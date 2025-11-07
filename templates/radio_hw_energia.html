@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-primary"><i class="bi bi-lightning-charge-fill"></i> HW Rádio: Energia e Baterias</h1>
+        <p class="lead text-muted">Detalhes sobre Controladores de Carga, Tipos de Bateria e dimensionamento básico.</p>
+    </div>
+</div>
+
+<h2 class="section-title"><i class="bi bi-sun"></i> Sistema de Geração Solar</h2>
+
+<div class="row g-4 mt-3">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <img src="{{ url_for('static', filename='img/controlador_carga.jpg') }}" class="card-img-top p-3" style="height: 250px; object-fit: contain;" onerror="this.src='https://placehold.co/600x400?text=FOTO+CONTROLADOR'">
+            <div class="card-body border-top">
+                <h5 class="fw-bold">Controlador de Carga</h5>
+                <p class="small mb-0"><strong>Função:</strong> Gerenciar a energia do painel solar para carregar a bateria de forma segura.</p>
+                <p class="small mb-0"><strong>Tipos:</strong> MPPT (Mais eficiente, recomendado) vs PWM (Mais simples).</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <img src="{{ url_for('static', filename='img/bateria_estacionaria.jpg') }}" class="card-img-top p-3" style="height: 250px; object-fit: contain;" onerror="this.src='https://placehold.co/600x400/333/FFF?text=FOTO+BATERIA+ESTACIONARIA'">
+            <div class="card-body border-top">
+                <h5 class="fw-bold">Baterias Estacionárias (AGM / VRLA)</h5>
+                <p class="small mb-0"><strong>Uso Padrão:</strong> Acumular energia para manter os rádios ligados durante a noite/falta de energia.</p>
+                <p class="small mb-0"><strong>Capacidade (Ah):</strong> Medida em Ampere-Hora. O dimensionamento deve garantir **2 a 3 dias de autonomia**.</p>
+                <p class="small mb-0"><strong>Descarga:</strong> São projetadas para descargas profundas. Não devem ser descarregadas abaixo de 50% para prolongar a vida útil.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="section-title"><i class="bi bi-shield-fill"></i> Proteção e Cabos</h2>
+
+<details>
+    <summary>DPS (Dispositivo de Proteção contra Surtos)</summary>
+    <div class="details-content">
+        <p><strong>Função:</strong> Desviar picos de tensão (surtos causados por raios ou chaveamento de energia) para a malha de aterramento, protegendo os rádios.</p>
+        <p><strong>Instalação Ideal:</strong> Dois DPS em série no cabo de rede: um no topo e outro na base da torre.</p>
+    </div>
+</details>
+
+<details>
+    <summary>Cabos UTP Blindados e PoE</summary>
+    <div class="details-content">
+        <p><strong>Cabos:</strong> OBRIGATÓRIO usar cabo UTP **Blindado (STP/FTP)** com proteção UV e fio de dreno (terra).</p>
+        <p><strong>PoE:</strong> Injetor que envia a energia elétrica (geralmente 24V ou 48V) para o rádio pelo cabo UTP.</p>
+    </div>
+</details>
+
+
+<a href="{{ url_for('radio_hardware') }}" class="btn btn-outline-secondary mt-4"><i class="bi bi-arrow-left"></i> Voltar para Enciclopédia Rádio</a>
+{% endblock %}

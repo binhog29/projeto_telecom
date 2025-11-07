@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-success"><i class="bi bi-antenna-fill"></i> HW Rádio: Acesso e Backhaul</h1>
+        <p class="lead text-muted">Especificações técnicas de Antenas Setoriais, Parabólicas e Rádios (RouterBoard).</p>
+    </div>
+</div>
+
+<h2 class="section-title"><i class="bi bi-router"></i> Rádios e Equipamentos CPE</h2>
+
+<details>
+    <summary>Rádio Integrado (CPE ou PTP)</summary>
+    <div class="details-content">
+        <p><strong>Definição:</strong> Dispositivo que combina a placa de rádio, o processador (RouterBoard) e o firmware em um único gabinete.</p>
+        <p class="mb-1"><strong>Modelos Comuns:</strong> Mikrotik SXT/LHg, Ubiquiti LiteBeam.</p>
+        <div class="alert alert-info small">
+            <strong>Dica Técnica:</strong> Sempre use a frequência 5.8 GHz, a menos que o ambiente de 2.4 GHz esteja totalmente limpo.
+        </div>
+    </div>
+</details>
+
+<h2 class="section-title text-danger"><i class="bi bi-broadcast"></i> Tipos de Antena</h2>
+
+<div class="row g-4 mt-3">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <img src="{{ url_for('static', filename='img/antena_setorial.jpg') }}" class="card-img-top p-3" style="height: 250px; object-fit: contain;" onerror="this.src='https://placehold.co/600x400?text=FOTO+SETORIAL'">
+            <div class="card-body border-top">
+                <h5 class="fw-bold">Antena Setorial (PTMP)</h5>
+                <p class="small mb-0"><strong>Uso:</strong> Atende **MÚLTIPLOS clientes** (PTMP). Tem abertura de 60°, 90°, ou 120°.</p>
+                <p class="small mb-0"><strong>Ganho Típico:</strong> 17 dBi a 20 dBi.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <img src="{{ url_for('static', filename='img/antena_parabolica.jpg') }}" class="card-img-top p-3" style="height: 250px; object-fit: contain;" onerror="this.src='https://placehold.co/600x400?text=FOTO+PARABOLICA'">
+            <div class="card-body border-top">
+                <h5 class="fw-bold">Antena Parabólica (Dish) - Backhaul</h5>
+                <p class="small mb-0"><strong>Uso:</strong> Exclusivamente para enlaces **Ponto-a-Ponto (PTP)**. Foco extremo e alto ganho (30 dBi+).</p>
+                <p class="small mb-0"><strong>Requisito:</strong> Exige alinhamento quase perfeito.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="{{ url_for('radio_hardware') }}" class="btn btn-outline-secondary mt-4"><i class="bi bi-arrow-left"></i> Voltar para Enciclopédia Rádio</a>
+{% endblock %}

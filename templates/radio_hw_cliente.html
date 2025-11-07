@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-warning text-dark"><i class="bi bi-house-fill"></i> HW Rádio: Cliente (CPE Interior)</h1>
+        <p class="lead text-muted">Dispositivos essenciais para a distribuição final do sinal Wi-Fi dentro da residência.</p>
+    </div>
+</div>
+
+<h2 class="section-title text-warning"><i class="bi bi-router-fill"></i> Distribuição Wi-Fi</h2>
+
+<div class="row g-4 mt-3">
+    
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+            <img src="{{ url_for('static', filename='img/router_wifi_dualband.jpg') }}" class="card-img-top p-3" style="height: 250px; object-fit: contain;" onerror="this.src='https://placehold.co/600x400?text=FOTO+ROTEADOR+WIFI'">
+            <div class="card-body border-top">
+                <h5 class="fw-bold text-warning">Roteador Wi-Fi Dual Band (5GHz)</h5>
+                <p class="small mb-1"><strong>Função:</strong> Conectado ao CPE externo, distribui o sinal na casa e realiza a discagem PPPoE.</p>
+                <p class="small mb-0"><strong>Frequência 5GHz:</strong> Crucial para entregar planos acima de 100 Mega, devido à menor saturação e maior largura de banda (Padrões AC/AX).</p>
+                <p class="small mb-0"><strong>2.4GHz:</strong> Maior alcance, mas ideal apenas para dispositivos mais lentos ou que estão mais distantes.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+            <img src="{{ url_for('static', filename='img/mesh_wifi.jpg') }}" class="card-img-top p-3" style="height: 250px; object-fit: contain;" onerror="this.src='https://placehold.co/600x400/333/FFF?text=FOTO+MESH+WIFI'">
+            <div class="card-body border-top">
+                <h5 class="fw-bold text-warning">Sistema Mesh Wi-Fi</h5>
+                <p class="small mb-1"><strong>Uso:</strong> Ideal para casas grandes, de dois andares ou com muitas barreiras físicas.</p>
+                <p class="small mb-0"><strong>Funcionamento:</strong> Cria uma **única rede sem costura** (Seamless Roaming), onde o dispositivo do cliente é direcionado automaticamente para o ponto de acesso mais forte.</p>
+                <p class="small mb-0"><strong>Melhor Prática:</strong> Se possível, use o *backhaul* (conexão entre os pontos Mesh) cabeado para evitar perda de velocidade.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="section-title text-success"><i class="bi bi-hdd-network"></i> Equipamentos CPE (Cliente Externo)</h2>
+
+<details>
+    <summary class="text-success">CPE Rádio (Antena Externa)</summary>
+    <div class="details-content">
+        <p><strong>Função:</strong> Capturar o sinal de rádio da torre (AP setorial) e convertê-lo em sinal Ethernet (cabo de rede).</p>
+        <p><strong>Modo de Operação:</strong> Geralmente configurado como **Bridge** (Ponte), permitindo que o roteador interno faça a discagem e o controle de sessão.</p>
+        <p><strong>Sinal Ideal (RX):</strong> O alinhamento deve ser feito para atingir um sinal de recepção ideal, tipicamente entre **-55 dBm e -65 dBm** para garantir a modulação máxima (capacidade de Mbps).</p>
+    </div>
+</details>
+
+<a href="{{ url_for('radio_hardware') }}" class="btn btn-outline-secondary mt-4"><i class="bi bi-arrow-left"></i> Voltar para Enciclopédia Rádio</a>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-primary"><i class="bi bi-tools"></i> HW Rádio: Infraestrutura e Proteção</h1>
+        <p class="lead text-muted">DPS, Aterramento, Cabos Blindados (STP/FTP) e Injetores PoE.</p>
+    </div>
+</div>
+
+<h2 class="section-title"><i class="bi bi-shield-fill"></i> Proteção Elétrica e Aterramento</h2>
+
+<div class="row g-4 mt-3">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <img src="{{ url_for('static', filename='img/dps_radio.jpg') }}" class="card-img-top p-3" style="height: 250px; object-fit: contain;" onerror="this.src='https://placehold.co/600x400/0d6efd/FFF?text=FOTO+DPS+(Protetor+Surto)'" alt="Protetor de Surto">
+            <div class="card-body border-top">
+                <h5 class="fw-bold">DPS (Protetor de Surto)</h5>
+                <p class="small mb-0"><strong>Função:</strong> Desviar picos de tensão (surtos) para a malha de aterramento, protegendo os rádios.</p>
+                <p class="small mb-0"><strong>Instalação Ideal:</strong> Dois em série: um no topo da torre e outro na base.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <img src="{{ url_for('static', filename='img/injetor_poe.jpg') }}" class="card-img-top p-3" style="height: 250px; object-fit: contain;" onerror="this.src='https://placehold.co/600x400?text=FOTO+INJETOR+POE'">
+            <div class="card-body border-top">
+                <h5 class="fw-bold">Injetor PoE (Power over Ethernet)</h5>
+                <p class="small mb-0"><strong>Função:</strong> Enviar a energia elétrica e dados pelo mesmo cabo de rede (UTP).</p>
+                <p class="small mb-0"><strong>Padrões:</strong> Passivo (24V) ou Ativo (802.3af/at).</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="section-title text-secondary mt-5"><i class="bi bi-link-45deg"></i> Cabos e Infraestrutura</h2>
+
+<details>
+    <summary>Cabos UTP Blindados (STP/FTP)</summary>
+    <div class="details-content">
+        <p><strong>Por que Blindado?</strong> A blindagem (folha de alumínio interna e fio de dreno) é a primeira linha de defesa contra surtos e ESD (Descarga Eletrostática) induzidos pelo campo eletromagnético. É obrigatório em torres.</p>
+        <p><strong>Conectores:</strong> Use conectores RJ45 metálicos (blindados). Eles garantem a continuidade da blindagem e o contato com o fio de dreno para descarregar a energia.</p>
+    </div>
+</details>
+
+<details>
+    <summary>Malha de Aterramento (Terra)</summary>
+    <div class="details-content">
+        <p><strong>Medição:</strong> A resistência do aterramento deve ser medida com um terrômetro. O ideal é ter um valor **abaixo de 10 Ohms**.</p>
+        <p><strong>Conexão:</strong> O fio de dreno dos cabos blindados deve ser conectado ao aterramento, assim como a carcaça metálica de todos os gabinetes.</p>
+    </div>
+</details>
+
+<a href="{{ url_for('radio_hardware') }}" class="btn btn-outline-secondary mt-4"><i class="bi bi-arrow-left"></i> Voltar para Enciclopédia Rádio</a>
+{% endblock %}
