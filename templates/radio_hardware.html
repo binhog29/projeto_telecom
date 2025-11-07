@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-success"><i class="bi bi-broadcast"></i> Enciclopédia de Hardware Wireless</h1>
+        <p class="lead text-muted">Detalhes técnicos sobre Antenas, Rádios (RB), Energia e Infraestrutura de Torres.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-success h-100">
+            <div class="card-header bg-success text-white fw-bold"><i class="bi bi-antenna-fill"></i> 1. Rádios e Antenas de Acesso</div>
+            <div class="list-group list-group-flush">
+                
+                <div class="list-group-item">
+                    <h5 class="fw-bold text-success">RouterBoard (RB) / Rádio Mikrotik</h5>
+                    <img src="{{ url_for('static', filename='img/routerboard.jpg') }}" class="img-fluid mb-2 rounded" style="max-height: 150px; object-fit: cover;" onerror="this.src='https://placehold.co/600x150/28a745/FFF?text=FOTO+RouterBoard+Mikrotik'">
+                    <p class="small mb-0"><strong>Função:</strong> É o roteador que está dentro da caixa (AP) ou na CPE do cliente. Roda o sistema **RouterOS**.</p>
+                    <p class="small mb-0"><strong>Modelos Comuns:</strong> CCR (Core Router), RB912 (AP de baixo custo), SXT/LiteBeam (CPEs de cliente).</p>
+                </div>
+
+                <div class="list-group-item bg-light">
+                    <h5 class="fw-bold text-success">Setorial (Painel)</h5>
+                    <img src="{{ url_for('static', filename='img/antena_setorial.jpg') }}" class="img-fluid mb-2 rounded" style="max-height: 150px; object-fit: cover;" onerror="this.src='https://placehold.co/600x150/28a745/FFF?text=FOTO+SETORIAL'">
+                    <p class="small mb-0"><strong>Uso:</strong> Atender múltiplos clientes em um setor (ex: 90° ou 120°). É o padrão para PTMP (Ponto-Multiponto).</p>
+                </div>
+
+                 <div class="list-group-item">
+                    <h5 class="fw-bold text-success">Antena Parabólica (Dish)</h5>
+                     <img src="{{ url_for('static', filename='img/antena_parabolica.jpg') }}" class="img-fluid mb-2 rounded" style="max-height: 150px; object-fit: cover;" onerror="this.src='https://placehold.co/600x150/0d6efd/FFF?text=FOTO+PARABOLICA+(DISH)'">
+                    <p class="small mb-0"><strong>Uso:</strong> Enlaces Ponto-a-Pontos (Backhaul). Foco estreito, alto ganho (30dBi+).</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-primary h-100">
+            <div class="card-header bg-primary text-white fw-bold"><i class="bi bi-lightning-charge-fill"></i> 2. Energia e Proteção (Torre)</div>
+            <div class="list-group list-group-flush">
+
+                <div class="list-group-item">
+                    <h5 class="fw-bold text-primary">Controlador de Carga (Solar)</h5>
+                    <img src="{{ url_for('static', filename='img/controlador_carga.jpg') }}" class="img-fluid mb-2 rounded" style="max-height: 150px; object-fit: contain;" onerror="this.src='https://placehold.co/600x150/0d6efd/FFF?text=FOTO+CONTROLADOR+DE+CARGA'">
+                    <p class="small mb-0"><strong>Função:</strong> Regula a energia do painel solar para carregar a bateria sem sobrecargas.</p>
+                </div>
+
+                <div class="list-group-item bg-light">
+                    <h5 class="fw-bold text-primary">DPS (Protetor de Surto)</h5>
+                    <p class="small mb-0"><strong>Função:</strong> Desviar picos de tensão (surtos/raios) para o terra, protegendo o rádio. Um DPS no topo e outro na base.</p>
+                </div>
+
+                <div class="list-group-item">
+                    <h5 class="fw-bold text-primary">Baterias e Gabinete</h5>
+                    <p class="small mb-0"><strong>Função:</strong> Armazenar energia para manter os rádios ligados durante a noite/chuva.</p>
+                    <p class="small mb-0"><strong>Manutenção:</strong> Instalar em gabinetes ventilados e herméticos.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-secondary h-100">
+            <div class="card-header bg-secondary text-white fw-bold"><i class="bi bi-tools"></i> 3. Cabos e Infraestrutura</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="fw-bold text-secondary">Injetor PoE</h5>
+                        <img src="{{ url_for('static', filename='img/injetor_poe.jpg') }}" class="img-fluid mb-2 rounded" style="max-height: 100px; object-fit: contain;" onerror="this.src='https://placehold.co/400x100/6c757d/FFF?text=FOTO+INJETOR+POE'">
+                        <p class="small mb-0"><strong>Função:</strong> Envia energia (24V ou 48V) e dados pelo mesmo cabo de rede.</p>
+                    </div>
+                    <div class="col-md-6">
+                         <h5 class="fw-bold text-secondary">Cabo e Conectores</h5>
+                         <p class="small mb-0">Use Cabo UTP **Blindado** (STP/FTP) e conectores RJ45 blindados para aterramento.</p>
+                         <p class="small mb-0"><strong>Antena de Grade:</strong> Alternativa mais barata à parabólica para PTP (Foto: `antena_parabolica_grade.jpg`).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-warning h-100">
+            <div class="card-header bg-warning text-dark fw-bold"><i class="bi bi-house-fill"></i> 4. Distribuição no Cliente (Interior)</div>
+            <div class="list-group list-group-flush">
+                
+                <div class="list-group-item">
+                    <h5 class="fw-bold text-dark">Roteador Wi-Fi Dual Band (5GHz)</h5>
+                    <img src="{{ url_for('static', filename='img/router_wifi_dualband.jpg') }}" class="img-fluid mb-2 rounded" style="max-height: 150px; object-fit: contain;" onerror="this.src='https://placehold.co/600x150/ffc107/000?text=FOTO+ROTEADOR+DUAL+BAND'">
+                    <p class="small mb-0"><strong>Função:</strong> Conectado ao CPE externo, distribui Wi-Fi e faz a discagem PPPoE.</p>
+                    <p class="small mb-0"><strong>Padrão:</strong> 5GHz é crucial para planos acima de 100 Mega, pois 2.4GHz é muito saturado.</p>
+                </div>
+
+                <div class="list-group-item bg-light">
+                    <h5 class="fw-bold text-dark">Mesh Wi-Fi</h5>
+                    <p class="small mb-0"><strong>Função:</strong> Usado em casas grandes. Cria uma única rede Wi-Fi com vários pontos de acesso interligados, eliminando "pontos cegos".</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
