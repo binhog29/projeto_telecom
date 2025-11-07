@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-info"><i class="bi bi-bounding-box"></i> Engenharia de Core & Roteamento Avançado</h1>
+        <p class="lead text-muted">O "miolo" da rede: MPLS, VPNs Corporativas, BGP e Qualidade de Serviço (QoS).</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        
+        <h2 class="section-title text-info" style="border-color: #0dcaf0 !important;"><i class="bi bi-tags-fill"></i> 1. MPLS (Multiprotocol Label Switching)</h2>
+        <div class="mt-3 mb-5">
+            <details>
+                <summary>O que é MPLS e por que usar?</summary>
+                <div class="details-content">
+                    <p><strong>Analogia:</strong> Pense no roteamento IP como ler o endereço completo em cada esquina. Pense no MPLS como uma etiqueta de bagagem de aeroporto (ex: GIG, GRU). O funcionário não lê o endereço, só a etiqueta.</p>
+                    <p>O roteador da borda (<strong>LER</strong> - Label Edge Router) olha o IP de destino e cola uma "etiqueta" (Label) no pacote. Os roteadores do "miolo" (<strong>LSR</strong> - Label Switching Router) só olham a etiqueta, trocam por outra e empurram para frente. É muito mais rápido e eficiente.</p>
+                    <p>O MPLS cria "túneis" (LSPs) pela rede, permitindo engenharia de tráfego (forçar o tráfego a passar por um caminho específico) e a criação de VPNs.</p>
+                </div>
+            </details>
+            <details>
+                <summary>O Poder do MPLS: VPNs (L2/L3)</summary>
+                <div class="details-content">
+                    <p>É aqui que o provedor ganha dinheiro com clientes corporativos.</p>
+                    <ul>
+                        <li><strong>L2VPN (VPLS):</strong> "O Cabo de Rede Virtual". Você conecta a Matriz de um banco em SP e a Filial no RJ. As duas se sentem na mesma rede local (mesma VLAN, mesmo IP), como se um cabo gigantesco fosse passado entre elas por dentro do seu provedor.</li>
+                        <li><strong>L3VPN (VRF):</strong> "O Roteador Virtual". Você entrega um link para um cliente (ex: Hospital) que tem suas próprias rotas internas. Essas rotas ficam em uma "tabela de roteamento virtual" (VRF) separada, que não se mistura com a sua internet normal ou com a de outros clientes.</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+
+        <h2 class="section-title text-info" style="border-color: #0dcaf0 !important;"><i class="bi bi-globe2"></i> 2. BGP Avançado (iBGP vs eBGP)</h2>
+        <div class="mt-3 mb-5">
+            <details>
+                <summary>eBGP (Externo) vs iBGP (Interno)</summary>
+                <div class="details-content">
+                    <p><strong>eBGP (External):</strong> O BGP "normal". Usado para seu Provedor (seu ASN) trocar rotas com a Internet (outros ASNs, como Google, Netflix, operadoras de Trânsito).</p>
+                    <p><strong>iBGP (Internal):</strong> O pulo do gato. Se você tem 2 roteadores de borda (Bordas A e B), como o Cliente conectado na Borda A aprende as rotas que só a Borda B conhece?</p>
+                    <p>Resposta: O iBGP é usado para "fofocar" as rotas do eBGP para **dentro** da sua própria rede. Todos os roteadores do seu Core falam iBGP entre si para terem um mapa completo da Internet.</p>
+                </div>
+            </details>
+        </div>
+
+        <h2 class="section-title text-info" style="border-color: #0dcaf0 !important;"><i class="bi bi-reception-4"></i> 3. QoS (Qualidade de Serviço)</h2>
+        <div class="mt-3 mb-5">
+             <details>
+                <summary>Marcando Pacotes (DSCP)</summary>
+                <div class="details-content">
+                    <p>Por padrão, a rede trata um pacote de jogo online e um pacote de download de Torrent exatamente da mesma forma (First-In, First-Out).</p>
+                    <p>QoS permite "carimbar" pacotes. Você marca pacotes de VoIP e Jogos como <strong>EF (Expedited Forwarding - Prioridade Máxima)</strong>.</p>
+                    <p>Quando o roteador fica congestionado, ele cria filas. Ele joga os pacotes de Torrent na fila "Lenta" (Baixa Prioridade) e passa os pacotes de VoIP na "Fila Expressa", garantindo que a ligação não pique, mesmo com a rede cheia.</p>
+                </div>
+            </details>
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card bg-dark text-white shadow-sm sticky-top" style="top: 100px">
+            <div class="card-header fw-bold">
+                <i class="bi bi-gem"></i> Nível Arquiteto: A Trindade
+            </div>
+            <div class="card-body">
+                <h5 class="card-title text-info">A Trindade da Redundância</h5>
+                <p>O objetivo de um Core de provedor é a convergência rápida (mudar de rota sem o cliente perceber). A "trindade" para isso é:</p>
+                <ol class="small">
+                    <li><strong>OSPF:</strong> Para os roteadores descobrirem os caminhos INTERNOS da sua rede (IGP).</li>
+                    <li><strong>MPLS:</strong> Para criar os "túneis" (LSPs) em cima dos caminhos do OSPF.</li>
+                    <li><strong>iBGP:</strong> Para distribuir as rotas da Internet (EXTERNAS) por cima dos túneis MPLS.</li>
+                </ol>
+                <p class="small">Se uma fibra sua rompe, o OSPF acha um novo caminho, o MPLS cria um novo túnel por ele, e o iBGP redistribui as rotas. Tudo em menos de 1 segundo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -20,7 +20,7 @@ def ftth_hardware():
 def ftth_calc():
     return render_template('ftth_calc.html', titulo="FTTH: Simulador Pro")
 
-# --- SUB-ROTAS: DETALHES DE HARDWARE FTTH ---
+# --- SUB-ROTAS: DETALHE HARDWARE FTTH ---
 @app.route('/ftth/hardware/olt')
 def ftth_hw_olt():
     return render_template('ftth_hw_olt.html', titulo="HW: OLT")
@@ -78,6 +78,15 @@ def ip_teoria():
 @app.route('/ip/calc')
 def ip_calc():
     return render_template('ip_calc.html', titulo="Calculadora IP (CIDR)")
+
+# --- MÓDULO SERVIDORES & CORE ---
+@app.route('/servers/teoria')
+def servers_teoria():
+    return render_template('servers_teoria.html', titulo="Servidores de Provedor (AAA)")
+
+@app.route('/core/teoria')  # <--- NOVA ROTA AVANÇADA
+def core_teoria():
+    return render_template('core_teoria.html', titulo="Engenharia de Core (MPLS/BGP)")
 
 # --- MÓDULO DIAGNÓSTICO ---
 @app.route('/diag')

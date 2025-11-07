@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-secondary"><i class="bi bi-server"></i> Servidores & Autenticação (AAA)</h1>
+        <p class="lead text-muted">A camada de serviço que controla o acesso e a velocidade do cliente.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        
+        <h2 class="section-title text-secondary" style="border-color: #6c757d !important;"><i class="bi bi-diagram-3-fill"></i> 1. O Fluxo de Autenticação</h2>
+        <div class="mt-3 mb-5">
+            <div class="diagram-box shadow">
+[ 🏠 CLIENTE (Roteador) ]
+       |  (Envia usuário/senha PPPoE)
+       v
+[ 🏢 OLT (Datacenter) ]
+       |  (Encapsula o PPPoE na VLAN 100)
+       v
+[ 🤖 BRAS / BNG ] (Servidor PPPoE)
+       |  "Quem é 'fabio@provedor'?"
+       v
+[ 🗃️ SERVIDOR RADIUS ]
+       |  (Consulta o Sistema de Billing)
+       |  "Fábio existe, fatura está OK."
+       |  "Plano: 500 Mega."
+       v
+[ 🤖 BRAS / BNG ]
+       |  (Autoriza, aplica o plano de 500 Mega)
+       v
+[ 🌐 INTERNET ]
+            </div>
+        </div>
+
+        <h2 class="section-title text-secondary" style="border-color: #6c757d !important;"><i class="bi bi-stack"></i> 2. Componentes Chave</h2>
+        <div class="mt-3 mb-5">
+            <details>
+                <summary>PPPoE (Protocolo de Acesso)</summary>
+                <div class="details-content">
+                    <p><strong>Por que não usar DHCP (IP automático)?</strong> DHCP é "burro". Ele entrega um IP para qualquer um que plugar o cabo. PPPoE (Point-to-Point Protocol over Ethernet) exige autenticação.</p>
+                    <p>Ele cria um "túnel" entre o roteador do cliente e o BRAS do provedor, permitindo:</p>
+                    <ul>
+                        <li>Exigir Login e Senha.</li>
+                        <li>Contabilizar o tempo de conexão.</li>
+                        <li>Identificar exatamente qual cliente está gerando tráfego.</li>
+                    </ul>
+                    <p><strong>Processo (PADI, PADO, PADR, PADS):</strong></p>
+                    <ol>
+                        <li><strong>PADI</strong> (Discovery): Cliente grita na rede "Quem é o servidor PPPoE?"</li>
+                        <li><strong>PADO</strong> (Offer): O BRAS responde "Eu sou!".</li>
+                        <li><strong>PADR</strong> (Request): Cliente pede "Quero conectar com você".</li>
+                        <li><strong>PADS</strong> (Session): O BRAS confirma "Sessão estabelecida, me mande o login/senha".</li>
+                    </ol>
+                </div>
+            </details>
+            <details>
+                <summary>BRAS / BNG (O Porteiro)</summary>
+                <div class="details-content">
+                    <p><strong>(Broadband Remote Access Server / Broadband Network Gateway)</strong></p>
+                    <p>É o equipamento (hardware ou software) que **encerra** os túneis PPPoE. Ele é o servidor que o cliente vê.</p>
+                    <ul>
+                        <li><strong>Hardware Dedicado:</strong> Juniper, Cisco, Huawei. Caros, alta performance.</li>
+                        <li><strong>Software:</strong> Mikrotik RouterOS (CCR) ou Accel-PPP (Linux). O mais comum em provedores regionais no Brasil.</li>
+                    </ul>
+                    <p>O BRAS **não sabe** a senha de ninguém. Ele apenas recebe a tentativa de login e pergunta ao RADIUS.</p>
+                </div>
+            </details>
+            <details>
+                <summary>RADIUS (O Cérebro AAA)</summary>
+                <div class="details-content">
+                    <p>O servidor mais importante da rede lógica. Ele cuida do <strong>AAA</strong>:</p>
+                    <ul>
+                        <li><strong>A</strong>uthentication (Autenticação): "Esse usuário/senha existem?"</li>
+                        <li><strong>A</strong>uthorization (Autorização): "Ele está pago? Qual o plano dele (500 Mega)?"</li>
+                        <li><strong>A</strong>ccounting (Contabilidade): "Quanto tempo ele ficou online? Quanto ele baixou?"</li>
+                    </ul>
+                    <p>O RADIUS se conecta diretamente ao seu sistema financeiro (Billing). Quando o cliente paga o boleto, o financeiro atualiza o RADIUS, que libera o acesso no BRAS.</p>
+                </div>
+            </details>
+            <details>
+                <summary>DNS Cache (Aceleração)</summary>
+                <div class="details-content">
+                    <p><strong>Por que um provedor precisa ter seu PRÓPRIO DNS?</strong></p>
+                    <p>Se você entrega 8.8.8.8 (Google) para seus 10.000 clientes, cada vez que UM deles acessa `google.com`, a requisição viaja até o datacenter do Google (SP/EUA) e volta.</p>
+                    <p>Se você tem um DNS Cache (como Unbound ou BIND9) no seu datacenter, acontece o seguinte:</p>
+                    <ol>
+                        <li>Cliente 1 acessa `google.com`.</li>
+                        <li>Seu DNS busca no Google e entrega ao cliente (demora 30ms).</li>
+                        <li>Seu DNS **salva a resposta** em cache (memória).</li>
+                        <li>Cliente 2 (e todos os outros 9.998) acessam `google.com`.</li>
+                        <li>Seu DNS responde instantaneamente (demora 1ms).</li>
+                    </ol>
+                    <p><strong>Resultado:</strong> A internet do seu cliente parece MUITO mais rápida e responsiva.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card bg-dark text-white shadow-sm sticky-top" style="top: 100px">
+            <div class="card-header fw-bold">
+                <i class="bi bi-building"></i> Nível Provedor: ASN & BGP
+            </div>
+            <div class="card-body">
+                <h5 class="card-title text-info">O que é um ASN?</h5>
+                <p>Quando um provedor fica grande, ele para de "comprar link" de outro provedor e passa a comprar "trânsito" direto das grandes operadoras (Claro, Vivo, Level3).</p>
+                <p>Para fazer isso, ele precisa de um <strong>ASN (Autonomous System Number)</strong>. É um "RG" mundial para redes. Com um ASN, o provedor pode usar o protocolo <strong>BGP</strong> (que vimos no módulo IP) para anunciar seus blocos de IP para o resto da internet.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
