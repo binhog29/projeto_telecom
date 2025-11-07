@@ -70,13 +70,20 @@
             <div class="card-body bg-light" id="quizContainer">
                 <h4 class="text-center text-info fw-bold mb-4">Escolha o Módulo para Avaliação</h4>
                 <div class="d-grid gap-3 col-md-8 mx-auto">
-                    <button class="btn btn-primary btn-lg" onclick="iniciarQuiz('ftth')"><i class="bi bi-optical-audio"></i> Módulo FTTH (Fibra)</button>
-                    <button class="btn btn-success btn-lg" onclick="iniciarQuiz('ip')"><i class="bi bi-hdd-network"></i> Módulo Redes IP</button>
-                    <button class="btn btn-secondary btn-lg" onclick="iniciarQuiz('radio')"><i class="bi bi-broadcast"></i> Módulo Rádio (Wireless)</button>
+                    <a href="{{ url_for('diag_quiz') }}?modulo=ftth" class="btn btn-primary btn-lg">
+                        <i class="bi bi-optical-audio"></i> Módulo FTTH (Fibra)
+                    </a>
+                    <a href="{{ url_for('diag_quiz') }}?modulo=ip" class="btn btn-success btn-lg">
+                        <i class="bi bi-hdd-network"></i> Módulo Redes IP
+                    </a>
+                    <a href="{{ url_for('diag_quiz') }}?modulo=radio" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-broadcast"></i> Módulo Rádio (Wireless)
+                    </a>
                 </div>
                 
-                <div id="quizArea" class="mt-5 d-none">
-                    </div>
+                <div class="alert alert-info text-center mt-4">
+                    <i class="bi bi-info-circle-fill"></i> O servidor seleciona 5 questões aleatórias do banco para cada teste.
+                </div>
             </div>
         </div>
     </div>

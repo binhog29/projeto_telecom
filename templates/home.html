@@ -4,7 +4,7 @@
 <div class="p-5 mb-5 bg-white rounded-3 shadow-sm text-center border">
     <h1 class="display-5 fw-bold text-primary">Domine as Telecomunicações</h1>
     <p class="col-md-8 fs-5 mx-auto text-muted">
-        Plataforma integrada para formação Nível Pleno: Físico, Lógico, Serviços e Core.
+        Plataforma integrada para formação Nível Pleno: Físico, Lógico, Serviços, Core e Segurança.
     </p>
 </div>
 
@@ -16,7 +16,7 @@
                 <div class="bg-primary text-white rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-optical-audio"></i>
                 </div>
-                <h2 class="h5 mb-0 text-primary fw-bold">Físico: Fibra (FTTH)</h2>
+                <h2 class="h5 mb-0 text-primary fw-bold">1. Fibra (FTTH)</h2>
             </div>
             <p class="text-muted small">GPON, OLTs, Hardware e cálculo de potência.</p>
             <div class="mt-auto pt-3">
@@ -25,7 +25,7 @@
                     <a href="/ftth/hardware" class="btn btn-outline-primary fw-bold flex-fill">Hardware</a>
                 </div>
                 <div class="d-grid">
-                    <a href="/ftth/calc" class="btn btn-primary fw-bold"><i class="bi bi-calculator"></i> Simulador</a>
+                    <a href="/ftth/calc" class="btn btn-primary fw-bold">Simulador</a>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 <div class="bg-success text-white rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-broadcast"></i>
                 </div>
-                <h2 class="h5 mb-0 text-success fw-bold">Físico: Rádio (WISP)</h2>
+                <h2 class="h5 mb-0 text-success fw-bold">2. Rádio (WISP)</h2>
             </div>
             <p class="text-muted small">Enlaces 5.8GHz, Zona de Fresnel e infra de torres.</p>
             <div class="mt-auto pt-3 d-grid">
@@ -52,7 +52,7 @@
                 <div class="bg-dark text-white rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-hdd-network"></i>
                 </div>
-                <h2 class="h5 mb-0 text-dark fw-bold">Lógico: Redes IP</h2>
+                <h2 class="h5 mb-0 text-dark fw-bold">3. Redes IP & Lógica</h2>
             </div>
             <p class="text-muted small">IPv4/IPv6, Sub-redes, DNS, DHCP e Roteamento.</p>
             <div class="mt-auto pt-3 d-grid gap-2 d-md-flex">
@@ -68,7 +68,7 @@
                 <div class="bg-secondary text-white rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-server"></i>
                 </div>
-                <h2 class="h5 mb-0 text-secondary fw-bold">Servidores & Autenticação</h2>
+                <h2 class="h5 mb-0 text-secondary fw-bold">4. Servidores & Autenticação</h2>
             </div>
             <p class="text-muted small">O coração do provedor: PPPoE, RADIUS, BRAS e DNS Cache.</p>
             <div class="mt-auto pt-3 d-grid">
@@ -83,26 +83,40 @@
                 <div class="bg-info text-white rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-bounding-box"></i>
                 </div>
-                <h2 class="h5 mb-0 text-info fw-bold">Engenharia de Core</h2>
+                <h2 class="h5 mb-0 text-info fw-bold">5. Engenharia de Core</h2>
             </div>
-            <p class="text-muted small">Backbone, MPLS (VPNs), Roteamento BGP (iBGP/eBGP) e Qualidade de Serviço (QoS).</p>
+            <p class="text-muted small">MPLS (VPNs), Roteamento BGP (iBGP/eBGP) e Qualidade de Serviço (QoS).</p>
             <div class="mt-auto pt-3 d-grid">
                 <a href="/core/teoria" class="btn btn-info fw-bold text-white">Acessar Módulo Core →</a>
             </div>
         </div>
     </div>
-
+    
     <div class="col-lg-4 col-md-6">
-        <div class="card h-100 border-danger shadow-sm p-4 card-hover" style="border-width: 2px;">
+        <div class="card h-100 border-success shadow-sm p-4 card-hover" style="border-width: 2px;">
             <div class="d-flex align-items-center mb-3">
+                <div class="bg-success text-white rounded-circle p-3 me-3 icon-circle">
+                    <i class="bi bi-shield-lock-fill"></i>
+                </div>
+                <h2 class="h5 mb-0 text-success fw-bold">6. Segurança de Redes</h2>
+            </div>
+            <p class="text-muted small">Firewall, Zero Trust, IPS/IDS e Defesa contra ataques DDoS.</p>
+            <div class="mt-auto pt-3 d-grid">
+                <a href="/security/teoria" class="btn btn-outline-success fw-bold">Acessar Módulo Segurança →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 mt-4">
+        <div class="card border-danger shadow-lg p-3 card-hover">
+             <div class="d-flex align-items-center">
                 <div class="bg-danger text-white rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-heart-pulse-fill"></i>
                 </div>
-                <h2 class="h5 mb-0 text-danger fw-bold">Central de Diagnóstico</h2>
-            </div>
-            <p class="text-muted small">Fluxograma de falhas e terminal simulado.</p>
-            <div class="mt-auto pt-3 d-grid">
-                <a href="/diag" class="btn btn-danger fw-bold py-2"><i class="bi bi-play-circle-fill"></i> INICIAR DIAGNÓSTICO</a>
+                <h2 class="h5 mb-0 text-danger fw-bold me-auto">Central de Diagnóstico & Avaliação</h2>
+                <a href="/diag" class="btn btn-danger btn-lg fw-bold py-2">
+                    <i class="bi bi-play-circle-fill me-2"></i> INICIAR DIAGNÓSTICO
+                </a>
             </div>
         </div>
     </div>
