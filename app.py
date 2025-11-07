@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+import ipaddress # Importado aqui para ser usado no cálculo
 
 app = Flask(__name__)
 
@@ -75,16 +76,74 @@ def radio_teoria():
 def ip_teoria():
     return render_template('ip_teoria.html', titulo="Redes IP: Protocolos")
 
-@app.route('/ip/calc')
+# Rota para a Calculadora IP - Agora processando GET e POST
+@app.route('/ip/calc', methods=['GET', 'POST'])
 def ip_calc():
-    return render_template('ip_calc.html', titulo="Calculadora IP (CIDR)")
+    
+    # Variáveis default
+    context = {'titulo': "Calculadora IP (CIDR)"}
+
+    # Bloco 'GET': Apenas mostra a página
+    if request.method == 'GET':
+        return render_template('ip_calc.html', **context)
+    
+    # Bloco 'POST': Processa o cálculo no servidor
+    if request.method == 'POST':
+        ip_entrada = request.form.get('ip_address')
+        cidr_entrada = int(request.form.get('cidr_mask'))
+        
+        context.update({
+            'ip_entrada': ip_entrada,
+            'cidr_entrada': cidr_entrada
+        })
+
+        try:
+            # Converte a entrada IP/CIDR para um objeto Network
+            network = ipaddress.ip_network(f'{ip_entrada}/{cidr_entrada}', strict=False)
+            
+            # Calcula os valores
+            network_address = str(network.network_address)
+            netmask = str(network.netmask)
+            broadcast_address = str(network.broadcast_address)
+            
+            # Lógica de Hosts (o coração do cálculo)
+            if cidr_entrada == 32:
+                total_hosts = 1
+                first_usable = ip_entrada
+                last_usable = ip_entrada
+            elif cidr_entrada == 31:
+                total_hosts = 0
+                first_usable = "N/A"
+                last_usable = "N/A"
+            else:
+                total_hosts = network.num_addresses - 2
+                first_usable = str(network.network_address + 1)
+                last_usable = str(network.broadcast_address - 1)
+            
+            # Adiciona todos os resultados ao contexto para injeção no HTML
+            context.update({
+                'resultado': True,
+                'net_addr': network_address,
+                'broadcast': broadcast_address,
+                'net_mask': netmask,
+                'first_ip': first_usable,
+                'last_ip': last_usable,
+                'hosts': total_hosts
+            })
+
+            return render_template('ip_calc.html', **context)
+
+        except ValueError:
+            # Em caso de IP ou Máscara inválida
+            context['erro'] = "Endereço IP ou Máscara inválida! Verifique a sintaxe."
+            return render_template('ip_calc.html', **context)
 
 # --- MÓDULO SERVIDORES & CORE ---
 @app.route('/servers/teoria')
 def servers_teoria():
     return render_template('servers_teoria.html', titulo="Servidores de Provedor (AAA)")
 
-@app.route('/core/teoria')  # <--- NOVA ROTA AVANÇADA
+@app.route('/core/teoria')
 def core_teoria():
     return render_template('core_teoria.html', titulo="Engenharia de Core (MPLS/BGP)")
 

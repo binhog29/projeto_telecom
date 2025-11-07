@@ -4,7 +4,7 @@
 <div class="row mb-4">
     <div class="col-12">
         <h1 class="text-danger"><i class="bi bi-heart-pulse-fill"></i> Central de Diagnóstico Avançado</h1>
-        <p class="lead text-muted">Ferramentas interativas para identificação e resolução de falhas em redes.</p>
+        <p class="lead text-muted">Ferramentas interativas para identificação, resolução de falhas e avaliação técnica.</p>
     </div>
 </div>
 
@@ -14,6 +14,9 @@
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link fw-bold" id="terminal-tab" data-bs-toggle="pill" data-bs-target="#terminal-pane" type="button" role="tab"><i class="bi bi-terminal-fill"></i> Simulador de Terminal</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold" id="quiz-tab" data-bs-toggle="pill" data-bs-target="#quiz-pane" type="button" role="tab"><i class="bi bi-patch-check-fill"></i> Avaliação Técnica</button>
     </li>
 </ul>
 
@@ -55,6 +58,25 @@
                     <span class="me-2 text-warning">$</span>
                     <input type="text" id="terminalInput" class="bg-transparent border-0 text-white w-100" style="outline: none;" autocomplete="off" autofocus>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tab-pane fade" id="quiz-pane" role="tabpanel">
+        <div class="card shadow-sm border-info">
+            <div class="card-header bg-info text-white fw-bold">
+                <i class="bi bi-patch-check"></i> Teste de Conhecimento
+            </div>
+            <div class="card-body bg-light" id="quizContainer">
+                <h4 class="text-center text-info fw-bold mb-4">Escolha o Módulo para Avaliação</h4>
+                <div class="d-grid gap-3 col-md-8 mx-auto">
+                    <button class="btn btn-primary btn-lg" onclick="iniciarQuiz('ftth')"><i class="bi bi-optical-audio"></i> Módulo FTTH (Fibra)</button>
+                    <button class="btn btn-success btn-lg" onclick="iniciarQuiz('ip')"><i class="bi bi-hdd-network"></i> Módulo Redes IP</button>
+                    <button class="btn btn-secondary btn-lg" onclick="iniciarQuiz('radio')"><i class="bi bi-broadcast"></i> Módulo Rádio (Wireless)</button>
+                </div>
+                
+                <div id="quizArea" class="mt-5 d-none">
+                    </div>
             </div>
         </div>
     </div>
