@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2 class="section-title"><i class="bi bi-calculator-fill"></i> Simulador FTTH Avançado (Engenharia)</h2>
+        <p class="lead text-muted">Ferramenta completa para cálculo de Power Budget em cenários complexos.</p>
+    </div>
+</div>
+
+<form id="calcForm">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white fw-bold">
+                    <i class="bi bi-broadcast"></i> 1. Transmissor & Meio Físico
+                </div>
+                <div class="card-body bg-light">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Potência OLT (dBm):</label>
+                            <input type="number" id="oltPower" class="form-control" value="5.0" step="0.1">
+                            <div class="form-text">Ex: B+ (+3), C+ (+5 a +7)</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Comp. de Onda:</label>
+                            <select id="wavelength" class="form-select" onchange="updateFiberLoss()">
+                                <option value="1490" selected>1490nm (Downstream)</option>
+                                <option value="1310">1310nm (Upstream)</option>
+                                <option value="1550">1550nm (Vídeo RF)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Distância Total (km):</label>
+                            <input type="number" id="distance" class="form-control" value="10" min="0.1" step="0.1">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-muted">Atenuação da Fibra (dB/km):</label>
+                            <input type="number" id="fiberLossPerKm" class="form-control form-control-sm bg-white" value="0.25" step="0.01" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white fw-bold">
+                    <i class="bi bi-diagram-2"></i> 2. Divisores Ópticos (Cascateamento)
+                </div>
+                <div class="card-body bg-light">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Estágio 1 (Primário):</label>
+                            <select id="spl1" class="form-select splitter-select">
+                                <option value="0">--- Nenhum ---</option>
+                                <optgroup label="Balanceado (PLC)">
+                                    <option value="3.7">PLC 1:2 (-3.7dB)</option>
+                                    <option value="7.3">PLC 1:4 (-7.3dB)</option>
+                                    <option value="10.5" selected>PLC 1:8 (-10.5dB)</option>
+                                    <option value="13.7">PLC 1:16 (-13.7dB)</option>
+                                    <option value="17.0">PLC 1:32 (-17.0dB)</option>
+                                </optgroup>
+                                <optgroup label="Desbalanc. FBT (Passante)">
+                                    <option value="0.4">FBT 95/5 (Passante -0.4dB)</option>
+                                    <option value="0.6">FBT 90/10 (Passante -0.6dB)</option>
+                                    <option value="1.2">FBT 80/20 (Passante -1.2dB)</option>
+                                    <option value="1.9">FBT 70/30 (Passante -1.9dB)</option>
+                                    <option value="2.6">FBT 60/40 (Passante -2.6dB)</option>
+                                </optgroup>
+                                <optgroup label="Desbalanc. FBT (TAP/Drop)">
+                                    <option value="14.5">FBT 95/5 (TAP -14.5dB)</option>
+                                    <option value="11.0">FBT 90/10 (TAP -11.0dB)</option>
+                                    <option value="8.0">FBT 80/20 (TAP -8.0dB)</option>
+                                    <option value="6.0">FBT 70/30 (TAP -6.0dB)</option>
+                                    <option value="4.4">FBT 60/40 (TAP -4.4dB)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Estágio 2 (Secundário):</label>
+                            <select id="spl2" class="form-select splitter-select">
+                                <option value="0">--- Nenhum ---</option>
+                                <optgroup label="Balanceado (PLC)">
+                                    <option value="7.3">PLC 1:4 (-7.3dB)</option>
+                                    <option value="10.5" selected>PLC 1:8 (-10.5dB)</option>
+                                    <option value="13.7">PLC 1:16 (-13.7dB)</option>
+                                </optgroup>
+                                <optgroup label="Desbalanc. FBT (TAP)">
+                                     <option value="11.0">FBT 90/10 (TAP -11.0dB)</option>
+                                     <option value="8.0">FBT 80/20 (TAP -8.0dB)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Estágio 3 (Final/Opcional):</label>
+                            <select id="spl3" class="form-select splitter-select">
+                                <option value="0" selected>--- Nenhum ---</option>
+                                <optgroup label="Balanceado (PLC)">
+                                    <option value="3.7">PLC 1:2 (-3.7dB)</option>
+                                    <option value="7.3">PLC 1:4 (-7.3dB)</option>
+                                    <option value="10.5">PLC 1:8 (-10.5dB)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white fw-bold">
+                    <i class="bi bi-tools"></i> 3. Eventos e Conexões
+                </div>
+                <div class="card-body bg-light">
+                     <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Conectores (0.5dB):</label>
+                            <input type="number" id="connQty" class="form-control" value="4" min="2">
+                            <div class="form-text">Total de acoplamentos (DIO, CTO, Roseta, ONU).</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Fusões (0.1dB):</label>
+                            <input type="number" id="fusionQty" class="form-control" value="2" min="0">
+                            <div class="form-text">Emendas feitas com máquina.</div>
+                        </div>
+                         <div class="col-md-4">
+                            <label class="form-label fw-bold text-danger">Mecânicas (0.5dB):</label>
+                            <input type="number" id="mechQty" class="form-control" value="0" min="0">
+                            <div class="form-text">Conectores de campo/reparos rápidos.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <div class="col-lg-4">
+            
+            <div class="card shadow-sm mb-4 border-warning">
+                <div class="card-header bg-warning text-dark fw-bold">
+                    <i class="bi bi-sliders"></i> Parâmetros de Aprovação
+                </div>
+                <div class="card-body bg-light">
+                     <div class="mb-3">
+                        <label class="form-label fw-bold">Margem de Segurança (dB):</label>
+                        <input type="number" id="safetyMargin" class="form-control" value="3.0" step="0.5">
+                        <div class="form-text">"Gordura" para manutenções futuras. Padrão: 3dB.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Sensibilidade ONU (dBm):</label>
+                        <input type="number" id="onuSensitivity" class="form-control" value="-27.0" step="0.5">
+                        <div class="form-text">Sinal mínimo para a ONU funcionar.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 mb-4">
+                 <button type="button" onclick="calculatePro()" class="btn btn-primary btn-lg py-3 fw-bold shadow-sm">
+                    <i class="bi bi-cpu-fill"></i> EXECUTAR SIMULAÇÃO
+                </button>
+            </div>
+
+            <div id="proResult" class="card shadow border-0 d-none">
+                <div class="card-header text-center text-white fw-bold py-3" id="resultHeader">
+                    RESULTADO DA SIMULAÇÃO
+                </div>
+                <div class="card-body text-center p-4">
+                    <h2 class="display-4 fw-bold mb-0" id="finalSignalDisplay">0.0 dBm</h2>
+                    <p class="lead fw-bold mt-2" id="statusText">Aguardando...</p>
+                    
+                    <hr>
+                    
+                    <div class="text-start small bg-light p-3 rounded">
+                        <h6 class="fw-bold text-muted mb-3">BALANÇO DE PERDAS:</h6>
+                        <div class="d-flex justify-content-between">
+                            <span>Fibra:</span> <span id="lossFiber" class="fw-bold">0 dB</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Splitters:</span> <span id="lossSplitters" class="fw-bold">0 dB</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Eventos (Con/Fus):</span> <span id="lossEvents" class="fw-bold">0 dB</span>
+                        </div>
+                         <div class="d-flex justify-content-between text-warning">
+                            <span>Margem Segurança:</span> <span id="lossMargin" class="fw-bold">0 dB</span>
+                        </div>
+                        <div class="border-top mt-2 pt-2 d-flex justify-content-between fw-bold">
+                            <span>PERDA TOTAL:</span> <span id="lossTotal" class="text-danger">0 dB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Atualiza a perda da fibra baseado no comprimento de onda
+function updateFiberLoss() {
+    const wave = document.getElementById('wavelength').value;
+    const lossInput = document.getElementById('fiberLossPerKm');
+    
+    if (wave === '1310') lossInput.value = '0.35'; // Upstream perde mais!
+    else if (wave === '1490') lossInput.value = '0.25'; // Downstream padrão
+    else if (wave === '1550') lossInput.value = '0.20'; // Vídeo/DWDM perde menos
+}
+
+function calculatePro() {
+    // 1. Coleta de Dados (Inputs)
+    const txPower = parseFloat(document.getElementById('oltPower').value);
+    const fiberLossKm = parseFloat(document.getElementById('fiberLossPerKm').value);
+    const distance = parseFloat(document.getElementById('distance').value);
+    
+    const spl1 = parseFloat(document.getElementById('spl1').value);
+    const spl2 = parseFloat(document.getElementById('spl2').value);
+    const spl3 = parseFloat(document.getElementById('spl3').value);
+    
+    const connQty = parseInt(document.getElementById('connQty').value);
+    const fusionQty = parseInt(document.getElementById('fusionQty').value);
+    const mechQty = parseInt(document.getElementById('mechQty').value);
+    
+    const margin = parseFloat(document.getElementById('safetyMargin').value);
+    const sensitivity = parseFloat(document.getElementById('onuSensitivity').value);
+
+    // 2. Cálculos Individuais
+    const loss_fiber = distance * fiberLossKm;
+    const loss_splitters = spl1 + spl2 + spl3;
+    const loss_connectors = connQty * 0.5;
+    const loss_fusions = fusionQty * 0.1;
+    const loss_mechanical = mechQty * 0.5;
+    const loss_events = loss_connectors + loss_fusions + loss_mechanical;
+
+    // 3. Resultado Final
+    const total_loss = loss_fiber + loss_splitters + loss_events + margin;
+    const final_signal = txPower - total_loss;
+
+    // 4. Exibição e Diagnóstico
+    const resultCard = document.getElementById('proResult');
+    const resultHeader = document.getElementById('resultHeader');
+    const finalDisplay = document.getElementById('finalSignalDisplay');
+    const statusText = document.getElementById('statusText');
+
+    resultCard.classList.remove('d-none');
+    finalDisplay.innerText = final_signal.toFixed(2) + ' dBm';
+
+    // Lógica de Aprovação Avançada
+    if (final_signal > -8) {
+        // Sinal muito forte (saturação)
+        resultHeader.className = 'card-header text-center text-white fw-bold py-3 bg-warning';
+        statusText.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> CUIDADO: SATURAÇÃO!';
+        statusText.className = 'lead fw-bold mt-2 text-warning';
+    } else if (final_signal >= sensitivity) {
+        // Aprovado (está acima da sensibilidade mínima)
+        resultHeader.className = 'card-header text-center text-white fw-bold py-3 bg-success';
+        statusText.innerHTML = '<i class="bi bi-check-circle-fill"></i> PROJETO VIÁVEL';
+        statusText.className = 'lead fw-bold mt-2 text-success';
+    } else {
+        // Reprovado
+        resultHeader.className = 'card-header text-center text-white fw-bold py-3 bg-danger';
+        statusText.innerHTML = '<i class="bi bi-x-octagon-fill"></i> INVIÁVEL (SEM SINAL)';
+        statusText.className = 'lead fw-bold mt-2 text-danger';
+    }
+
+    // Preenche o detalhamento
+    document.getElementById('lossFiber').innerText = '-' + loss_fiber.toFixed(2) + ' dB';
+    document.getElementById('lossSplitters').innerText = '-' + loss_splitters.toFixed(2) + ' dB';
+    document.getElementById('lossEvents').innerText = '-' + loss_events.toFixed(1) + ' dB';
+    document.getElementById('lossMargin').innerText = '-' + margin.toFixed(1) + ' dB';
+    document.getElementById('lossTotal').innerText = '-' + total_loss.toFixed(2) + ' dB';
+}
+</script>
+{% endblock %}

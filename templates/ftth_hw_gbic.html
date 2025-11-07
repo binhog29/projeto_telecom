@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="/ftth/hardware" class="btn btn-outline-secondary mb-4">← Voltar para Enciclopédia</a>
+<h2 class="section-title text-primary"><i class="bi bi-broadcast"></i> Detalhamento: GBIC / SFP GPON</h2>
+
+<div class="row mt-4">
+    <div class="col-lg-5">
+        <div class="card shadow-sm mb-4">
+            <img src="{{ url_for('static', filename='img/sfp_gpon.jpg') }}" class="card-img-top" style="height: 250px; object-fit: contain; padding: 20px;" onerror="this.src='https://placehold.co/500x300/0d6efd/FFF?text=FOTO+SFP+GPON'">
+            <div class="card-body bg-light">
+                <p class="card-text small">O módulo SFP é inserido na porta PON da OLT. Ele converte os sinais elétricos do equipamento em pulsos de laser que viajam pela fibra.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card h-100 border-primary">
+            <div class="card-header bg-primary text-white fw-bold">Classes de Potência (Laser)</div>
+            <div class="card-body">
+                <p>A "força" do laser determina quão longe o sinal pode ir e por quantos splitters ele pode passar.</p>
+                <table class="table table-striped table-hover table-bordered text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Classe</th>
+                            <th>Potência de Envio (TX)</th>
+                            <th>Sensibilidade (RX)</th>
+                            <th>Uso Recomendado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>B+</strong></td>
+                            <td>+1.5 a +5 dBm</td>
+                            <td>-27 dBm</td>
+                            <td>Redes antigas ou pequenas (1:64, até 10km).</td>
+                        </tr>
+                        <tr class="table-success border-success" style="border-width: 2px;">
+                            <td><strong>C+</strong></td>
+                            <td class="fw-bold">+3 a +7 dBm</td>
+                            <td>-30 dBm</td>
+                            <td><strong>Padrão de mercado atual (1:128, até 20km).</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>C++</strong></td>
+                            <td>+5.5 a +10 dBm</td>
+                            <td>-32 dBm</td>
+                            <td>Cenários extremos de longa distância (>30km).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

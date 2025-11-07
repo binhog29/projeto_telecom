@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="/ftth/hardware" class="btn btn-outline-secondary mb-4">← Voltar para Enciclopédia</a>
+<h2 class="section-title text-primary"><i class="bi bi-hdd-rack-fill"></i> Detalhamento: OLT (Optical Line Terminal)</h2>
+
+<div class="row mt-4 g-4">
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+            <img src="{{ url_for('static', filename='img/olt.jpg') }}" class="card-img-top" style="height: 300px; object-fit: cover;" onerror="this.src='https://placehold.co/600x400/0d6efd/FFF?text=FOTO+OLT+(Chassi+ou+Pizza)'">
+            <div class="card-body">
+                <h4 class="text-primary">O Cérebro da Rede</h4>
+                <p>A OLT é o equipamento que fica no datacenter do provedor e controla toda a rede PON.</p>
+                <ul>
+                    <li><strong>Função Downstream (TDM):</strong> Envia dados para todos os clientes na mesma fibra (broadcast).</li>
+                    <li><strong>Função Upstream (TDMA):</strong> Gerencia o tempo de fala de cada ONU para que elas não enviem dados ao mesmo tempo e causem colisão de luz.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="alert alert-info h-100">
+            <h4 class="alert-heading"><i class="bi bi-info-circle"></i> Tipos de OLT</h4>
+            <hr>
+            <div class="mb-4">
+                <h5 class="fw-bold">1. Pizza Box (Compacta)</h5>
+                <p>Tem tamanho fixo (geralmente 1U de rack, como uma caixa de pizza). Possui 4, 8 ou 16 portas PON fixas. Ideal para provedores iniciantes ou para atender bairros distantes (POPs).</p>
+            </div>
+            <div>
+                <h5 class="fw-bold">2. Chassi Modular</h5>
+                <p>Um "armário" grande onde você insere placas conforme a necessidade. Pode ter placas de controle redundantes (se uma queimar, a outra assume). Usado em grandes operações centrais.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

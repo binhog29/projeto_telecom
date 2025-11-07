@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="/ftth/hardware" class="btn btn-outline-secondary mb-4">← Voltar</a>
+<h2 class="section-title text-dark">Equipamentos CPE (Cliente)</h2>
+<div class="row mt-4 g-4">
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+            <img src="{{ url_for('static', filename='img/onu_basic.jpg') }}" class="card-img-top p-4" style="height: 250px; object-fit: contain;" onerror="this.src='https://placehold.co/400x300?text=FOTO+ONU+BRIDGE'">
+            <div class="card-body border-top">
+                <h4 class="text-dark">ONU Bridge (Básica)</h4>
+                <p>Apenas converte Fibra para Cabo de Rede. Ideal para gamers com roteadores próprios.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm border-warning">
+            <img src="{{ url_for('static', filename='img/hgu_wifi.jpg') }}" class="card-img-top p-4" style="height: 250px; object-fit: contain;" onerror="this.src='https://placehold.co/400x300?text=FOTO+HGU+WIFI'">
+            <div class="card-body border-top">
+                <h4 class="text-dark">HGU (Gateway Wi-Fi)</h4>
+                <p><strong>Padrão atual.</strong> ONU + Roteador Wi-Fi potente integrados num só aparelho.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

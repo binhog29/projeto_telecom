@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="/ftth/hardware" class="btn btn-outline-secondary mb-4">← Voltar</a>
+<h2 class="section-title text-danger">PTO / Roseta Óptica</h2>
+<div class="row mt-4">
+    <div class="col-lg-6">
+        <div class="card shadow border-danger">
+            <img src="{{ url_for('static', filename='img/pto_roseta.jpg') }}" class="card-img-top" style="height: 400px; object-fit: cover;" onerror="this.src='https://placehold.co/600x400?text=FOTO+PTO+INSTALADO'">
+            <div class="card-body">
+                <h4 class="text-danger fw-bold">Elemento de Proteção Vital</h4>
+                <p>Ancora o cabo duro que vem da rua e permite usar um cordão molinho até a ONU.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 d-flex align-items-center">
+         <div class="alert alert-warning shadow-sm fs-5">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>Nunca ligue o cabo Drop direto na ONU!</strong><br>
+            Se o cliente mover o aparelho para limpar a estante, a fibra quebrará e gerará uma visita técnica cara. A roseta evita isso.
+         </div>
+    </div>
+</div>
+{% endblock %}

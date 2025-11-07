@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="/ftth/hardware" class="btn btn-outline-secondary mb-4">← Voltar</a>
+<h2 class="section-title text-dark">Patch Cords Ópticos</h2>
+
+<div class="row mt-4">
+    <div class="col-lg-6">
+        <img src="{{ url_for('static', filename='img/patch_cord.jpg') }}" class="img-fluid rounded shadow mb-3" onerror="this.src='https://placehold.co/600x400?text=FOTO+PATCH+CORDS'">
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h4>Cordões de Manobra</h4>
+                <p>Cabos flexíveis usados para interligar equipamentos ativos e passivos em distâncias curtas (dentro de rack ou na casa do cliente).</p>
+                
+                <h5 class="mt-4 text-primary">Tipos Principais</h5>
+                <ul>
+                    <li><strong>Simplex:</strong> Uma única via. Padrão para FTTH GPON.</li>
+                    <li><strong>Duplex:</strong> Duas vias juntas (RX/TX). Usado em switches com fibra ativa.</li>
+                </ul>
+
+                <h5 class="mt-4 text-warning text-dark">Padrão de Cores (Capa)</h5>
+                <table class="table table-sm table-bordered text-center">
+                    <thead class="table-dark"><tr><th>Cor</th><th>Tipo de Fibra</th><th>Uso Típico</th></tr></thead>
+                    <tbody>
+                        <tr class="table-warning fw-bold"><td>Amarelo</td><td>Monomodo (SM)</td><td>FTTH, Longa Distância</td></tr>
+                        <tr class="table-info"><td>Aqua</td><td>Multimodo (OM3/4)</td><td>Datacenter 10G+</td></tr>
+                        <tr class="table-danger"><td>Laranja</td><td>Multimodo (OM1/2)</td><td>Redes Legadas</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

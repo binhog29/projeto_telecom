@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="/ftth/hardware" class="btn btn-outline-secondary mb-4">← Voltar</a>
+<h2 class="section-title text-success">Splitters Ópticos</h2>
+<div class="row mt-4">
+    <div class="col-lg-7">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="text-success">Tabela de Perdas</h4>
+                <table class="table table-striped table-bordered text-center small">
+                    <thead class="table-dark"><tr><th>Divisão</th><th>Perda (dB)</th><th>Uso</th></tr></thead>
+                    <tbody>
+                        <tr><td>1:2</td><td>-3.7 dB</td><td>Redes rurais.</td></tr>
+                        <tr><td>1:4</td><td>-7.3 dB</td><td>Primeiro nível.</td></tr>
+                        <tr class="table-success fw-bold"><td>1:8</td><td>-10.5 dB</td><td>CTO Padrão.</td></tr>
+                        <tr class="table-success fw-bold"><td>1:16</td><td>-14.0 dB</td><td>CTO Densa.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+         <div class="card shadow-sm">
+             <img src="{{ url_for('static', filename='img/splitter.jpg') }}" class="card-img-top" style="height: 300px; object-fit: cover;" onerror="this.src='https://placehold.co/600x400?text=FOTO+SPLITTER'">
+             <div class="card-body text-muted small">Splitter PLC 1:8 conectorizado (verde).</div>
+         </div>
+    </div>
+</div>
+{% endblock %}

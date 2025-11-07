@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Telecom Pro | {{ titulo }}</title>
+
+    <meta name="theme-color" content="#0d6efd">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2920/2920330.png">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4 sticky-top">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="/"><i class="bi bi-globe"></i> Telecom Pro</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-optical-audio"></i> FTTH
+                </a>
+                <ul class="dropdown-menu shadow">
+                    <li><a class="dropdown-item" href="/ftth/teoria"><i class="bi bi-book-half me-2"></i>Arquitetura & Engenharia</a></li>
+                    <li><a class="dropdown-item" href="/ftth/hardware"><i class="bi bi-gpu-card me-2"></i>Enciclopédia de Hardware</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/ftth/calc"><i class="bi bi-calculator-fill me-2"></i>Simulador de Potência</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-broadcast"></i> Wireless
+                </a>
+                <ul class="dropdown-menu shadow">
+                    <li><a class="dropdown-item" href="/radio/teoria"><i class="bi bi-tower me-2"></i>Engenharia WISP</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-hdd-network"></i> IP & Redes
+                </a>
+                <ul class="dropdown-menu shadow">
+                    <li><a class="dropdown-item" href="/ip/teoria"><i class="bi bi-journals me-2"></i>Protocolos (TCP/IP)</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/ip/calc"><i class="bi bi-cpu me-2"></i>Calculadora CIDR</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-bold text-warning" href="/diag"><i class="bi bi-heart-pulse-fill"></i> Diagnóstico</a>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mb-5">
+        {% block conteudo %}
+        {% endblock %}
+    </div>
+
+    <footer class="text-center py-4 mt-5 text-muted border-top bg-white">
+        <small>Sistema de Estudo Técnico Profissional &copy; 2025</small>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

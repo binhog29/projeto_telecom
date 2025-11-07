@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="/ftth/hardware" class="btn btn-outline-secondary mb-4">← Voltar</a>
+<h2 class="section-title text-dark">Conectores</h2>
+<div class="row mt-4 g-4">
+    <div class="col-md-6">
+        <div class="card border-success h-100">
+            <div class="card-header bg-success text-white fw-bold">SC/APC (Verde) - CORRETO</div>
+            <img src="{{ url_for('static', filename='img/conector_verde.jpg') }}" class="card-img-top p-3" style="height: 200px; object-fit: contain;" onerror="this.src='https://placehold.co/400x300?text=FOTO+APC+VERDE'">
+            <div class="card-body">
+                <p><strong>Ponta Angulada (8°):</strong> Joga a reflexão de luz para fora. Essencial para PON.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-danger h-100 opacity-75">
+             <div class="card-header bg-danger text-white fw-bold">SC/UPC (Azul) - ERRADO PARA PON</div>
+             <img src="{{ url_for('static', filename='img/conector_azul.jpg') }}" class="card-img-top p-3" style="height: 200px; object-fit: contain;" onerror="this.src='https://placehold.co/400x300?text=FOTO+UPC+AZUL'">
+             <div class="card-body">
+                <p><strong>Ponta Plana:</strong> Reflete luz de volta para a OLT. Causa problemas.</p>
+             </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

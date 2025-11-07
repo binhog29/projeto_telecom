@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="section-title text-dark" style="border-color: #212529 !important;">
+            <i class="bi bi-calculator"></i> Calculadora de Sub-rede IPv4 (CIDR)
+        </h2>
+        <p class="text-muted">Ferramenta essencial para planejamento de endereçamento.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-dark text-white fw-bold">
+                <i class="bi bi-input-cursor-text"></i> Entrada de Dados
+            </div>
+            <div class="card-body bg-light">
+                <form id="ipForm">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Endereço IP:</label>
+                        <input type="text" id="ipAddress" class="form-control font-monospace" placeholder="Ex: 192.168.0.1" value="192.168.88.1">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Máscara (CIDR):</label>
+                        <select id="cidr" class="form-select font-monospace">
+                            <option value="32">/32 (1 IP - Host Único)</option>
+                            <option value="30">/30 (4 IPs - Ponto-a-Ponto)</option>
+                            <option value="29">/29 (8 IPs)</option>
+                            <option value="28">/28 (16 IPs)</option>
+                            <option value="27">/27 (32 IPs)</option>
+                            <option value="26">/26 (64 IPs)</option>
+                            <option value="25">/25 (128 IPs)</option>
+                            <option value="24" selected>/24 (256 IPs - LAN Padrão)</option>
+                            <option value="23">/23 (512 IPs)</option>
+                            <option value="22">/22 (1024 IPs)</option>
+                            <option value="16">/16 (65536 IPs - Rede Grande)</option>
+                            <option value="8">/8 (16 Milhões - Rede Gigante)</option>
+                        </select>
+                    </div>
+
+                    <button type="button" onclick="calculateCIDR()" class="btn btn-dark w-100 fw-bold py-3">
+                        CALCULAR REDE <i class="bi bi-arrow-right-circle ms-2"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div id="resultCard" class="card shadow border-dark h-100 d-none">
+            <div class="card-header bg-white text-center fw-bold text-dark fs-5">
+                RESULTADO DA ANÁLISE
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush font-monospace">
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <span class="text-muted">Endereço de Rede:</span>
+                        <strong id="resNet" class="fs-5 text-primary">---</strong>
+                    </li>
+                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <span class="text-muted">Primeiro IP Útil:</span>
+                        <strong id="resFirst">---</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <span class="text-muted">Último IP Útil:</span>
+                        <strong id="resLast">---</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <span class="text-muted">Broadcast:</span>
+                        <strong id="resBc" class="text-danger">---</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3 bg-light">
+                        <span>Máscara Decimal:</span>
+                        <span id="resMask">---</span>
+                    </li>
+                     <li class="list-group-item d-flex justify-content-between align-items-center p-3 bg-light">
+                        <span>Total de Hosts Úteis:</span>
+                        <strong id="resHosts" class="text-success fs-4">0</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Função auxiliar: Converte IP texto (ex: "192.168.0.1") para número Inteiro Longo
+function ipToLong(ip) {
+    let parts = ip.split('.');
+    if (parts.length !== 4) return null;
+    return ((parseInt(parts[0]) << 24) | (parseInt(parts[1]) << 16) | (parseInt(parts[2]) << 8) | parseInt(parts[3])) >>> 0;
+}
+
+// Função auxiliar: Converte número Inteiro Longo de volta para texto IP
+function longToIp(long) {
+    return [
+        (long >>> 24) & 0xFF,
+        (long >>> 16) & 0xFF,
+        (long >>> 8) & 0xFF,
+        long & 0xFF
+    ].join('.');
+}
+
+function calculateCIDR() {
+    const ipInput = document.getElementById('ipAddress').value;
+    const cidr = parseInt(document.getElementById('cidr').value);
+    
+    const ipLong = ipToLong(ipInput);
+    
+    if (ipLong === null || isNaN(ipLong)) {
+        alert("Endereço IP inválido!");
+        return;
+    }
+
+    // Lógica binária de redes
+    const maskLong = ~((1 << (32 - cidr)) - 1) >>> 0; // Cria a máscara binária
+    const netLong = (ipLong & maskLong) >>> 0;        // Aplica a máscara (AND) para achar a rede
+    const bcLong = (netLong | (~maskLong >>> 0)) >>> 0; // Inverte a máscara (OR) para achar o broadcast
+
+    const firstUsableLong = (cidr >= 31) ? netLong : netLong + 1;
+    const lastUsableLong = (cidr >= 31) ? bcLong : bcLong - 1;
+    let totalHosts = (bcLong - netLong) - 1;
+    if (cidr === 32) totalHosts = 1;
+    if (cidr === 31) totalHosts = 0; // /31 é um caso especial (RFC 3021), mas vamos simplificar como 0 para iniciantes
+
+    // Exibir resultados
+    document.getElementById('resultCard').classList.remove('d-none');
+    document.getElementById('resNet').innerText = longToIp(netLong) + "/" + cidr;
+    document.getElementById('resBc').innerText = longToIp(bcLong);
+    document.getElementById('resMask').innerText = longToIp(maskLong);
+    document.getElementById('resFirst').innerText = longToIp(firstUsableLong);
+    document.getElementById('resLast').innerText = longToIp(lastUsableLong);
+    document.getElementById('resHosts').innerText = (cidr === 32) ? "1 (Host único)" : totalHosts.toLocaleString();
+}
+</script>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-danger"><i class="bi bi-heart-pulse-fill"></i> Central de Diagnóstico Avançado</h1>
+        <p class="lead text-muted">Ferramentas interativas para identificação e resolução de falhas em redes.</p>
+    </div>
+</div>
+
+<ul class="nav nav-pills mb-4" id="diagTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active fw-bold" id="fluxo-tab" data-bs-toggle="pill" data-bs-target="#fluxo-pane" type="button" role="tab"><i class="bi bi-diagram-3"></i> Fluxograma Guiado</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold" id="terminal-tab" data-bs-toggle="pill" data-bs-target="#terminal-pane" type="button" role="tab"><i class="bi bi-terminal-fill"></i> Simulador de Terminal</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="diagContent">
+    <div class="tab-pane fade show active" id="fluxo-pane" role="tabpanel">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white fw-bold">
+                <i class="bi bi-question-circle-fill"></i> Assistente de Troubleshooting
+            </div>
+            <div class="card-body" id="fluxoContainer">
+                <h4 class="card-title">Qual o sintoma principal do cliente?</h4>
+                <div class="d-grid gap-2 col-md-6 mx-auto mt-4">
+                    <button class="btn btn-outline-danger btn-lg text-start" onclick="iniciarFluxo('sem_conexao')">
+                        <i class="bi bi-wifi-off me-2"></i> Cliente totalmente SEM CONEXÃO
+                    </button>
+                    <button class="btn btn-outline-warning btn-lg text-start text-dark" onclick="iniciarFluxo('lentidao')">
+                        <i class="bi bi-speedometer me-2"></i> Cliente reclamando de LENTIDÃO
+                    </button>
+                    <button class="btn btn-outline-secondary btn-lg text-start text-dark" onclick="iniciarFluxo('quedas')">
+                        <i class="bi bi-arrow-down-up me-2"></i> Cliente com QUEDAS INTERMITENTES
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="terminal-pane" role="tabpanel">
+        <div class="card shadow bg-dark text-success font-monospace">
+            <div class="card-header bg-secondary text-white small py-1">
+                root@noc-server:~ (Simulador v1.0)
+            </div>
+            <div class="card-body p-0">
+                <div id="terminalOutput" style="height: 400px; overflow-y: auto; padding: 15px;">
+                    <div>Bem-vindo ao Terminal de Diagnóstico Telecom Pro.</div>
+                    <div>Digite 'help' para ver os comandos disponíveis.</div>
+                    <br>
+                </div>
+                <div class="d-flex border-top border-secondary p-2 bg-dark">
+                    <span class="me-2 text-warning">$</span>
+                    <input type="text" id="terminalInput" class="bg-transparent border-0 text-white w-100" style="outline: none;" autocomplete="off" autofocus>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/diag.js') }}"></script>
+{% endblock %}

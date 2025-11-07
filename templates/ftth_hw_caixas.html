@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="/ftth/hardware" class="btn btn-outline-secondary mb-4">← Voltar</a>
+<h2 class="section-title text-success">Caixas Ópticas</h2>
+<div class="row mt-4 g-3">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header bg-dark text-white fw-bold">DIO (Datacenter)</div>
+            <img src="{{ url_for('static', filename='img/dio.jpg') }}" class="card-img-top" style="height: 200px; object-fit: cover;" onerror="this.src='https://placehold.co/400x300?text=FOTO+DIO'">
+            <div class="card-body small">Organiza as fibras no rack da OLT.</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white fw-bold">CEO (Emenda/Poste)</div>
+            <img src="{{ url_for('static', filename='img/ceo.jpg') }}" class="card-img-top" style="height: 200px; object-fit: cover;" onerror="this.src='https://placehold.co/400x300?text=FOTO+CEO'">
+            <div class="card-body small">Caixa vedada para fusões de cabos tronco na rua.</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+             <div class="card-header bg-primary text-white fw-bold">CTO (Cliente Final)</div>
+            <img src="{{ url_for('static', filename='img/cto.jpg') }}" class="card-img-top" style="height: 200px; object-fit: cover;" onerror="this.src='https://placehold.co/400x300?text=FOTO+CTO'">
+            <div class="card-body small">Onde o cabo drop do cliente é conectado.</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="/ftth/hardware" class="btn btn-outline-secondary mb-4">← Voltar</a>
+<h2 class="section-title text-secondary">Infraestrutura de Poste (Ferragens)</h2>
+
+<div class="row mt-4 g-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <img src="{{ url_for('static', filename='img/bap.jpg') }}" class="card-img-top p-3" style="height: 300px; object-fit: contain;" onerror="this.src='https://placehold.co/600x400?text=FOTO+BAP+(Cinta)'">
+            <div class="card-body border-top">
+                <h4 class="text-secondary">BAP (Braçadeira Ajustável)</h4>
+                <p>Cinta metálica que abraça o poste. É a base para prender qualquer outro acessório.</p>
+                <ul>
+                    <li><strong>Tamanhos:</strong> BAP 2, 3 e 4 (quanto maior o número, maior o diâmetro do poste que ela abraça).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <img src="{{ url_for('static', filename='img/alca_preformada.jpg') }}" class="card-img-top p-3" style="height: 300px; object-fit: contain;" onerror="this.src='https://placehold.co/600x400?text=FOTO+ALCA+PREFORMADA'">
+            <div class="card-body border-top">
+                <h4 class="text-secondary">Alça Preformada & Suporte</h4>
+                <p>Conjunto usado para ancorar (esticar) o cabo entre dois postes.</p>
+                <ul>
+                    <li><strong>Alça:</strong> Arame espiralado que agarra a capa do cabo sem esmagar a fibra interna.</li>
+                    <li><strong>Cor da Alça:</strong> Indica a bitola do cabo (ex: Azul para cabos de 6-7mm).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

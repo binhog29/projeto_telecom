@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-primary"><i class="bi bi-gpu-card"></i> Enciclopédia de Hardware FTTH</h1>
+        <p class="lead text-muted">Catálogo técnico detalhado: Ativos, Passivos, Ferragens e CPEs.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        
+        <div class="card shadow-sm border-primary mb-4">
+            <div class="card-header bg-primary text-white fw-bold">
+                <i class="bi bi-hdd-rack-fill"></i> 1. Equipamentos Ativos (Datacenter)
+            </div>
+            <div class="list-group list-group-flush">
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold text-primary mb-0">OLT (Optical Line Terminal)</h5><small class="text-muted">O cérebro da rede.</small></div>
+                    <a href="/ftth/hardware/olt" class="btn btn-sm btn-outline-primary fw-bold">Ver Detalhes →</a>
+                </div>
+                <div class="list-group-item bg-light d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold text-primary mb-0">GBIC / SFP PON</h5><small class="text-muted">Laser transmissor.</small></div>
+                    <a href="/ftth/hardware/gbic" class="btn btn-sm btn-outline-primary fw-bold">Ver Detalhes →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-success">
+            <div class="card-header bg-success text-white fw-bold">
+                <i class="bi bi-diagram-2-fill"></i> 2. Passivos Ópticos (Rede Externa)
+            </div>
+            <div class="list-group list-group-flush">
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold text-success mb-0">Fibras e Cabos</h5><small>Tronco (AS) e Drop Flat.</small></div>
+                    <a href="/ftth/hardware/fibras" class="btn btn-sm btn-outline-success fw-bold">Ver Detalhes →</a>
+                </div>
+                <div class="list-group-item bg-light d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold text-success mb-0">Splitters (Divisores)</h5><small>PLC e FBT.</small></div>
+                    <a href="/ftth/hardware/splitters" class="btn btn-sm btn-outline-success fw-bold">Ver Detalhes →</a>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold text-success mb-0">Caixas Ópticas</h5><small>DIO, CEO e CTO.</small></div>
+                    <a href="/ftth/hardware/caixas" class="btn btn-sm btn-outline-success fw-bold">Ver Detalhes →</a>
+                </div>
+                <div class="list-group-item bg-light d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold text-success mb-0">Tipos de Emenda</h5><small>Fusão vs Mecânica.</small></div>
+                    <a href="/ftth/hardware/emendas" class="btn btn-sm btn-outline-success fw-bold">Ver Detalhes →</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-lg-6">
+        
+        <div class="card shadow-sm border-secondary mb-4">
+            <div class="card-header bg-secondary text-white fw-bold">
+                <i class="bi bi-tools"></i> 3. Infraestrutura de Poste (Ferragens)
+            </div>
+            <div class="list-group list-group-flush">
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold text-secondary mb-0">Kit de Ancoragem</h5><small class="text-muted">BAP, Isolador, Alça.</small></div>
+                    <a href="/ftth/hardware/ferragens" class="btn btn-sm btn-outline-secondary fw-bold">Ver Detalhes →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-warning">
+            <div class="card-header bg-warning text-dark fw-bold">
+                <i class="bi bi-house-fill"></i> 4. Cliente & Acessórios
+            </div>
+            <div class="list-group list-group-flush">
+                 <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold text-dark mb-0">ONU vs HGU (Modem)</h5><small>Equipamento ativo.</small></div>
+                    <a href="/ftth/hardware/cpe" class="btn btn-sm btn-outline-dark fw-bold">Ver Detalhes →</a>
+                </div>
+                <div class="list-group-item bg-light d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold text-dark mb-0">PTO / Roseta</h5><small class="text-danger fw-bold">Proteção vital.</small></div>
+                    <a href="/ftth/hardware/pto" class="btn btn-sm btn-danger fw-bold">Ver Detalhes →</a>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold text-dark mb-0">Conectores</h5><small>SC/APC (Verde).</small></div>
+                    <a href="/ftth/hardware/conectores" class="btn btn-sm btn-outline-dark fw-bold">Ver Detalhes →</a>
+                </div>
+                 <div class="list-group-item bg-light d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold text-dark mb-0">Patch Cords</h5><small>Cordões de manobra.</small></div>
+                    <a href="/ftth/hardware/patchcords" class="btn btn-sm btn-outline-dark fw-bold">Ver Detalhes →</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

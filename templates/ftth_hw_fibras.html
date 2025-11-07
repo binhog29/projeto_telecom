@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="/ftth/hardware" class="btn btn-outline-secondary mb-4">← Voltar</a>
+<h2 class="section-title text-success">Fibras e Cabos</h2>
+<div class="row mt-4 g-4">
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+            <img src="{{ url_for('static', filename='img/cabo_tronco.jpg') }}" class="card-img-top" alt="Cabo Tronco" style="height: 250px; object-fit: cover;" onerror="this.src='https://placehold.co/600x400?text=FOTO+CABO+TRONCO'">
+            <div class="card-body">
+                <h4 class="text-success">Cabo Tronco (Backbone)</h4>
+                <p>Leva o sinal da OLT até os bairros. 12 a 144 fibras.</p>
+                <ul>
+                    <li><strong>Fibra G.652D:</strong> Rígida, não aceita dobras fortes.</li>
+                    <li><strong>Estrutura AS/ASU:</strong> Auto-sustentado para postes.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+             <img src="{{ url_for('static', filename='img/cabo_drop.jpg') }}" class="card-img-top" alt="Cabo Drop" style="height: 250px; object-fit: cover;" onerror="this.src='https://placehold.co/600x400?text=FOTO+CABO+DROP'">
+            <div class="card-body">
+                <h4 class="text-success">Cabo Drop (Flat)</h4>
+                <p>Sai da caixa na rua e entra na casa do cliente.</p>
+                <ul>
+                     <li><strong>Fibra G.657A:</strong> Flexível, aceita curvas de 90º.</li>
+                     <li><strong>Mensageiro:</strong> Arame de aço para esticar no poste.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

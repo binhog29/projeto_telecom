@@ -1,0 +1,39 @@
+
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="/ftth/hardware" class="btn btn-outline-secondary mb-4">← Voltar para Enciclopédia</a>
+<h2 class="section-title text-success">Tipos de Emenda Óptica</h2>
+
+<div class="row mt-4 g-4">
+    <div class="col-md-6">
+        <div class="card border-success h-100">
+            <div class="card-header bg-success text-white fw-bold">Fusão (Máquina) - PROFISSIONAL</div>
+            <img src="{{ url_for('static', filename='img/fusao.jpg') }}" class="card-img-top p-3" style="height: 300px; object-fit: cover;" onerror="this.src='https://placehold.co/600x400/28a745/FFF?text=FOTO+MAQUINA+DE+FUSAO'">
+            <div class="card-body border-top">
+                <p>Processo que usa um arco voltaico de alta temperatura para derreter as duas pontas de vidro e transformá-las em uma só.</p>
+                <ul>
+                    <li><strong>Perda:</strong> 0.01 dB a 0.03 dB (Excelente).</li>
+                    <li><strong>Durabilidade:</strong> Eterna (se protegida pelo tubete).</li>
+                    <li><strong>Obrigatório:</strong> Em todas as conexões de rede externa (backbone).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-warning h-100">
+            <div class="card-header bg-warning text-dark fw-bold">Mecânica (Conector) - EMERGENCIAL</div>
+            <img src="{{ url_for('static', filename='img/emenda_mecanica.jpg') }}" class="card-img-top p-3" style="height: 300px; object-fit: contain;" onerror="this.src='https://placehold.co/600x400/ffc107/000?text=FOTO+CONECTOR+DE+CAMPO'">
+            <div class="card-body border-top">
+                <h4 class="text-muted h5">Conector de Campo</h4>
+                <p>Apenas alinha as duas fibras dentro de um tubo com gel adaptador de índice de refração.</p>
+                <ul>
+                    <li><strong>Perda:</strong> 0.3 dB a 0.5 dB (Alta).</li>
+                    <li><strong>Problema:</strong> O gel seca com os anos, aumentando a perda e causando falhas futuras.</li>
+                    <li><strong>Uso:</strong> Apenas para ativação rápida em casa de cliente ou reparo provisório na chuva.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

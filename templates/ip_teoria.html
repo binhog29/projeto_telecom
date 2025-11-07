@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-dark"><i class="bi bi-hdd-network"></i> Engenharia de Redes Lógicas</h1>
+        <p class="lead text-muted">Domine a camada invisível: Protocolos, Transporte e Roteamento Avançado.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        
+        <h2 class="section-title text-dark" style="border-color: #212529 !important;"><i class="bi bi-layers-half"></i> 1. Modelos de Referência</h2>
+        <div class="mt-3 mb-5">
+            <details>
+                <summary>Modelo OSI (7 Camadas)</summary>
+                <div class="details-content">
+                    <ul class="list-group list-group-flush small">
+                        <li class="list-group-item"><strong>7. Aplicação:</strong> HTTP, FTP, SMTP (O que o usuário vê).</li>
+                        <li class="list-group-item"><strong>6. Apresentação:</strong> Criptografia (SSL/TLS), Formatos (JPG).</li>
+                        <li class="list-group-item"><strong>5. Sessão:</strong> Controle de diálogo.</li>
+                        <li class="list-group-item list-group-item-primary"><strong>4. Transporte:</strong> TCP (Confiável) vs UDP (Rápido).</li>
+                        <li class="list-group-item list-group-item-primary"><strong>3. Rede:</strong> Endereçamento IP e Roteamento.</li>
+                        <li class="list-group-item list-group-item-primary"><strong>2. Enlace:</strong> MAC Address, Switches, VLANs.</li>
+                        <li class="list-group-item"><strong>1. Física:</strong> Cabos, Fibra, RF (Sinais elétricos/ópticos).</li>
+                    </ul>
+                </div>
+            </details>
+            <details>
+                <summary>TCP vs UDP (Transporte)</summary>
+                <div class="details-content">
+                    <p><strong>TCP:</strong> Garante a entrega. Se perder, reenvia. Lento, mas confiável. (Web, Email, Arquivos)</p>
+                    <p><strong>UDP:</strong> Dispara e esquece. Rápido, mas pode perder pacotes. (VoIP, Jogos, Streaming ao vivo)</p>
+                </div>
+            </details>
+        </div>
+
+        <h2 class="section-title text-dark" style="border-color: #212529 !important;"><i class="bi bi-123"></i> 2. Endereçamento Avançado</h2>
+        <div class="mt-3 mb-5">
+            <details>
+                <summary>CIDR e Sub-redes (/24, /30)</summary>
+                <div class="details-content">
+                    <ul>
+                        <li><code>/32</code> = 1 IP (Loopback/Cliente único)</li>
+                        <li><code>/30</code> = 4 IPs (2 úteis). Para enlace entre roteadores.</li>
+                        <li><code>/29</code> = 8 IPs (6 úteis). Para clientes corporativos com IPs fixos.</li>
+                        <li><code>/24</code> = 256 IPs (254 úteis). Padrão para redes locais (LAN).</li>
+                    </ul>
+                </div>
+            </details>
+             <details>
+                <summary>VLAN (802.1Q)</summary>
+                <div class="details-content">
+                    <p>Redes virtuais dentro do mesmo cabo físico. Separa tráfego de clientes, gerência e VoIP usando "tags" (etiquetas).</p>
+                </div>
+            </details>
+        </div>
+
+        <h2 class="section-title text-dark" style="border-color: #212529 !important;"><i class="bi bi-signpost-split-fill"></i> 3. Roteamento & Serviços</h2>
+        <div class="mt-3 mb-5">
+            <details>
+                <summary>Roteamento Dinâmico (OSPF/BGP)</summary>
+                <div class="details-content">
+                    <p><strong>OSPF (IGP):</strong> Roteamento interno. Acha o caminho mais rápido dentro da sua rede.</p>
+                    <p><strong>BGP (EGP):</strong> Roteamento externo. É o protocolo que conecta seu provedor à Internet mundial.</p>
+                </div>
+            </details>
+            <details>
+                <summary>NAT e CGNAT</summary>
+                <div class="details-content">
+                    <p><strong>NAT:</strong> Vários dispositivos privados compartilham 1 IP público.</p>
+                    <p><strong>CGNAT:</strong> NAT feito pelo provedor em grande escala. Economiza IPs públicos, mas atrapalha jogos e serviços que precisam de portas abertas.</p>
+                </div>
+            </details>
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card bg-dark text-white shadow-sm mb-4 sticky-top" style="top: 100px; z-index: 1;">
+            <div class="card-header fw-bold">
+                <i class="bi bi-tools"></i> Toolbox do Analista
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small mb-0">
+                    <li class="mb-3"><strong class="text-info">> ping 8.8.8.8</strong><br>Testa conectividade (Camada 3).</li>
+                    <li class="mb-3"><strong class="text-info">> traceroute google.com</strong><br>Mostra a rota (saltos) até o destino.</li>
+                    <li class="mb-3"><strong class="text-info">> nslookup site.com</strong><br>Testa resolução de nomes DNS.</li>
+                    <li><strong class="text-info">> telnet 192.168.1.1 80</strong><br>Testa se uma porta TCP está aberta.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-info shadow-sm" style="background-color: #f8f9fa;">
+            <div class="card-body d-flex align-items-start">
+                <div class="me-3 text-info">
+                    <i class="bi bi-lightbulb-fill fs-1"></i>
+                </div>
+                <div>
+                    <h4 class="card-title fw-bold text-dark">Você sabia?</h4>
+                    <p class="card-text fs-5">Em provedores de internet (ISPs), o método mais comum para autenticar clientes residenciais não é o DHCP puro, mas sim o <strong>PPPoE</strong> (Point-to-Point Protocol over Ethernet).</p>
+                    <p class="text-muted mb-0">Ele cria um "túnel" virtual discado que permite ao provedor exigir usuário e senha para liberar a conexão, facilitar o controle de banda e isolar cada cliente na rede.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

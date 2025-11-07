@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="p-5 mb-5 bg-white rounded-3 shadow-sm text-center border">
+    <h1 class="display-5 fw-bold text-primary">Domine as Telecomunicações</h1>
+    <p class="col-md-8 fs-5 mx-auto text-muted">
+        Plataforma integrada para formação técnica completa: do cabo físico ao diagnóstico lógico.
+    </p>
+</div>
+
+<div class="row g-4">
+    
+    <div class="col-md-6">
+        <div class="card h-100 border-0 shadow-sm p-4 card-hover">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary text-white rounded-circle p-3 me-3 icon-circle">
+                    <i class="bi bi-optical-audio"></i>
+                </div>
+                <h2 class="h5 mb-0 text-primary fw-bold">Físico: Fibra (FTTH)</h2>
+            </div>
+            <p class="text-muted">GPON, OLTs, Enciclopédia de Hardware e cálculo profissional de orçamento óptico.</p>
+            <div class="mt-auto pt-3">
+                <div class="d-flex gap-2 mb-2">
+                    <a href="/ftth/teoria" class="btn btn-outline-primary fw-bold flex-fill">Teoria</a>
+                    <a href="/ftth/hardware" class="btn btn-outline-primary fw-bold flex-fill">Hardware</a>
+                </div>
+                <div class="d-grid">
+                    <a href="/ftth/calc" class="btn btn-primary fw-bold"><i class="bi bi-calculator"></i> Simulador Pro</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card h-100 border-0 shadow-sm p-4 card-hover">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-success text-white rounded-circle p-3 me-3 icon-circle">
+                    <i class="bi bi-broadcast"></i>
+                </div>
+                <h2 class="h5 mb-0 text-success fw-bold">Físico: Rádio (WISP)</h2>
+            </div>
+            <p class="text-muted">Enlaces 5.8GHz, Zona de Fresnel, infraestrutura de torres e alinhamento de antenas.</p>
+            <div class="mt-auto pt-3 d-grid">
+                <a href="/radio/teoria" class="btn btn-outline-success fw-bold">Acessar Módulo Wireless →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card h-100 border-0 shadow-sm p-4 card-hover">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-dark text-white rounded-circle p-3 me-3 icon-circle">
+                    <i class="bi bi-hdd-network"></i>
+                </div>
+                <h2 class="h5 mb-0 text-dark fw-bold">Lógico: Redes IP</h2>
+            </div>
+            <p class="text-muted">Endereçamento IPv4/IPv6, Sub-redes (CIDR), DNS, DHCP e Roteamento Avançado.</p>
+            <div class="mt-auto pt-3 d-grid gap-2 d-md-flex">
+                <a href="/ip/teoria" class="btn btn-outline-dark fw-bold flex-fill">Protocolos</a>
+                <a href="/ip/calc" class="btn btn-dark fw-bold flex-fill"><i class="bi bi-calculator"></i> Calc. IP</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card h-100 border-danger shadow-sm p-4 card-hover" style="border-width: 2px;">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-danger text-white rounded-circle p-3 me-3 icon-circle">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </div>
+                <h2 class="h5 mb-0 text-danger fw-bold">Central de Diagnóstico</h2>
+            </div>
+            <p class="text-muted">Ferramentas interativas para troubleshooting: Fluxograma de falhas e terminal simulado.</p>
+            <div class="mt-auto pt-3 d-grid">
+                <a href="/diag" class="btn btn-danger fw-bold py-2">
+                    <i class="bi bi-play-circle-fill me-2"></i> INICIAR DIAGNÓSTICO
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
