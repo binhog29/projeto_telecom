@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-success"><i class="bi bi-shield-lock-fill"></i> Segurança de Redes (Nível Provedor)</h1>
+        <p class="lead text-muted">Protegendo a infraestrutura: Firewall, Zero Trust e Defesa contra DDoS.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        
+        <h2 class="section-title text-success" style="border-color: #198754 !important;"><i class="bi bi-fire"></i> 1. O Firewall e o Filtro de Pacotes</h2>
+        <div class="mt-3 mb-5">
+            <details>
+                <summary>Firewall (Essencial)</summary>
+                <div class="details-content">
+                    <p><strong>Definição:</strong> O porteiro da rede. Filtra tráfego baseado em regras (IP de origem, IP de destino e porta).</p>
+                    <p><strong>Regra Padrão (Implicit Deny):</strong> O firewall deve ter uma regra final que diz: "Tudo o que não for explicitamente permitido está BLOQUEADO". Isso garante que se você esquecer de configurar algo, o tráfego não passa por acidente.</p>
+                    <p><strong>Firewall Stateful:</strong> O mais comum. Ele "lembra" do tráfego. Se um cliente inicia uma conexão legítima (tráfego de saída), ele automaticamente permite o tráfego de retorno, sem precisar de uma regra explícita de entrada.</p>
+                </div>
+            </details>
+            <details>
+                <summary>Ataques Comuns: DDoS</summary>
+                <div class="details-content">
+                    <p><strong>DDoS (Distributed Denial of Service):</strong> O ataque mais comum a provedores. Milhões de requisições inúteis (lixo) são enviadas ao mesmo tempo para esgotar a banda ou a CPU do roteador/servidor.</p>
+                    <p><strong>Mitigação:</strong> Requer serviços especializados (Clean Pipes, Cloudflare) que filtram o tráfego lixo antes mesmo que ele chegue na sua rede, pois, se chegar, seu link já estará saturado.</p>
+                </div>
+            </details>
+        </div>
+
+        <h2 class="section-title text-success" style="border-color: #198754 !important;"><i class="bi bi-fingerprint"></i> 2. Conceitos Modernos</h2>
+        <div class="mt-3 mb-5">
+            <details>
+                <summary>Zero Trust (Confiança Zero)</summary>
+                <div class="details-content">
+                    <p><strong>Filosofia:</strong> Nunca confie, sempre verifique. Em redes tradicionais, confia-se em qualquer um que está "dentro" da rede (após o login).</p>
+                    <p><strong>Zero Trust:</strong> Aplica autenticação e autorização rigorosa a TODOS, mesmo se o acesso for interno. Essencial para proteger dados sensíveis de ataques internos.</p>
+                </div>
+            </details>
+            <details>
+                <summary>VPN (Virtual Private Network)</summary>
+                <div class="details-content">
+                    <p>Cria um túnel criptografado sobre uma rede pública.</p>
+                    <ul>
+                        <li><strong>IPsec (Empresarial):</strong> Protocolo complexo, mas muito seguro e rápido (acelerado por hardware).</li>
+                        <li><strong>OpenVPN/WireGuard (Comercial):</strong> Mais simples de configurar, usado para acesso remoto de funcionários ou venda de VPN para clientes.</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card bg-dark text-white shadow-sm sticky-top" style="top: 100px">
+            <div class="card-header fw-bold">
+                <i class="bi bi-exclamation-triangle-fill"></i> Dica de Firewall Profissional
+            </div>
+            <div class="card-body">
+                <h5 class="card-title text-warning">Proteção da Borda (Edge)</h5>
+                <p>O Firewall principal deve rodar no seu Roteador de Borda. Use listas de acesso (ACLs) para **bloquear** tráfego vindo da Internet para portas essenciais dos seus equipamentos internos (ex: Telnet 23, SSH 22, HTTPS 443). Seu acesso de gerência deve ser feito APENAS de IPs confiáveis.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
