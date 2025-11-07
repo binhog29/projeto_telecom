@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="{{ url_for('pratica_home') }}" class="btn btn-outline-secondary mb-4">← Voltar para Prática de Campo</a>
+<h1 class="section-title text-primary"><i class="bi bi-lightning-charge"></i> Prática: Conectorização e Fusão</h1>
+
+<h2 class="section-title mt-4"><i class="bi bi-plug"></i> Conectorização (Fast Connector)</h2>
+<p>O Fast Connector é usado para terminação rápida na casa do cliente (em emergências ou no PTO).</p>
+<ol>
+    <li>**Decapagem:** Use a faca rotatória para remover a capa do cabo Drop.</li>
+    <li>**Retirada do Acrilato:** Use o alicate decapador de 2 ou 3 furos para remover o buffer (tinta colorida). Limpe com álcool isopropílico.</li>
+    <li>**Clivagem (Corte):** Corte a fibra na medida exata (geralmente 10mm ou 12mm), usando a clivadora. O corte deve ser perfeito (ângulo de 90°).</li>
+    <li>**Inserção:** Insira a fibra no conector de campo até sentir o leve clique.</li>
+    <li>**Travamento:** Feche a tampa e trave a fibra, finalizando o conector.</li>
+</ol>
+
+<h2 class="section-title mt-4"><i class="bi bi-cpu"></i> Fusão (Máquina)</h2>
+<p>Procedimento padrão para redes externas (CEO/CTO). Garante perda < 0.05dB.</p>
+<ol>
+    <li>**Preparo:** Decape e limpe a fibra (álcool isopropílico).</li>
+    <li>**Clivagem:** Use a clivadora para fazer o corte perfeito (é o passo mais importante).</li>
+    <li>**Alinhamento:** Coloque a fibra nos suportes da máquina. A máquina alinha as duas pontas automaticamente.</li>
+    <li>**Fusão:** A máquina aplica o arco voltaico, fundindo o vidro.</li>
+    <li>**Proteção:** Deslize o tubete (luva de proteção) sobre a fusão e aqueça-o na estufa da máquina.</li>
+</ol>
+{% endblock %}

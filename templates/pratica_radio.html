@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<a href="{{ url_for('pratica_home') }}" class="btn btn-outline-secondary mb-4">← Voltar para Prática de Campo</a>
+<h1 class="section-title text-success"><i class="bi bi-broadcast-pin"></i> Prática: Instalação e Alinhamento Rádio</h1>
+
+<h2 class="section-title mt-4"><i class="bi bi-geo-alt-fill"></i> Checklist Pré-Instalação</h2>
+<ol>
+    <li>**Cálculo Fresnel:** Use a calculadora (Módulo Rádio) para confirmar que a **Zona de Fresnel (60%)** está livre. Se houver obstrução, o link será instável.</li>
+    <li>**Cabo e Conectores:** Certifique-se de que o cabo UTP é blindado (STP) e que os conectores são blindados e estão crimpados corretamente, garantindo o aterramento.</li>
+    <li>**Aterramento:** O mastro da CPE do cliente deve ter um aterramento ou, no mínimo, usar um DPS na entrada da casa (Camada 1).</li>
+</ol>
+
+<h2 class="section-title mt-4"><i class="bi bi-rulers"></i> Procedimento de Alinhamento (PTP/PTMP)</h2>
+<p>O objetivo é atingir o melhor **Sinal (RX)** e o melhor **SNR** (Sinal-Ruído).</p>
+<ol>
+    <li>**Alinhamento Grosseiro:** Use um aplicativo no celular (ex: Google Maps ou bússola) para apontar as antenas na direção geral.</li>
+    <li>**Alinhamento Fino:**
+        <ul>
+            <li>Entre no software do rádio (Mikrotik/Ubiquiti).</li>
+            <li>Gire a antena lentamente nos eixos **Horizontal (Azimute)** e **Vertical (Elevação)**.</li>
+            <li>Pare no ponto em que o valor de **Sinal (RX)** é o mais baixo em dBm (ex: de -70dBm para -55dBm).</li>
+        </ul>
+    </li>
+    <li>**Confirmação:** O nível de sinal ideal é entre **-55 dBm e -65 dBm**. Um sinal muito forte (ex: -30dBm) pode saturar o receptor.</li>
+</ol>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-secondary"><i class="bi bi-tools"></i> Prática de Campo & Manutenção</h1>
+        <p class="lead text-muted">Aprenda as habilidades manuais essenciais para técnicos de redes Nível 1 e Nível 2.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card h-100 shadow-sm border-primary card-hover">
+            <div class="card-body">
+                <h4 class="card-title text-primary"><i class="bi bi-lightning-charge me-2"></i> Habilidades com Fibra Óptica</h4>
+                <p class="card-text">Guia passo a passo para manuseio, corte, e terminação da fibra.</p>
+                <ul class="list-unstyled small">
+                    <li><i class="bi bi-check-circle-fill text-primary me-2"></i> Conectorização (Fast Connector)</li>
+                    <li><i class="bi bi-check-circle-fill text-primary me-2"></i> Fusão (Máquina)</li>
+                    <li><i class="bi bi-check-circle-fill text-primary me-2"></i> Limpeza (Checklist)</li>
+                </ul>
+                <a href="{{ url_for('pratica_fibra') }}" class="btn btn-primary mt-3">Iniciar Prática de Fibra →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100 shadow-sm border-success card-hover">
+            <div class="card-body">
+                <h4 class="card-title text-success"><i class="bi bi-broadcast-pin me-2"></i> Alinhamento de Rádio</h4>
+                <p class="card-text">Checklist completo para instalação de CPEs e torres PTP/PTMP.</p>
+                <ul class="list-unstyled small">
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Verificação da Zona de Fresnel</li>
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Alinhamento Fino (Sinal Ideal)</li>
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i> Configuração de Power TX</li>
+                </ul>
+                <a href="{{ url_for('pratica_radio') }}" class="btn btn-success mt-3">Iniciar Prática de Rádio →</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card h-100 shadow-sm border-dark card-hover">
+            <div class="card-body">
+                <h4 class="card-title text-dark"><i class="bi bi-box me-2"></i> Montagem e Fechamento de Caixas</h4>
+                <p class="card-text">Procedimentos para manuseio interno de CTOs e CEOs.</p>
+                <ul class="list-unstyled small">
+                    <li><i class="bi bi-check-circle-fill text-dark me-2"></i> Montagem interna da CTO (Splitter)</li>
+                    <li><i class="bi bi-check-circle-fill text-dark me-2"></i> Fusão de Sangria em CEO</li>
+                    <li><i class="bi bi-check-circle-fill text-dark me-2"></i> Acomodação de Tubos Loose</li>
+                </ul>
+                <a href="{{ url_for('pratica_ceo_cto') }}" class="btn btn-dark mt-3">Montagem CEO/CTO →</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

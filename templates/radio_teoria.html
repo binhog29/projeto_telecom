@@ -4,60 +4,48 @@
 <div class="row mb-4">
     <div class="col-12">
         <h1 class="text-success"><i class="bi bi-broadcast"></i> Engenharia de Redes Wireless (WISP)</h1>
-        <p class="lead text-muted">Documentação avançada sobre enlaces de rádio profissionais, infraestrutura e física de RF.</p>
+        <p class="lead text-muted">Documentação avançada sobre enlaces de rádio, infraestrutura e física de RF.</p>
     </div>
 </div>
 
 <div class="row g-4">
-    <div class="col-lg-8">
+    
+    <div class="col-lg-7">
         
-        <h2 class="section-title text-success" style="border-color: #198754 !important;"><i class="bi bi-diagram-2-fill"></i> 1. Topologias de Enlace</h2>
+        <h2 class="section-title text-success" style="border-color: #198754 !important;"><i class="bi bi-diagram-3-fill"></i> 1. Topologias de Enlace</h2>
         <div class="mt-3 mb-5">
             <details>
-                <summary>PTP (Point-to-Point / Ponto-a-Ponto)</summary>
-                <div class="details-content">
-                    <p><strong>Definição:</strong> Conexão dedicada entre dois rádios apenas. Usada para "Backhaul" (transportar grande quantidade de banda de uma torre para outra).</p>
-                    <ul>
-                        <li><strong>Equipamentos Típicos:</strong> Antenas disco (parabólicas) de alto ganho (30dBi+). Rádios blindados (airFiber, Mimosa B5).</li>
-                        <li><strong>Características:</strong> Feixe muito estreito (< 5°), alta imunidade a ruído, longas distâncias (5km a 50km+).</li>
-                    </ul>
+                <summary class="bg-light p-3 fw-bold text-success rounded">PTP (Point-to-Point / Ponto-a-Ponto)</summary>
+                <div class="details-content bg-white">
+                    <p>Conexão dedicada entre dois rádios (Backhaul). Usa antenas disco de alto ganho (30dBi+) e feixe estreito para longas distâncias.</p>
                 </div>
             </details>
             <details>
-                <summary>PTMP (Point-to-MultiPoint / Ponto-Multiponto)</summary>
-                <div class="details-content">
-                    <p><strong>Definição:</strong> Uma estação base (AP) atende múltiplos clientes (CPEs) simultaneamente.</p>
-                    <ul>
-                        <li><strong>Estação Base (Torre):</strong> Usa antenas "Setoriais" ou "Painéis" que abrem o sinal em ângulos maiores (ex: 60°, 90°, 120°) para cobrir uma área (bairro).</li>
-                        <li><strong>Cliente (Casa):</strong> Usa antenas direcionais menores (CPEs integradas, ex: LiteBeam, SXT) apontadas para a torre.</li>
-                        <li><strong>Desafio:</strong> O protocolo TDMA (Time Division Multiple Access) é essencial para evitar colisão de dados quando muitos clientes tentam falar ao mesmo tempo.</li>
-                    </ul>
-                </details>
+                <summary class="bg-light p-3 fw-bold text-success rounded">PTMP (Point-to-MultiPoint / Ponto-Multiponto)</summary>
+                <div class="details-content bg-white">
+                    <p>Uma estação base (AP) atende múltiplos clientes (CPEs). Usa antenas Setoriais (Painéis) em ângulos (60°, 90°).</p>
+                </div>
+            </details>
         </div>
 
         <h2 class="section-title text-success" style="border-color: #198754 !important;"><i class="bi bi-soundwave"></i> 2. Espectro e Frequências</h2>
         <div class="mt-3 mb-5">
              <details>
-                <summary>2.4 GHz (A banda poluída)</summary>
-                <div class="details-content">
-                    <p><strong>Vantagens:</strong> Maior penetração em obstáculos leves (árvores ralas). Equipamento barato.</p>
-                    <p><strong>Desvantagens:</strong> Extremamente poluída (micro-ondas, Wi-Fi doméstico, bluetooth). Poucos canais disponíveis (apenas 3 não sobrepostos: 1, 6, 11 em 20MHz).</p>
-                    <p><strong>Uso Profissional:</strong> Quase abandonado para PTMP. Usado apenas em áreas rurais muito remotas ou hotspots públicos.</p>
+                <summary class="bg-light p-3 fw-bold text-success rounded">2.4 GHz (A banda poluída)</summary>
+                <div class="details-content bg-white">
+                    <p>Maior penetração em obstáculos leves. **Desvantagem:** Extremamente poluída (Wi-Fi doméstico, Bluetooth). EVITADA em PTMP urbano.</p>
                 </div>
             </details>
             <details>
-                <summary>5.x GHz (O padrão WISP)</summary>
-                <div class="details-content">
-                    <p><strong>Vantagens:</strong> Muitos canais disponíveis (espectro maior). Menor zona de Fresnel que 2.4GHz. Bom alcance com visada.</p>
-                    <p><strong>Desvantagens:</strong> Exige visada direta (LOS) quase perfeita. Não atravessa árvores ou prédios.</p>
-                    <p><strong>Uso:</strong> Padrão absoluto para atendimento a clientes via rádio hoje.</p>
+                <summary class="bg-light p-3 fw-bold text-success rounded">5.x GHz (O padrão WISP)</summary>
+                <div class="details-content bg-white">
+                    <p>Muitos canais disponíveis e menor Zona de Fresnel. **Requisito:** Exige visada direta (LOS) quase perfeita.</p>
                 </div>
             </details>
-             <details>
-                <summary>Ondas Milimétricas (24 GHz, 60 GHz)</summary>
-                <div class="details-content">
-                    <p><strong>Vantagens:</strong> Bandas gigantescas (passa 1Gbps+ fácil). Feixe extremamente estreito (quase um laser), imune a interferência.</p>
-                    <p><strong>Desvantagens:</strong> Alcance curtíssimo (alguns km). Sofre muita atenuação com chuva (especialmente 60GHz, devido à absorção pelo oxigênio).</p>
+            <details>
+                <summary class="bg-light p-3 fw-bold text-success rounded">Ondas Milimétricas (24 GHz, 60 GHz)</summary>
+                <div class="details-content bg-white">
+                    <p>Bandas gigantescas (passa 1Gbps+). **Desvantagem:** Alcance curtíssimo e sofre muito com chuva (Rain Fade).</p>
                 </div>
             </details>
         </div>
@@ -65,154 +53,108 @@
         <h2 class="section-title text-success" style="border-color: #198754 !important;"><i class="bi bi-router-fill"></i> 3. Hardware e Antenas</h2>
         <div class="mt-3 mb-5">
             <details>
-                <summary>Tipos de Antenas</summary>
-                <div class="details-content">
-                    <ul>
-                        <li><strong>Disco/Parabólica:</strong> Foco extremo. Para PTP longo. Ganho alto (25 a 34 dBi).</li>
-                        <li><strong>Setorial (Painel):</strong> Cobre uma fatia horizontal (ex: 90°). Ganho médio (15 a 21 dBi). Usada em torres para PTMP.</li>
-                        <li><strong>Omni:</strong> Cobre 360°. Ganho baixo (10-13 dBi). Pega muito ruído de todos os lados. Evitada em provedores profissionais, exceto para pequenos hotspots.</li>
-                        <li><strong>CPE Integrada:</strong> Rádio + Antena numa peça só (ex: NanoStation, LiteBeam). Para instalar no cliente.</li>
-                    </ul>
+                <summary class="bg-light p-3 fw-bold text-success rounded">Tipos de Antenas</summary>
+                <div class="details-content bg-white">
+                    <p>Disco/Parabólica (PTP), Setorial/Painel (PTMP), Omni (Evitada em áreas urbanas).</p>
                 </div>
             </details>
             <details>
-                <summary>Rádio: Componentes Internos</summary>
-                <div class="details-content">
-                    <p>O "rádio" é a parte ativa que gera o sinal de RF.</p>
-                    <ul>
-                        <li><strong>Chipset Wireless:</strong> O cérebro (Atheros/Qualcomm é o mais comum).</li>
-                        <li><strong>Amplificador (PA):</strong> Dá potência ao sinal (dBm). Cuidado: potência demais gera distorção (ruído interno)!</li>
-                        <li><strong>Porta Ethernet:</strong> Geralmente Gigabit hoje em dia, recebe energia via PoE passivo (24V ou 48V).</li>
-                    </ul>
+                <summary class="bg-light p-3 fw-bold text-success rounded">Rádio: Componentes Internos</summary>
+                <div class="details-content bg-white">
+                    <p>Chipset (Atheros/Qualcomm), Amplificador de Potência (PA), Portas PoE.</p>
                 </div>
             </details>
         </div>
-
+        
         <h2 class="section-title text-success" style="border-color: #198754 !important;"><i class="bi bi-tower"></i> 4. Infraestrutura Pesada</h2>
         <div class="mt-3 mb-5">
             <details>
-                <summary>Torres</summary>
-                <div class="details-content">
-                    <ul>
-                        <li><strong>Autoportante:</strong> Base larga, fica em pé sozinha. Mais cara, ocupa mais espaço no chão.</li>
-                        <li><strong>Estaiada:</strong> Fina, precisa de cabos de aço (estais) para segurar. Mais barata, mas exige terreno grande para ancorar os cabos.</li>
-                    </ul>
+                <summary class="bg-light p-3 fw-bold text-success rounded">Torres</summary>
+                <div class="details-content bg-white">
+                    <p>Autoportante (Base larga, mais cara) e Estaiada (Cabo de aço, mais barata).</p>
                 </div>
             </details>
             <details>
-                <summary>Cabos e Conectores (A parte vital!)</summary>
-                <div class="details-content">
-                    <p><strong>Cabo de Rede Externo (Outdoor):</strong> NÃO use cabo azul comum de escritório em torres! Ele resseca com o sol e quebra em meses.</p>
-                    <p><strong>Obrigatório em Torre:</strong> Cabo blindado (FTP/STP) com fita de alumínio interna e fio de dreno, capa preta com proteção UV.</p>
-                    <p><strong>Conector RJ45 Blindado:</strong> Tem carcaça metálica. O fio de dreno do cabo deve tocar nessa carcaça para descarregar a estática (ESD) da torre para o terra da tomada, salvando o rádio de queimar em tempestades.</p>
+                <summary class="bg-light p-3 fw-bold text-success rounded">Cabos e Conectores</summary>
+                <div class="details-content bg-white">
+                    <p>OBRIGATÓRIO usar Cabo UTP BLINDADO (STP/FTP) e Conector RJ45 Blindado para descarregar ESD.</p>
                 </div>
             </details>
         </div>
-
+        
         <h2 class="section-title text-success" style="border-color: #198754 !important;"><i class="bi bi-sliders"></i> 5. Física de RF & Configuração</h2>
         <div class="mt-3 mb-5">
              <details>
-                <summary>Zona de Fresnel (O conceito vital)</summary>
-                <div class="details-content">
-                    <p>O sinal de rádio não é uma linha reta laser. Ele é um "dirigível" gordo. Se esse dirigível tocar em árvores, prédios ou no chão, o sinal reflete, chega atrasado no destino e cancela o sinal principal (interferência destrutiva).</p>
-                    <p><strong>Regra 60%:</strong> Pelo menos 60% dessa zona deve estar totalmente limpa para o enlace ter performance máxima.</p>
+                <summary class="bg-light p-3 fw-bold text-success rounded">Zona de Fresnel (O conceito vital)</summary>
+                <div class="details-content bg-white">
+                    <p>O sinal é um "dirigível" (área elíptica). **Regra 60%:** Pelo menos 60% dessa zona deve estar totalmente limpa para evitar interferência destrutiva.</p>
                 </div>
             </details>
             <details>
-                <summary>SNR, Modulation (MCS) e Data Rate</summary>
-                <div class="details-content">
-                    <p>Como o rádio decide a velocidade?</p>
-                    <ul>
-                        <li><strong>Noise Floor (Piso de Ruído):</strong> É o "barulho" ambiente de outros rádios. Ex: -90dBm (silencioso), -75dBm (barulhento).</li>
-                        <li><strong>Sinal Recebido (RSSI):</strong> A força que seu sinal chega. Ex: -55dBm (forte).</li>
-                        <li><strong>SNR (Sinal-Ruído):</strong> A diferença entre eles. (-55) - (-90) = <strong>35dB de SNR</strong>.</li>
-                    </ul>
-                    <p><strong>Modulação (QAM):</strong> Quanto maior o SNR, mais complexa a modulação o rádio consegue usar (64QAM, 256QAM, 1024QAM) e mais dados ele passa por segundo.</p>
+                <summary class="bg-light p-3 fw-bold text-success rounded">SNR, Modulação (MCS) e Data Rate</summary>
+                <div class="details-content bg-white">
+                    <p>A velocidade (Mbps) é definida pelo **SNR** (Sinal - Ruído). Quanto maior o SNR, mais complexa a Modulação (256QAM) e maior a banda.</p>
                 </div>
             </details>
-             <details>
-                <summary>Largura de Canal (Channel Width)</summary>
-                <div class="details-content">
-                    <p>É a "largura da estrada" por onde seus dados passam.</p>
-                    <ul>
-                        <li><strong>20 MHz:</strong> Padrão. Mais estável em ambientes ruidosos. Menos banda (~100-150Mbps reais).</li>
-                        <li><strong>40 MHz:</strong> Dobro da estrada. Dobro da banda, mas pega o dobro de interferência. Usado em PTPs limpos.</li>
-                        <li><strong>80 MHz:</strong> Altíssima velocidade (padrão AC). Exige espectro muito limpo, raro em cidades.</li>
-                    </ul>
+            <details>
+                <summary class="bg-light p-3 fw-bold text-success rounded">Largura de Canal (Channel Width)</summary>
+                <div class="details-content bg-white">
+                    <p>A "largura da estrada" (20 MHz, 40 MHz). Canais maiores passam mais banda, mas pegam mais interferência.</p>
                 </div>
             </details>
         </div>
+        
+        <div class="alert alert-warning small fw-bold">
+            <i class="bi bi-lightbulb-fill"></i> Regra de Ouro WISP: "Quem tem visada, tem tudo." Se não há LOS perfeita em 5.8GHz, o enlace nunca será 100% estável.
+        </div>
 
-    </div> <div class="col-lg-4">
+    </div> <div class="col-lg-5">
         
         <div class="card shadow-sm border-success mb-4 sticky-top" style="top: 100px; z-index: 1;">
             <div class="card-header bg-success text-white fw-bold">
-                <i class="bi bi-calculator"></i> Calculadora Fresnel (1ª Zona)
-            </div>
-            <div class="card-body bg-light">
-                <p class="small text-muted">Calcule o raio livre necessário no meio do enlace para garantir performance máxima.</p>
-                
-                <label class="fw-bold mt-2">Distância (km):</label>
-                <input type="number" id="rDist" class="form-control" value="5" min="0.1" step="0.1">
-                
-                <label class="fw-bold mt-3">Frequência (GHz):</label>
-                <select id="rFreq" class="form-select">
-                    <option value="0.9">900 MHz (Rural extremo)</option>
-                    <option value="2.4">2.4 GHz (Legado)</option>
-                    <option value="5.8" selected>5.8 GHz (Padrão WISP)</option>
-                    <option value="11">11 GHz (Licenciado)</option>
-                    <option value="24">24 GHz (AirFiber 24)</option>
-                    <option value="60">60 GHz (V-Band/Gigabeam)</option>
-                </select>
-
-                <button onclick="calcFresnel()" class="btn btn-success w-100 fw-bold mt-4">CALCULAR RAIO</button>
-                
-                <div id="fRes" class="alert alert-light border mt-4 text-center d-none">
-                    <h3 id="fRad" class="fw-bold text-success mb-0">0 m</h3>
-                    <small class="text-muted d-block mb-3">Raio total (100%)</small>
-                    
-                    <div class="progress" style="height: 25px;">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 60%">60% Livre</div>
-                        <div class="progress-bar bg-danger" role="progressbar" style="width: 40%">Obstrução máx</div>
-                    </div>
-                    
-                    <p class="mt-3 mb-0 fw-bold">
-                        Mantenha livre pelo menos:<br>
-                        <span id="f60" class="fs-4 text-dark">0 m</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="card shadow-sm border-warning">
-             <div class="card-header bg-warning text-dark fw-bold">
-                <i class="bi bi-lightbulb-fill"></i> Regra de Ouro WISP
+                <i class="bi bi-calculator"></i> Calculadora Zona de Fresnel (Python Server-Side)
             </div>
             <div class="card-body">
-                <p class="card-text"><em>"Quem tem visada, tem tudo."</em></p>
-                <small class="text-muted">Não tente desafiar a física. Se não há LOS (visada) perfeita em 5.8GHz, o enlace nunca será 100% estável, não importa quão caro seja o equipamento.</small>
+                <p class="text-muted small">Calcule o raio livre necessário no meio do enlace para garantir performance máxima.</p>
+                
+                <form method="POST" action="{{ url_for('radio_teoria') }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Distância do Enlace (km):</label>
+                        <input type="number" name="radio_dist" class="form-control" value="5" step="0.1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Frequência (GHz):</label>
+                        <select name="radio_freq" class="form-select" required>
+                            <option value="2.4">2.4 GHz (Legado)</option>
+                            <option value="5.8" selected>5.8 GHz (WISP Padrão)</option>
+                            <option value="11">11 GHz (Licenciado)</option>
+                            <option value="24">24 GHz (Ondas Milimétricas)</option>
+                        </select>
+                    </div>
+
+                    {% if erro_fresnel %}
+                    <div class="alert alert-danger small">{{ erro_fresnel }}</div>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-success w-100 fw-bold">CALCULAR RAIO</button>
+                </form>
+
+                {% if resultado_fresnel %}
+                <div id="fresnelResult" class="alert alert-info mt-4 text-center shadow-sm">
+                    <h3 class="fw-bold mb-0 text-dark">{{ resultado_fresnel.raio_total }} m</h3>
+                    <small>Raio total (100%) no centro do enlace</small>
+                    <hr>
+                    <p class="mb-0 fw-bold fs-5">
+                        Mantenha **livre** (60%):
+                        <span class="fs-3 text-success d-block">{{ resultado_fresnel.raio_livre }} m</span>
+                    </p>
+                    <p class="small text-muted mb-0">Para um enlace de {{ resultado_fresnel.distancia }} km em {{ resultado_fresnel.frequencia }} GHz.</p>
+                </div>
+                {% endif %}
+
             </div>
         </div>
-
-    </div>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-function calcFresnel() {
-    let d = parseFloat(document.getElementById('rDist').value);
-    let f = parseFloat(document.getElementById('rFreq').value);
-    
-    if (d > 0 && f > 0) {
-        // Fórmula exata: r = 17.32 * sqrt(d / (4*f))
-        let r = 17.32 * Math.sqrt(d / (4 * f));
-        let r60 = r * 0.6;
-
-        document.getElementById('fRes').classList.remove('d-none');
-        document.getElementById('fRad').innerText = r.toFixed(2) + " m";
-        document.getElementById('f60').innerText = r60.toFixed(2) + " m";
-    }
-}
-</script>
+        
+        <a href="{{ url_for('radio_hardware') }}" class="btn btn-outline-success mt-3 w-100"><i class="bi bi-cpu"></i> Ver Enciclopédia de Hardware Rádio →</a>
+    </div> </div>
 {% endblock %}
