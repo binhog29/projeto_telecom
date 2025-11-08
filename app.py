@@ -59,9 +59,51 @@ def ftth_calc():
         return render_template('ftth_calc.html', titulo="FTTH: Simulador Pro")
     return render_template('ftth_calc.html', titulo="FTTH: Simulador Pro")
 
-# --- SUB-ROTAS: DETALHES DE HARDWARE FTTH (Mantidas) ---
-# [Rotas omitidas aqui por brevidade, mas devem estar no seu arquivo]
-# ...
+# --- SUB-ROTAS: DETALHES DE HARDWARE FTTH (AS CAUSADORAS DO PROBLEMA) ---
+# TODAS ESSAS FUNÇÕES DEVEM EXISTIR NO SERVIDOR VERCEL
+@app.route('/ftth/hardware/olt')
+def ftth_hw_olt():
+    return render_template('ftth_hw_olt.html', titulo="HW: OLT")
+
+@app.route('/ftth/hardware/gbic')
+def ftth_hw_gbic():
+    return render_template('ftth_hw_gbic.html', titulo="HW: GBIC/SFP")
+
+@app.route('/ftth/hardware/fibras')
+def ftth_hw_fibras():
+    return render_template('ftth_hw_fibras.html', titulo="HW: Fibras e Cabos")
+
+@app.route('/ftth/hardware/splitters')
+def ftth_hw_splitters():
+    return render_template('ftth_hw_splitters.html', titulo="HW: Splitters")
+
+@app.route('/ftth/hardware/caixas')
+def ftth_hw_caixas():
+    return render_template('ftth_hw_caixas.html', titulo="HW: Caixas Ópticas")
+
+@app.route('/ftth/hardware/conectores')
+def ftth_hw_conectores():
+    return render_template('ftth_hw_conectores.html', titulo="HW: Conectores")
+
+@app.route('/ftth/hardware/emendas')
+def ftth_hw_emendas():
+    return render_template('ftth_hw_emendas.html', titulo="HW: Tipos de Emenda")
+
+@app.route('/ftth/hardware/patchcords')
+def ftth_hw_patchcords():
+    return render_template('ftth_hw_patchcords.html', titulo="HW: Patch Cords")
+
+@app.route('/ftth/hardware/ferragens')
+def ftth_hw_ferragens():
+    return render_template('ftth_hw_ferragens.html', titulo="HW: Infraestrutura de Poste")
+
+@app.route('/ftth/hardware/cpe')
+def ftth_hw_cpe():
+    return render_template('ftth_hw_cpe.html', titulo="HW: Equipamentos CPE")
+
+@app.route('/ftth/hardware/pto')
+def ftth_hw_pto():
+    return render_template('ftth_hw_pto.html', titulo="HW: PTO/Roseta")
 
 # --- MÓDULO RÁDIO (WIRELESS) ---
 @app.route('/radio/teoria', methods=['GET', 'POST'])
@@ -105,7 +147,7 @@ def radio_teoria():
 def radio_hardware():
     return render_template('radio_hardware.html', titulo="Rádio: Enciclopédia de Hardware")
 
-# --- SUB-ROTAS: DETALHES DE HARDWARE RÁDIO (ADICIONADAS AQUI NOVAMENTE) ---
+# --- SUB-ROTAS: DETALHES DE HARDWARE RÁDIO ---
 @app.route('/radio/hardware/acesso')
 def radio_hw_acesso():
     return render_template('radio_hw_acesso.html', titulo="HW Rádio: Acesso e Backhaul")
@@ -145,7 +187,6 @@ def ip_calc():
         })
 
         try:
-            # Lógica de cálculo (Mantida para brevidade)
             network = ipaddress.ip_network(f'{ip_entrada}/{cidr_entrada}', strict=False)
             
             network_address = str(network.network_address)
@@ -208,7 +249,7 @@ def diag_home():
 @app.route('/diag/quiz', methods=['GET', 'POST'])
 def diag_quiz():
     
-    # Lógica do Quiz (Mantida para brevidade)
+    # 1. IDENTIFICAÇÃO DO MÓDULO
     modulo = request.args.get('modulo', 'ftth')
     modulo = modulo.lower()
     
@@ -233,8 +274,37 @@ def diag_quiz():
     
     
     if request.method == 'POST':
-        # ... (Resto da lógica de correção do Quiz) ...
-        pass # Remova este 'pass' se você estiver usando a lógica de Quiz
+        # --- Lógica de Correção (POST) ---
+        respostas_do_usuario = request.form
+        modulo_pos = respostas_do_usuario.get('modulo', 'ftth')
+        quiz_original = BANCO_MESTRE[modulo_pos]
+        
+        pontuacao = 0
+        acertos = {}
+        chaves_corrigir = []
+        
+        for key, resposta_dada in respostas_do_usuario.items():
+            if key in quiz_original:
+                item = quiz_original[key]
+                resposta_correta = item['resposta']
+                chaves_corrigir.append(key)
+                
+                if resposta_dada == resposta_correta:
+                    pontuacao += 1
+                    acertos[key] = {'correta': True, 'dada': resposta_dada}
+                else:
+                    acertos[key] = {'correta': False, 'dada': resposta_dada, 'esperada': resposta_correta}
+
+        total_perguntas = len(chaves_corrigir)
+
+        return render_template('diag_quiz_server.html', 
+                               titulo=f"Resultado {modulo_pos.upper()}", 
+                               modulo=modulo_pos,
+                               quiz=quiz_original, 
+                               resultados=acertos,
+                               pontuacao=pontuacao,
+                               total=total_perguntas,
+                               porcentagem=(pontuacao/total_perguntas)*100)
 
 
 # --- MÓDULO SERVIDORES & CORE & SEGURANÇA ---
