@@ -239,5 +239,10 @@ def vendas_teoria():
 def gestao_teoria(): 
     return render_template('gestao_teoria.html', titulo="Normas, NR10/35 e ANATEL")
     
+# --- ROTA PARA O SERVICE WORKER (PWA) ---
+@app.route('/sw.js')
+def sw():
+    return app.send_static_file('sw.js')
+    
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
