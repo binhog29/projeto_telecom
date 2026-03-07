@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12 text-center">
+        <h1 class="text-success fw-bold"><i class="bi bi-cart-check"></i> Gestão Comercial e Retenção</h1>
+        <p class="lead text-muted">A tecnologia entrega a banda, mas o comercial garante o faturamento. Técnicas avançadas de PAP, Up-Sell e prevenção de Churn.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-12">
+        <div class="card shadow-sm border-start border-success border-4 mb-4">
+            <div class="card-body">
+                <h4 class="fw-bold"><i class="bi bi-door-open"></i> Metodologia de Vendas Porta a Porta (PAP)</h4>
+                <p>O consultor PAP é o caçador do provedor. A abordagem amadora baseada em "quer comprar internet?" gera recusas automáticas. A venda consultiva foca na dor do cliente (Metodologia SPIN).</p>
+                <div class="row text-center mt-4">
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border h-100">
+                            <h5 class="text-success fw-bold">1. Situação</h5>
+                            <p class="small text-muted">Mapear o cenário: "Quantas pessoas usam o Wi-Fi na sua casa hoje? Vocês jogam online ou assistem muito streaming?"</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border h-100">
+                            <h5 class="text-success fw-bold">2. Problema (Dor)</h5>
+                            <p class="small text-muted">Tocar na ferida: "E quando todos chegam em casa à noite, a imagem da Netflix costuma congelar ou a rede cai?"</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border h-100">
+                            <h5 class="text-success fw-bold">3. Implicação</h5>
+                            <p class="small text-muted">Aumentar a dor: "Isso é frustrante, né? Acaba atrapalhando o descanso depois de um dia longo de trabalho."</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border h-100">
+                            <h5 class="text-success fw-bold">4. Necessidade (Cura)</h5>
+                            <p class="small text-muted">A solução: "Nossa rede 100% fibra acaba com isso. Tenho 2 portas sobrando na CTO aqui da frente. Vamos agendar?"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm border-start border-info border-4">
+            <div class="card-header bg-white fw-bold"><i class="bi bi-graph-up-arrow text-info"></i> Up-Sell e Cross-Sell</div>
+            <div class="card-body">
+                <p>Aumentar o Ticket Médio (ARPU - Average Revenue Per User) do cliente que já está na base.</p>
+                <ul>
+                    <li><strong>Up-Sell (Vender plano maior):</strong> Monitorar pelo sistema clientes que estão batendo o teto de banda contratada e oferecer upgrade por um valor promocional.</li>
+                    <li><strong>Cross-Sell (Venda cruzada):</strong> Vender serviços adicionais, como locação de Roteadores Mesh (para casas grandes), IP Fixo (para gamers/câmeras) ou pacotes de Streaming (SVA - Serviço de Valor Adicionado).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm border-start border-danger border-4">
+            <div class="card-header bg-white fw-bold"><i class="bi bi-shield-x text-danger"></i> Combate ao Churn (Cancelamento)</div>
+            <div class="card-body">
+                <p>O custo de Aquisição de Clientes (CAC) na fibra é altíssimo (Equipamento ONU, Drop, Bobina, Tempo do Técnico). Se o cliente cancelar em 6 meses, o provedor toma prejuízo financeiro grave.</p>
+                <ul>
+                    <li><strong>Contato Ativo:</strong> Ligar para o cliente na primeira semana após a instalação para perguntar se o Wi-Fi está chegando no quarto.</li>
+                    <li><strong>Setor de Retenção:</strong> Se o cliente pede para cancelar por preço, ter flexibilidade para oferecer descontos ou upgrade temporário para mantê-lo na base.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,806 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    /* Estilos do Mapa CAD PRO */
+    #cad-toolbar {
+        background: #1a1d20; padding: 12px; border-radius: 8px 8px 0 0;
+        display: flex; flex-wrap: wrap; gap: 10px; border: 2px solid #333; border-bottom: none; align-items: center;
+    }
+    .tool-btn {
+        background: #333; color: #fff; border: 1px solid #555; padding: 8px 15px;
+        border-radius: 5px; cursor: pointer; transition: 0.2s; font-weight: bold; font-size: 0.9rem;
+    }
+    .tool-btn:hover { background: #444; }
+    .tool-btn.active { background: #0d6efd; border-color: #0a58ca; box-shadow: 0 0 10px rgba(13,110,253,0.5); }
+    .tool-btn.danger.active { background: #dc3545; border-color: #b02a37; box-shadow: 0 0 10px rgba(220,53,69,0.5); }
+    
+    #map-area {
+        position: relative; width: 100%; height: 650px; background: #e9ecef;
+        border: 2px solid #333; border-radius: 0 0 8px 8px; overflow: hidden;
+        background-image: linear-gradient(#d1d7db 1px, transparent 1px), linear-gradient(90deg, #d1d7db 1px, transparent 1px);
+        background-size: 50px 50px; cursor: crosshair;
+    }
+
+    #cables-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .cable-path { pointer-events: stroke; cursor: pointer; transition: 0.2s; }
+    .cable-path:hover { stroke: #0dcaf0 !important; stroke-width: 6px !important; }
+    
+    .cad-node {
+        position: absolute; transform: translate(-50%, -50%); z-index: 2;
+        display: flex; align-items: center; justify-content: center; font-size: 18px;
+        cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s;
+        flex-direction: column; text-align: center;
+    }
+    .cad-node:hover { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 12px #0dcaf0; z-index: 3;}
+    .cad-node span { position: absolute; top: 110%; background: rgba(0,0,0,0.8); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap; pointer-events: none; text-align: center; line-height: 1.2;}
+
+    .node-olt { background: #0d6efd; color: white; width: 50px; height: 50px; border: 2px solid #000; border-radius: 5px; }
+    .node-poste { background: #6c757d; color: white; width: 20px; height: 20px; border-radius: 50%; border: 2px solid #444;}
+    .node-ceo { background: #212529; color: white; width: 35px; height: 45px; border-radius: 20px; border: 2px solid #fff; }
+    .node-cto { background: #ffc107; color: black; width: 30px; height: 35px; border-radius: 4px; border: 2px solid #000; }
+    
+    /* STATUS DA CASA DO CLIENTE */
+    .node-client { color: white; width: 35px; height: 35px; border-radius: 5px; transition: background 0.3s, box-shadow 0.3s; }
+    .node-client.offline { background: #dc3545; border: 2px solid #8b0000; }
+    .node-client.online { background: #198754; border: 2px solid #0f5132; box-shadow: 0 0 15px #198754; }
+
+    /* LAYOUT INTERNO DA BANDEJA */
+    .fiber-tray { 
+        background: #111; border: 2px solid #444; border-radius: 5px; padding: 15px; 
+        display: flex; flex-wrap: wrap; gap: 15px; color: #ffffff; max-height: 55vh; overflow-y: auto;
+    }
+    .tray-olt { border-color: #0d6efd; background: #061e40; }
+    .tray-ceo { border-color: #6c757d; background: #1a1a1a; }
+    .tray-cto { border-color: #ffc107; background: #2a2512; }
+    .tray-client { border-color: #dc3545; background: #3a1519; }
+
+    .cable-box { background: #222; border: 1px solid #555; padding: 12px; flex: 1; min-width: 280px; border-radius: 8px; box-shadow: inset 0 0 10px #000;}
+    .cable-box h6 { color: #ffffff; font-weight: bold; font-size: 1rem; }
+    .panel-cto { border: 2px dashed #ffc107; background: #1c180b; }
+    .panel-fbt { border: 2px solid #0dcaf0; background: #0a2530; }
+
+    /* FIBRAS E ALTO CONTRASTE */
+    .fiber-item { 
+        display: flex; align-items: center; padding: 10px; border: 1px solid #555; 
+        margin-bottom: 5px; border-radius: 4px; cursor: pointer; background: #2b2b2b; font-size: 0.95rem;
+        color: #ffffff !important; font-weight: 500; transition: 0.2s;
+    }
+    .fiber-item:hover { background: #444; border-color: #aaa; }
+    .fiber-item.selected { border-color: #0dcaf0; background: #0d4290; box-shadow: 0 0 10px rgba(13,202,240,0.8); color: #fff; }
+    .fiber-item.spliced { border-left: 6px solid #198754; background: #1a2e20; opacity: 1; }
+    .fiber-item.passante { border-left: 6px solid #0dcaf0; background: #0a2530; opacity: 1; }
+    
+    .f-color { width: 16px; height: 16px; border-radius: 50%; border: 1px solid #fff; margin-right: 12px; flex-shrink: 0;}
+    
+    /* Código Cores Telebrás */
+    .c0{background:#008000;} .c1{background:#FFFF00;} .c2{background:#FFFFFF;} .c3{background:#0000FF;}
+    .c4{background:#FF0000;} .c5{background:#800080;} .c6{background:#8B4513;} .c7{background:#FFC0CB;}
+    .c8{background:#000000;} .c9{background:#808080;} .c10{background:#FFA500;} .c11{background:#40E0D0;}
+
+    .box-controls { background: #000; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; }
+
+    /* TOASTS */
+    #toast-container { position: fixed; top: 90px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+    .toast { pointer-events: auto; }
+</style>
+
+<div id="toast-container"></div>
+
+<div class="row mb-3">
+    <div class="col-12">
+        <h2 class="text-info fw-bold"><i class="bi bi-bezier2"></i> CAD de Redes FTTH (Engenharia Realista)</h2>
+        <p class="text-muted mb-0">Crie redes contínuas com Auto-Passante. Selecione a fibra e faça Sangrias exatas onde a CTO for instalada.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div id="cad-toolbar">
+            <button class="tool-btn active" id="btn-select" onclick="setTool('select')"><i class="bi bi-cursor"></i> Cursor (Abrir Equip.)</button>
+            <button class="tool-btn" id="btn-olt" onclick="setTool('olt')"><i class="bi bi-hdd-network"></i> Plantar OLT</button>
+            <button class="tool-btn" id="btn-poste" onclick="setTool('poste')"><i class="bi bi-geo-alt-fill"></i> Plantar Poste</button>
+            <button class="tool-btn" id="btn-client" onclick="setTool('client')"><i class="bi bi-house"></i> Casa Cliente</button>
+            
+            <div class="d-flex align-items-center ms-3 me-2 border-start border-secondary ps-3">
+                <button class="tool-btn text-warning border-warning me-2" id="btn-cabo" onclick="setTool('cabo')"><i class="bi bi-bezier2"></i> Lançar Cabo Óptico</button>
+                <select id="default-cable-cap" class="form-select form-select-sm bg-dark text-white border-warning fw-bold" style="width: 120px;" title="Capacidade do Cabo Lançado">
+                    <option value="1">1 FO (Drop)</option>
+                    <option value="6">6 FO (AS)</option>
+                    <option value="12" selected>12 FO (AS)</option>
+                    <option value="36">36 FO (AS)</option>
+                    <option value="72">72 FO (AS)</option>
+                </select>
+            </div>
+
+            <button class="tool-btn danger ms-2" id="btn-delete" onclick="setTool('delete')"><i class="bi bi-trash"></i> Apagar Item</button>
+            
+            <button class="tool-btn text-success border-success ms-auto" onclick="openProjectManager()"><i class="bi bi-floppy"></i> Meus Projetos</button>
+        </div>
+
+        <div id="map-area" onclick="handleMapClick(event)">
+            <svg id="cables-layer"></svg>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="boxModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary py-3 bg-black">
+                <h5 class="modal-title fw-bold" id="boxTitle">Propriedades do Equipamento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body bg-dark">
+                
+                <div id="box-config-panel" class="mb-3 d-none p-5 bg-secondary rounded text-center shadow">
+                    <h4 class="mb-3 fw-bold text-white"><i class="bi bi-tools"></i> Poste Sem Equipamento</h4>
+                    <p class="mb-4 text-light">Escolha qual tipo de caixa instalar neste poste.</p>
+                    <button class="btn btn-dark btn-lg me-3 border-light" onclick="upgradeNode('ceo')"><i class="bi bi-signpost-split"></i> Instalar CEO (Caixa de Emenda)</button>
+                    <button class="btn btn-warning btn-lg fw-bold" onclick="upgradeNode('cto')"><i class="bi bi-box"></i> Instalar CTO (Caixa Atendimento)</button>
+                </div>
+
+                <div id="olt-controls" class="box-controls d-flex flex-wrap gap-3 align-items-center d-none border-primary">
+                    <div class="text-primary fw-bold"><i class="bi bi-hdd-rack"></i> Controle de Potência OLT:</div>
+                    <div class="input-group" style="width: 250px;">
+                        <span class="input-group-text bg-dark text-white">SFP (dBm)</span>
+                        <input type="number" id="oltPowerInput" class="form-control fw-bold text-center" step="0.5" value="5.0">
+                        <button class="btn btn-primary fw-bold" onclick="updateOltPower()">Aplicar</button>
+                    </div>
+                </div>
+
+                <div id="box-fusion-panel" class="d-none">
+                    <div class="box-controls d-flex flex-wrap gap-2 align-items-center">
+                        
+                        <div class="btn-group border border-secondary rounded shadow-sm">
+                            <button class="btn btn-primary fw-bold" onclick="fusionFibers()"><i class="bi bi-link"></i> Fusão Manual</button>
+                            <button class="btn btn-danger" onclick="breakFusion()"><i class="bi bi-scissors"></i> Romper (Fazer Sangria)</button>
+                            <button class="btn btn-success" onclick="measurePower()"><i class="bi bi-speedometer2"></i> Medir Sinal</button>
+                        </div>
+                        
+                        <div class="ms-2 hide-on-client">
+                            <button class="btn btn-outline-info btn-sm fw-bold" onclick="bulkSplice()"><i class="bi bi-arrow-left-right"></i> Restaurar Passante Múltiplo</button>
+                        </div>
+                        
+                        <div id="client-controls" class="ms-3 d-none align-items-center gap-2">
+                            <button class="btn btn-outline-light btn-sm fw-bold border-secondary" onclick="renameActiveNode()"><i class="bi bi-pencil-square"></i> Renomear Cliente</button>
+                            
+                            <span class="text-danger fw-bold small ms-2"><i class="bi bi-gear-fill"></i> Conexão Local:</span>
+                            <select id="clientRosetaSelect" class="form-select form-select-sm bg-dark text-white border-danger fw-bold" style="width: auto;" onchange="updateClientRoseta()">
+                                <option value="direto">Drop Direto na ONU (-0.5 dB)</option>
+                                <option value="roseta">Roseta PTO + Patch Cord (-1.0 dB)</option>
+                            </select>
+                        </div>
+
+                        <div class="dropdown ms-auto hide-on-client">
+                            <button class="btn btn-warning dropdown-toggle fw-bold text-dark shadow-sm px-4" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-plus-circle"></i> Instalar Splitter
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-dark shadow border-warning">
+                                <li><h6 class="dropdown-header text-info">Desbalanceados (FBT)</h6></li>
+                                <li><a class="dropdown-item fw-bold text-white" href="#" onclick="addSplitter('FBT_5_95')">FBT 5/95 (-14.5 / -0.4)</a></li>
+                                <li><a class="dropdown-item fw-bold text-white" href="#" onclick="addSplitter('FBT_10_90')">FBT 10/90 (-10.5 / -0.6)</a></li>
+                                <li><a class="dropdown-item fw-bold text-white" href="#" onclick="addSplitter('FBT_20_80')">FBT 20/80 (-7.4 / -1.2)</a></li>
+                                <li><a class="dropdown-item fw-bold text-white" href="#" onclick="addSplitter('FBT_30_70')">FBT 30/70 (-5.6 / -1.9)</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header text-warning">Balanceados (PLC)</h6></li>
+                                <li><a class="dropdown-item fw-bold text-white" href="#" onclick="addSplitter('PLC_1:2')">PLC 1:2 (-3.5 dB)</a></li>
+                                <li><a class="dropdown-item fw-bold text-white" href="#" onclick="addSplitter('PLC_1:4')">PLC 1:4 (-7.3 dB)</a></li>
+                                <li><a class="dropdown-item fw-bold text-white" href="#" onclick="addSplitter('PLC_1:8')">PLC 1:8 (-10.5 dB)</a></li>
+                                <li><a class="dropdown-item fw-bold text-white" href="#" onclick="addSplitter('PLC_1:16')">PLC 1:16 (-14.0 dB)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-dark border-secondary py-2 small mb-3 text-light">
+                        <i class="bi bi-info-circle text-info"></i> Fibras azuis indicam tubo <strong>Passante Direto</strong>. Selecione e clique em "Romper" para fazer a Sangria de um tubo na CTO.
+                    </div>
+
+                    <div class="fiber-tray" id="tray-container"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="projectModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary py-3 bg-black">
+                <h5 class="modal-title fw-bold text-success"><i class="bi bi-folder-fill"></i> Gerenciador de Projetos</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body bg-dark">
+                <div class="input-group mb-4">
+                    <input type="text" id="projectName" class="form-control bg-secondary text-white border-secondary" placeholder="Nome do Projeto (Ex: Nova Rede)...">
+                    <button class="btn btn-success fw-bold" onclick="saveProject()"><i class="bi bi-floppy"></i> Salvar</button>
+                </div>
+                <h6 class="border-bottom border-secondary pb-2 mb-3 text-white"><i class="bi bi-archive"></i> Arquivos Salvos</h6>
+                <div id="project-list" class="list-group"></div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button class="btn btn-outline-danger me-auto fw-bold" onclick="clearMap()"><i class="bi bi-file-earmark-x"></i> Limpar Mapa Atual</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // --- SISTEMA DE TOASTS ---
+    function showToast(title, message, type = 'primary') {
+        let bgClass = type === 'error' ? 'bg-danger' : (type === 'success' ? 'bg-success' : (type === 'warning' ? 'bg-warning text-dark' : 'bg-primary'));
+        let icon = type === 'error' ? 'bi-x-octagon' : (type === 'success' ? 'bi-check-circle' : 'bi-info-circle');
+        
+        let toast = document.createElement('div');
+        toast.className = `toast show ${bgClass} text-white border-0 shadow`;
+        toast.innerHTML = `
+            <div class="toast-header ${bgClass} text-white border-bottom border-light border-opacity-25">
+                <strong class="me-auto"><i class="bi ${icon}"></i> ${title}</strong>
+                <button type="button" class="btn-close btn-close-white" onclick="this.parentElement.parentElement.remove()"></button>
+            </div>
+            <div class="toast-body fw-bold">${message}</div>
+        `;
+        document.getElementById('toast-container').appendChild(toast);
+        setTimeout(() => { if(toast) toast.remove(); }, 5000);
+    }
+
+    // --- NÚCLEO DO MOTOR GRÁFICO ---
+    let currentTool = 'select';
+    let nodes = {}; 
+    let cables = {}; 
+    let splices = {}; 
+    
+    let nodeIdCounter = 1;
+    let cableIdCounter = 1;
+    let nodeToConnect = null; 
+    let activeNodeId = null;
+    let selectedPorts = []; 
+
+    let boxModalInstance;
+    let projectModalInstance;
+
+    const coresTB = ['Verde', 'Amarelo', 'Branco', 'Azul', 'Vermelho', 'Violeta', 'Marrom', 'Rosa', 'Preto', 'Cinza', 'Laranja', 'Turquesa'];
+    const classTB = ['c0','c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11'];
+
+    // Perdas Reais dos FBTs
+    const fbtLoss = {
+        '5_95': { tap: 14.5, out: 0.4 }, '10_90': { tap: 10.5, out: 0.6 },
+        '20_80': { tap: 7.4, out: 1.2 }, '30_70': { tap: 5.6, out: 1.9 }
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        boxModalInstance = new bootstrap.Modal(document.getElementById('boxModal'));
+        projectModalInstance = new bootstrap.Modal(document.getElementById('projectModal'));
+    });
+
+    // --- SALVAMENTO ---
+    function openProjectManager() { renderProjectList(); projectModalInstance.show(); }
+    
+    function saveProject() {
+        let name = document.getElementById('projectName').value.trim() || "Projeto_" + new Date().getTime();
+        let data = { nodes, cables, splices, nodeIdCounter, cableIdCounter };
+        let saved = JSON.parse(localStorage.getItem('ftth_cad')) || {};
+        saved[name] = data; localStorage.setItem('ftth_cad', JSON.stringify(saved));
+        document.getElementById('projectName').value = ''; renderProjectList();
+        showToast("Salvo", `Projeto "${name}" guardado na memória.`, 'success');
+    }
+
+    function renderProjectList() {
+        let listDiv = document.getElementById('project-list'); listDiv.innerHTML = '';
+        let saved = JSON.parse(localStorage.getItem('ftth_cad')) || {};
+        let names = Object.keys(saved);
+        if(names.length === 0) { listDiv.innerHTML = '<p class="text-muted text-center py-3">Nenhum projeto.</p>'; return; }
+
+        names.forEach(name => {
+            let qt = Object.keys(saved[name].nodes || {}).length;
+            listDiv.innerHTML += `
+                <div class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                    <div><span class="fw-bold text-info">${name}</span> <small class="text-muted">(${qt} equipamentos)</small></div>
+                    <div>
+                        <button class="btn btn-sm btn-primary me-2 fw-bold" onclick="loadProject('${name}')">Abrir</button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteProject('${name}')"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function loadProject(name) {
+        let saved = JSON.parse(localStorage.getItem('ftth_cad')) || {};
+        if(!saved[name]) return; let pData = saved[name];
+        nodes = pData.nodes || {}; cables = pData.cables || {}; splices = pData.splices || {};
+        nodeIdCounter = pData.nodeIdCounter || 1; cableIdCounter = pData.cableIdCounter || 1;
+
+        document.querySelectorAll('.cad-node').forEach(el => el.remove());
+        Object.values(nodes).forEach(node => {
+            let div = document.createElement('div');
+            div.id = node.id; div.className = `cad-node node-${node.type} ${node.type === 'client' ? 'offline' : ''}`; 
+            div.style.left = node.x + 'px'; div.style.top = node.y + 'px';
+            let icon = node.type === 'olt' ? '<i class="bi bi-hdd-network"></i>' : (node.type === 'client' ? '<i class="bi bi-house"></i>' : (node.type === 'ceo' ? 'C' : (node.type === 'cto' ? 'T' : '')));
+            div.innerHTML = `${icon}<span>${node.label}</span>`; div.onclick = (e) => handleNodeClick(e, node.id);
+            document.getElementById('map-area').appendChild(div);
+        });
+        drawCables(); updatePowerNetwork(); projectModalInstance.hide(); setTool('select');
+        showToast("Carregado", `Projeto "${name}" aberto.`, 'info');
+    }
+
+    function deleteProject(name) {
+        if(!confirm(`Apagar permanentemente "${name}"?`)) return;
+        let saved = JSON.parse(localStorage.getItem('ftth_cad')) || {};
+        delete saved[name]; localStorage.setItem('ftth_cad', JSON.stringify(saved)); renderProjectList();
+    }
+
+    function clearMap() {
+        if(!confirm("Apagar toda a tela atual?")) return;
+        nodes = {}; cables = {}; splices = {}; nodeIdCounter = 1; cableIdCounter = 1;
+        document.querySelectorAll('.cad-node').forEach(el => el.remove());
+        drawCables(); updatePowerNetwork(); projectModalInstance.hide();
+    }
+
+    // --- FERRAMENTAS E LANÇAMENTO CONTÍNUO ---
+    function setTool(tool) {
+        currentTool = tool;
+        document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active', 'danger'));
+        let btn = document.getElementById('btn-' + tool);
+        if(btn) btn.classList.add('active'); if(tool === 'delete') btn.classList.add('danger');
+        
+        if(nodeToConnect) { document.getElementById(nodeToConnect).style.boxShadow = ""; nodeToConnect = null; }
+    }
+
+    function handleMapClick(e) {
+        if (e.target.id !== 'map-area' && e.target.tagName !== 'svg') return;
+        const rect = document.getElementById('map-area').getBoundingClientRect();
+        const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+        if (currentTool === 'olt') addNode(x, y, 'olt', '<i class="bi bi-hdd-network"></i>', 'OLT Principal');
+        else if (currentTool === 'poste') addNode(x, y, 'poste', '', 'Poste');
+        else if (currentTool === 'client') addNode(x, y, 'client', '<i class="bi bi-house"></i>', 'Casa Cliente');
+    }
+
+    function addNode(x, y, type, icon, label) {
+        if(type === 'olt' && Object.values(nodes).some(n => n.type === 'olt')) return showToast("Aviso", "Apenas uma OLT.", "warning");
+        
+        let id = 'n' + nodeIdCounter++;
+        let node = { id, x, y, type, label, splitters: [], oltPower: 5.0, hasRoseta: false }; 
+        nodes[id] = node; splices[id] = [];
+        
+        let div = document.createElement('div');
+        div.id = id; div.className = `cad-node node-${type} ${type === 'client' ? 'offline' : ''}`;
+        div.style.left = x + 'px'; div.style.top = y + 'px';
+        div.innerHTML = `${icon}<span>${label}</span>`;
+        div.onclick = (e) => handleNodeClick(e, id);
+        document.getElementById('map-area').appendChild(div);
+        
+        // Mantém a ferramenta na mão a não ser que seja OLT
+        if(type === 'olt') setTool('select');
+        updatePowerNetwork();
+    }
+
+    function removeNode(id) {
+        Object.values(cables).forEach(c => { if(c.src === id || c.tgt === id) removeCable(c.id); });
+        document.getElementById(id).remove(); delete nodes[id]; delete splices[id]; updatePowerNetwork();
+    }
+
+    function removeCable(id) {
+        Object.keys(splices).forEach(nodeId => {
+            splices[nodeId] = splices[nodeId].filter(s => !s.portA.startsWith(id+'_') && !s.portB.startsWith(id+'_'));
+        });
+        delete cables[id]; drawCables(); updatePowerNetwork();
+    }
+
+    function handleNodeClick(e, id) {
+        e.stopPropagation();
+        if (currentTool === 'delete') { removeNode(id); }
+        else if (currentTool === 'cabo') {
+            if (!nodeToConnect) {
+                nodeToConnect = id; document.getElementById(id).style.boxShadow = "0 0 15px #ffc107";
+            } else {
+                if(nodeToConnect !== id) {
+                    addCable(nodeToConnect, id);
+                    document.getElementById(nodeToConnect).style.boxShadow = ""; 
+                    // AUTO-SELECIONA O NOVO NÓ PARA DESENHO CONTÍNUO
+                    nodeToConnect = id; 
+                    document.getElementById(id).style.boxShadow = "0 0 15px #ffc107";
+                } else {
+                    document.getElementById(nodeToConnect).style.boxShadow = ""; nodeToConnect = null; // Clicou no mesmo, desmarca
+                }
+            }
+        } else if (currentTool === 'select') { openBox(id); }
+    }
+
+    function addCable(srcId, tgtId) {
+        let cap = parseInt(document.getElementById('default-cable-cap').value);
+        let id = 'c' + cableIdCounter++;
+        let nA = nodes[srcId]; let nB = nodes[tgtId];
+        let distKm = Math.max(0.1, (Math.sqrt(Math.pow(nB.x - nA.x, 2) + Math.pow(nB.y - nA.y, 2)) / 200)).toFixed(2);
+
+        cables[id] = { id, src: srcId, tgt: tgtId, capacity: cap, dist: parseFloat(distKm) };
+        
+        // LOGICA DE AUTO-PASSANTE (Se o nó tiver exatamente 2 cabos de mesma capacidade backbone, une eles)
+        [srcId, tgtId].forEach(nodeId => {
+            let node = nodes[nodeId];
+            if(node.type !== 'olt' && node.type !== 'client') {
+                let attached = Object.values(cables).filter(c => c.src === nodeId || c.tgt === nodeId);
+                if(attached.length === 2) {
+                    let cA = attached[0]; let cB = attached[1];
+                    if(cA.capacity === cB.capacity && cA.capacity > 1) { // Só faz passante automático em cabos troncos, drop não.
+                        for(let i=0; i<cA.capacity; i++) {
+                            let pA = `${cA.id}_f${i}`; let pB = `${cB.id}_f${i}`;
+                            let emUso = splices[nodeId].some(s => s.portA === pA || s.portB === pA || s.portA === pB || s.portB === pB);
+                            if(!emUso) splices[nodeId].push({ portA: pA, portB: pB, loss: 0.0 }); // Perda 0.0 = Cabo Contínuo
+                        }
+                    }
+                }
+            }
+        });
+
+        drawCables(); updatePowerNetwork();
+    }
+
+    function drawCables() {
+        let svg = document.getElementById('cables-layer');
+        svg.innerHTML = '';
+        Object.values(cables).forEach(c => {
+            let nA = nodes[c.src]; let nB = nodes[c.tgt];
+            let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", nA.x); line.setAttribute("y1", nA.y);
+            line.setAttribute("x2", nB.x); line.setAttribute("y2", nB.y);
+            line.setAttribute("class", "cable-path");
+            
+            if(c.capacity === 1) {
+                line.setAttribute("stroke", "#000"); line.setAttribute("stroke-width", "3"); line.setAttribute("stroke-dasharray", "6,4");
+            } else {
+                line.setAttribute("stroke", "#212529"); line.setAttribute("stroke-width", "5");
+            }
+
+            line.onclick = (e) => {
+                e.stopPropagation();
+                if(currentTool === 'delete') removeCable(c.id);
+                else showToast(`Cabo de Rede`, `ID: ${c.id}<br>Fibras: ${c.capacity}FO<br>Distância: ${c.dist} km`, 'info');
+            };
+            svg.appendChild(line);
+        });
+    }
+
+    // --- INTERFACES (CEO, CTO, CLIENTE) ---
+    function openBox(id) {
+        activeNodeId = id; let node = nodes[id]; selectedPorts = [];
+        document.getElementById('box-config-panel').classList.add('d-none');
+        document.getElementById('box-fusion-panel').classList.add('d-none');
+        document.getElementById('olt-controls').classList.add('d-none');
+        document.getElementById('client-controls').classList.add('d-none');
+        document.querySelectorAll('.hide-on-client').forEach(e => e.classList.remove('d-none'));
+
+        let tray = document.getElementById('tray-container');
+
+        if(node.type === 'poste') {
+            document.getElementById('boxTitle').innerHTML = `<i class="bi bi-geo-alt"></i> Poste N° ${id.replace('n','')}`;
+            document.getElementById('box-config-panel').classList.remove('d-none');
+        } 
+        else if (node.type === 'client') {
+            document.getElementById('boxTitle').innerHTML = `<i class="bi bi-house-door text-danger"></i> Instalação: ${node.label}`;
+            document.getElementById('box-fusion-panel').classList.remove('d-none');
+            document.getElementById('client-controls').classList.remove('d-none');
+            
+            document.getElementById('clientRosetaSelect').value = node.hasRoseta ? 'roseta' : 'direto';
+            document.querySelectorAll('.hide-on-client').forEach(e => e.classList.add('d-none'));
+            tray.className = "fiber-tray tray-client"; renderTray();
+        } 
+        else if (node.type === 'olt') {
+            document.getElementById('boxTitle').innerHTML = `<i class="bi bi-hdd-network text-primary"></i> Datacenter (OLT)`;
+            document.getElementById('box-fusion-panel').classList.remove('d-none');
+            document.getElementById('olt-controls').classList.remove('d-none');
+            document.getElementById('oltPowerInput').value = node.oltPower || 5.0;
+            tray.className = "fiber-tray tray-olt"; renderTray();
+        }
+        else {
+            document.getElementById('box-fusion-panel').classList.remove('d-none');
+            if(node.type === 'ceo') {
+                document.getElementById('boxTitle').innerHTML = `<i class="bi bi-signpost-split text-white"></i> CEO (Caixa de Emenda)`;
+                tray.className = "fiber-tray tray-ceo";
+            } else {
+                document.getElementById('boxTitle').innerHTML = `<i class="bi bi-box text-warning"></i> CTO (Atendimento)`;
+                tray.className = "fiber-tray tray-cto";
+            }
+            renderTray();
+        }
+        boxModalInstance.show();
+    }
+
+    function upgradeNode(newType) {
+        let node = nodes[activeNodeId];
+        node.type = newType; node.label = newType === 'ceo' ? 'CEO' : 'CTO';
+        let div = document.getElementById(node.id);
+        div.className = `cad-node node-${newType}`; div.innerHTML = (newType==='ceo'?'C':'T') + `<span>${node.label}</span>`;
+        openBox(activeNodeId); 
+    }
+
+    function updateOltPower() {
+        let newPwr = parseFloat(document.getElementById('oltPowerInput').value);
+        if(isNaN(newPwr)) return; nodes[activeNodeId].oltPower = newPwr;
+        updatePowerNetwork(); renderTray();
+        showToast("OLT", `Laser configurado para ${newPwr} dBm.`, "success");
+    }
+
+    function renameActiveNode() {
+        let node = nodes[activeNodeId];
+        let newName = prompt("Nome do Cliente:", node.label);
+        if(newName && newName.trim() !== "") {
+            node.label = newName.trim();
+            document.getElementById('boxTitle').innerHTML = `<i class="bi bi-house-door text-danger"></i> Instalação: ${node.label}`;
+            updatePowerNetwork(); 
+            showToast("Cliente", `Renomeado para: ${node.label}`, "success");
+        }
+    }
+
+    function updateClientRoseta() {
+        let node = nodes[activeNodeId];
+        node.hasRoseta = (document.getElementById('clientRosetaSelect').value === 'roseta');
+        splices[activeNodeId].forEach(s => {
+            if(s.portA === 'RX' || s.portB === 'RX') s.loss = node.hasRoseta ? 1.0 : 0.5;
+        });
+        updatePowerNetwork(); renderTray();
+        showToast("Conexão", "Atenuação do conector ajustada.", "info");
+    }
+
+    // --- BANDEJA E IDENTIFICAÇÃO ---
+    function getFiberInfo(index, isDrop) {
+        if(isDrop) return { name: "Drop (Fibra Única)", colorClass: "c8" }; 
+        let tubeIdx = Math.floor(index / 12); let fiberIdx = index % 12;
+        return { name: `T${tubeIdx+1} (${coresTB[tubeIdx%12]}) - F${fiberIdx+1} (${coresTB[fiberIdx]})`, colorClass: `c${fiberIdx}` };
+    }
+
+    function formatPortName(portStr) {
+        if(portStr === 'TX') return "Laser TX"; if(portStr === 'RX') return "ONU";
+        if(portStr.startsWith('spl_')) { let p = portStr.split('_'); return `Splitter ${parseInt(p[1])+1} - ${p[2].toUpperCase()}`; }
+        if(portStr.startsWith('c')) { let p = portStr.split('_'); return `Cabo ${p[0].replace('c','')} - F${parseInt(p[1].replace('f',''))+1}`; }
+        return portStr;
+    }
+
+    function renderTray() {
+        let tray = document.getElementById('tray-container'); tray.innerHTML = '';
+        let node = nodes[activeNodeId];
+
+        if(node.type === 'olt') {
+            tray.innerHTML += createTrayGroup("Placa PON", [{ portId: 'TX', name: `SFP TX (+${node.oltPower} dBm)`, colorClass: 'bg-primary' }]);
+        }
+        
+        if(node.type === 'client') {
+            let pwr = calculatePowerAtPort(activeNodeId, 'RX');
+            let pTxt = pwr !== null ? `${pwr.toFixed(2)} dBm` : 'Sem Sinal';
+            tray.innerHTML += createTrayGroup("Equipamento Casa", [{ portId: 'RX', name: `Porta Óptica ONU (Sinal: ${pTxt})`, colorClass: 'bg-danger' }]);
+        }
+
+        Object.values(cables).filter(c => c.src === activeNodeId || c.tgt === activeNodeId).forEach(c => {
+            let isInput = (c.tgt === activeNodeId);
+            let directionBadge = isInput ? `<span class="badge bg-success rounded-pill ms-1">ENTRADA</span>` : `<span class="badge bg-primary rounded-pill ms-1">SAÍDA</span>`;
+            let directionText = isInput ? `Vem de: ${nodes[c.src].label}` : `Vai para: ${nodes[c.tgt].label}`;
+            
+            let isDrop = c.capacity === 1;
+            let title = `<i class="bi bi-diagram-2-fill"></i> Cabo ${c.id.replace('c','')} (${c.capacity}FO) ${directionBadge} <br><div class="mt-2 text-info small"><i class="bi bi-arrow-right-short"></i> ${directionText}</div>`;
+            
+            let ports = [];
+            for(let i=0; i<c.capacity; i++) {
+                let fInfo = getFiberInfo(i, isDrop); ports.push({ portId: `${c.id}_f${i}`, name: fInfo.name, colorClass: fInfo.colorClass });
+            }
+            tray.innerHTML += createTrayGroup(title, ports);
+        });
+
+        node.splitters.forEach((spl, idx) => {
+            let splId = `spl_${idx}`;
+            let ports = [{ portId: `${splId}_in`, name: "IN (Entrada)", colorClass: 'c0' }];
+            let isFBT = spl.startsWith('FBT');
+            let extraClass = ''; let headerIcon = 'Splitter';
+
+            if(isFBT) {
+                let parts = spl.split('_'); 
+                ports.push({ portId: `${splId}_out1`, name: `OUT (Passante ${parts[2]}%)`, colorClass: 'c3' });
+                ports.push({ portId: `${splId}_tap1`, name: `TAP (Derivação ${parts[1]}%)`, colorClass: 'c1' });
+                extraClass = 'panel-fbt'; headerIcon = '<i class="bi bi-hdd-network-fill text-info"></i> FBT Desbalanceado';
+            } else {
+                let outs = parseInt(spl.split('_')[1].split(':')[1]);
+                for(let i=1; i<=outs; i++) ports.push({ portId: `${splId}_out${i}`, name: `OUT ${i} (Atendimento)`, colorClass: 'bg-secondary' });
+                extraClass = node.type === 'cto' ? 'panel-cto' : '';
+                headerIcon = node.type === 'cto' ? '<i class="bi bi-grid-3x3-gap-fill text-warning"></i> Painel Atendimento PLC' : '<i class="bi bi-bar-chart-steps text-light"></i> Splitter PLC';
+            }
+            
+            let htmlType = isFBT ? spl.replace('_',' ') : spl.replace('_', ' ');
+            tray.innerHTML += createTrayGroup(`${headerIcon} <br><small class="text-white">${htmlType}</small> <button class="btn btn-sm btn-danger float-end py-0" onclick="removeSplitter(${idx})"><i class="bi bi-trash"></i></button>`, ports, extraClass);
+        });
+    }
+
+    function createTrayGroup(title, ports, extraClass = "") {
+        let html = `<div class="cable-box ${extraClass}"><h6 class="border-bottom border-secondary pb-2 mb-3 text-white">${title}</h6>`;
+        ports.forEach(p => {
+            let conn = splices[activeNodeId].find(s => s.portA === p.portId || s.portB === p.portId);
+            
+            let cssSpliced = '';
+            let subText = "";
+            
+            if(conn) {
+                let targetStr = formatPortName(conn.portA===p.portId ? conn.portB : conn.portA);
+                // IDENTIFICA SE É PASSANTE DIRETO (Perda 0)
+                if(conn.loss === 0.0) {
+                    cssSpliced = 'passante';
+                    subText = `<div class="mt-1 text-info fw-bold" style="font-size:0.8rem;"><i class="bi bi-arrow-left-right"></i> Passante: ${targetStr}</div>`;
+                } else {
+                    cssSpliced = 'spliced';
+                    subText = `<div class="mt-1 text-success fw-bold" style="font-size:0.8rem;"><i class="bi bi-link"></i> Fusão: ${targetStr}</div>`;
+                }
+            }
+
+            html += `
+                <div class="fiber-item ${cssSpliced}" id="port_${p.portId}" onclick="selectPort('${p.portId}')">
+                    <div class="f-color ${p.colorClass}"></div> 
+                    <div style="flex-grow:1; line-height: 1.2;">${p.name} ${subText}</div>
+                </div>`;
+        });
+        html += `</div>`;
+        return html;
+    }
+
+    function selectPort(portId) {
+        let el = document.getElementById('port_'+portId);
+        if(selectedPorts.includes(portId)) {
+            selectedPorts = selectedPorts.filter(p => p !== portId); el.classList.remove('selected');
+        } else {
+            if(selectedPorts.length >= 2) { document.getElementById('port_'+selectedPorts[0]).classList.remove('selected'); selectedPorts.shift(); }
+            selectedPorts.push(portId); el.classList.add('selected');
+        }
+    }
+
+    // --- AÇÕES ---
+    function addSplitter(type) { nodes[activeNodeId].splitters.push(type); renderTray(); }
+    
+    function removeSplitter(idx) {
+        let prefix = `spl_${idx}`;
+        splices[activeNodeId] = splices[activeNodeId].filter(s => !s.portA.startsWith(prefix) && !s.portB.startsWith(prefix));
+        nodes[activeNodeId].splitters.splice(idx, 1); updatePowerNetwork(); renderTray();
+    }
+
+    function bulkSplice() {
+        let cabosAtivos = Object.values(cables).filter(c => c.src === activeNodeId || c.tgt === activeNodeId);
+        if(cabosAtivos.length < 2) return showToast("Erro", "Precisa de 2 cabos.", "error");
+        let idA = prompt("NÚMERO do Cabo Entrada (Ex: 1):"); let idB = prompt("NÚMERO do Cabo Saída:");
+        if(!idA || !idB) return; let cA = `c${idA}`; let cB = `c${idB}`;
+        if(!cables[cA] || !cables[cB]) return showToast("Erro", "Cabo não existe.", "error");
+
+        let limite = Math.min(cables[cA].capacity, cables[cB].capacity); let cont = 0;
+        for(let i=0; i<limite; i++) {
+            let pA = `${cA}_f${i}`; let pB = `${cB}_f${i}`;
+            let emUso = splices[activeNodeId].some(s => s.portA === pA || s.portB === pA || s.portA === pB || s.portB === pB);
+            if(!emUso) { splices[activeNodeId].push({ portA: pA, portB: pB, loss: 0.0 }); cont++; } // Auto passante perda zero
+        }
+        updatePowerNetwork(); renderTray(); showToast("Passante", `${cont} fibras conectadas direto.`, "success");
+    }
+
+    function fusionFibers() {
+        if(selectedPorts.length !== 2) return showToast("Atenção", "Selecione exatamente 2 pontas.", "warning");
+        let pA = selectedPorts[0]; let pB = selectedPorts[1];
+        if(splices[activeNodeId].some(s => s.portA === pA || s.portB === pA || s.portA === pB || s.portB === pB)) return showToast("Erro", "Ponta ocupada. Rompa a atual antes.", "error");
+        
+        let loss = 0.1; // Fusão padrão
+        if(pA === 'RX' || pB === 'RX') loss = nodes[activeNodeId].hasRoseta ? 1.0 : 0.5;
+        
+        splices[activeNodeId].push({ portA: pA, portB: pB, loss: loss });
+        selectedPorts = []; updatePowerNetwork(); renderTray();
+    }
+
+    function breakFusion() {
+        if(selectedPorts.length !== 1) return showToast("Atenção", "Selecione 1 ponta para separar (fazer sangria).", "warning");
+        let p = selectedPorts[0]; let len = splices[activeNodeId].length;
+        splices[activeNodeId] = splices[activeNodeId].filter(s => s.portA !== p && s.portB !== p);
+        if(splices[activeNodeId].length === len) return showToast("Aviso", "Esta fibra já está solta.", "info");
+        selectedPorts = []; updatePowerNetwork(); renderTray();
+        showToast("Sangria", "A fibra foi rompida e está livre.", "success");
+    }
+
+    function measurePower() {
+        if(selectedPorts.length !== 1) return showToast("Atenção", "Selecione 1 ponta para medir.", "warning");
+        let pwr = calculatePowerAtPort(activeNodeId, selectedPorts[0]);
+        if(pwr !== null) showToast("Power Meter", `Sinal: ${pwr.toFixed(2)} dBm`, "success");
+        else showToast("Power Meter", "LOS (Sem Luz)", "error");
+    }
+
+    // --- CÁLCULO DE GRAFOS E ATUALIZAÇÃO VISUAL ---
+    let globalPowerState = {}; 
+
+    function updatePowerNetwork() {
+        globalPowerState = {}; let queue = [];
+        Object.values(nodes).filter(n => n.type === 'olt').forEach(olt => {
+            let portGlobal = `${olt.id}_TX`;
+            let pwr = olt.oltPower !== undefined ? olt.oltPower : 5.0;
+            globalPowerState[portGlobal] = pwr; queue.push({ port: portGlobal, power: pwr });
+        });
+
+        while(queue.length > 0) {
+            let curr = queue.shift();
+            let [nodeId, portLocal] = curr.port.split('_', 2);
+            portLocal = curr.port.substring(nodeId.length + 1);
+
+            if(splices[nodeId]) {
+                splices[nodeId].forEach(s => {
+                    let destLocal = s.portA === portLocal ? s.portB : (s.portB === portLocal ? s.portA : null);
+                    if(destLocal) {
+                        let newPwr = curr.power - s.loss; let destGlobal = `${nodeId}_${destLocal}`;
+                        if(globalPowerState[destGlobal] === undefined || newPwr > globalPowerState[destGlobal]) {
+                            globalPowerState[destGlobal] = newPwr; queue.push({ port: destGlobal, power: newPwr });
+                        }
+                    }
+                });
+            }
+
+            if(portLocal.includes('_in')) {
+                let splId = portLocal.replace('_in', ''); let splIdx = parseInt(splId.replace('spl_',''));
+                if(nodes[nodeId].splitters[splIdx]) {
+                    let splType = nodes[nodeId].splitters[splIdx];
+                    
+                    if(splType.startsWith('FBT')) {
+                        let tapVal = splType.split('_')[1];
+                        let l = fbtLoss[`${tapVal}_${100-tapVal}`];
+                        
+                        let outGlobal = `${nodeId}_${splId}_out1`; let pwrOut = curr.power - l.out;
+                        if(globalPowerState[outGlobal] === undefined || pwrOut > globalPowerState[outGlobal]) {
+                            globalPowerState[outGlobal] = pwrOut; queue.push({ port: outGlobal, power: pwrOut });
+                        }
+                        
+                        let tapGlobal = `${nodeId}_${splId}_tap1`; let pwrTap = curr.power - l.tap;
+                        if(globalPowerState[tapGlobal] === undefined || pwrTap > globalPowerState[tapGlobal]) {
+                            globalPowerState[tapGlobal] = pwrTap; queue.push({ port: tapGlobal, power: pwrTap });
+                        }
+                    } else {
+                        let splLoss = splType === 'PLC_1:2' ? 3.5 : (splType === 'PLC_1:4' ? 7.3 : (splType === 'PLC_1:8' ? 10.5 : 14.0));
+                        let outs = parseInt(splType.split(':')[1]);
+                        for(let i=1; i<=outs; i++) {
+                            let outGlobal = `${nodeId}_${splId}_out${i}`; let newPwr = curr.power - splLoss;
+                            if(globalPowerState[outGlobal] === undefined || newPwr > globalPowerState[outGlobal]) {
+                                globalPowerState[outGlobal] = newPwr; queue.push({ port: outGlobal, power: newPwr });
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(portLocal.startsWith('c') && portLocal.includes('_f')) {
+                let [cabId, fibId] = portLocal.split('_'); let cable = cables[cabId];
+                if(cable) {
+                    let destNode = cable.src === nodeId ? cable.tgt : cable.src;
+                    let destGlobal = `${destNode}_${portLocal}`; let newPwr = curr.power - (cable.dist * 0.25);
+                    if(globalPowerState[destGlobal] === undefined || newPwr > globalPowerState[destGlobal]) {
+                        globalPowerState[destGlobal] = newPwr; queue.push({ port: destGlobal, power: newPwr });
+                    }
+                }
+            }
+        }
+
+        // --- ATUALIZAÇÃO VISUAL DAS CORES DA CASA NO MAPA ---
+        Object.values(nodes).forEach(node => {
+            if (node.type === 'client') {
+                let pwr = calculatePowerAtPort(node.id, 'RX');
+                let div = document.getElementById(node.id);
+                if (div) {
+                    let span = div.querySelector('span');
+                    if (pwr !== null) {
+                        div.classList.remove('offline'); div.classList.add('online'); // Casa Verde
+                        if(span) span.innerHTML = `${node.label}<br><b style="color:#39ff14">${pwr.toFixed(1)} dBm</b>`;
+                    } else {
+                        div.classList.remove('online'); div.classList.add('offline'); // Casa Vermelha
+                        if(span) span.innerHTML = `${node.label}<br><b style="color:#ffc107">LOS</b>`;
+                    }
+                }
+            } else {
+                let div = document.getElementById(node.id);
+                if(div) { let span = div.querySelector('span'); if(span) span.innerHTML = node.label; }
+            }
+        });
+    }
+
+    function calculatePowerAtPort(nodeId, portLocal) {
+        let val = globalPowerState[`${nodeId}_${portLocal}`];
+        return val === undefined ? null : val;
+    }
+</script>
+{% endblock %}

@@ -70,18 +70,32 @@
             <div class="card-body bg-light" id="quizContainer">
                 <h4 class="text-center text-info fw-bold mb-4">Escolha o Módulo para Avaliação</h4>
                 <div class="d-grid gap-3 col-md-8 mx-auto">
-                    <a href="{{ url_for('diag_quiz') }}?modulo=ftth" class="btn btn-primary btn-lg">
-                        <i class="bi bi-optical-audio"></i> Módulo FTTH (Fibra)
+                    
+                    <a href="{{ url_for('diag_quiz') }}?modulo=ftth" class="btn btn-primary btn-lg text-start fw-bold shadow-sm">
+                        <i class="bi bi-optical-audio me-2"></i> Módulo FTTH (Fibra)
                     </a>
-                    <a href="{{ url_for('diag_quiz') }}?modulo=ip" class="btn btn-success btn-lg">
-                        <i class="bi bi-hdd-network"></i> Módulo Redes IP
+                    <a href="{{ url_for('diag_quiz') }}?modulo=ip" class="btn btn-success btn-lg text-start fw-bold shadow-sm">
+                        <i class="bi bi-hdd-network me-2"></i> Módulo Redes IP
                     </a>
-                    <a href="{{ url_for('diag_quiz') }}?modulo=radio" class="btn btn-secondary btn-lg">
-                        <i class="bi bi-broadcast"></i> Módulo Rádio (Wireless)
+                    <a href="{{ url_for('diag_quiz') }}?modulo=radio" class="btn btn-secondary btn-lg text-start fw-bold shadow-sm">
+                        <i class="bi bi-broadcast me-2"></i> Módulo Rádio (Wireless)
                     </a>
+                    
+                    <hr class="text-secondary my-2">
+                    
+                    <a href="{{ url_for('diag_quiz') }}?modulo=atendimento" class="btn btn-outline-primary border-2 bg-white btn-lg text-start fw-bold shadow-sm">
+                        <i class="bi bi-headset me-2 text-primary"></i> Módulo Suporte N1/N2
+                    </a>
+                    <a href="{{ url_for('diag_quiz') }}?modulo=vendas" class="btn btn-outline-success border-2 bg-white btn-lg text-start fw-bold shadow-sm">
+                        <i class="bi bi-cart-check me-2 text-success"></i> Módulo Comercial e Vendas
+                    </a>
+                    <a href="{{ url_for('diag_quiz') }}?modulo=gestao" class="btn btn-outline-dark border-2 bg-white btn-lg text-start fw-bold shadow-sm">
+                        <i class="bi bi-cone-striped me-2 text-warning"></i> Módulo Normas & Seg. Trabalho
+                    </a>
+
                 </div>
                 
-                <div class="alert alert-info text-center mt-4">
+                <div class="alert alert-info text-center mt-4 mb-0">
                     <i class="bi bi-info-circle-fill"></i> O servidor seleciona 5 questões aleatórias do banco para cada teste.
                 </div>
             </div>

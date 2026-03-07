@@ -8,14 +8,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2920/2920330.png">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='icon.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icon.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   </head>
   <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4 sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4 sticky-top">
       <div class="container">
         <a class="navbar-brand fw-bold" href="/"><i class="bi bi-globe"></i> Telecom Pro</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -30,8 +31,12 @@
                 <ul class="dropdown-menu shadow">
                     <li><a class="dropdown-item" href="/ftth/teoria">Arquitetura & Engenharia</a></li>
                     <li><a class="dropdown-item" href="/ftth/hardware">Enciclopédia de Hardware</a></li>
+                    <li><a class="dropdown-item" href="/ftth/calc">Simulador de Potência Básica</a></li>
+                    <li><a class="dropdown-item" href="/ftth/simulador_avancado">Simulador Avançado (End-to-End)</a></li>
+                    <li><a class="dropdown-item" href="/ftth/simulador_campo">Simulador de Campo (Passo a Passo)</a></li>
+                    <li><a class="dropdown-item" href="/ftth/simulador_grafico">Topologia Gráfica Básica</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/ftth/calc">Simulador de Potência</a></li>
+                    <li><a class="dropdown-item fw-bold text-info" href="/ftth/mapa_interativo"><i class="bi bi-bezier2 me-2"></i>Mini CAD Profissional (O Mapa)</a></li>
                 </ul>
             </li>
             
@@ -39,25 +44,30 @@
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i class="bi bi-broadcast"></i> Wireless</a>
                 <ul class="dropdown-menu shadow">
                     <li><a class="dropdown-item" href="/radio/teoria">Engenharia WISP</a></li>
-                    <li><a class="dropdown-item" href="/radio/hardware">Hardware & Antenas</a></li> </ul>
-            </li>
-            
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i class="bi bi-hdd-network"></i> IP & Redes</a>
-                <ul class="dropdown-menu shadow">
-                    <li><a class="dropdown-item" href="/ip/teoria">Protocolos (TCP/IP)</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/ip/calc">Calculadora CIDR</a></li>
+                    <li><a class="dropdown-item" href="/radio/hardware">Hardware & Antenas</a></li> 
                 </ul>
             </li>
             
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-server"></i> Infra & Core
-                </a>
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i class="bi bi-hdd-network"></i> IP & Core</a>
                 <ul class="dropdown-menu shadow">
-                    <li><a class="dropdown-item" href="/servers/teoria"><i class="bi bi-person-badge me-2"></i>Servidores (AAA/DNS)</a></li>
-                    <li><a class="dropdown-item" href="/core/teoria"><i class="bi bi-bounding-box me-2"></i>Core (MPLS/BGP)</a></li>
+                    <li><a class="dropdown-item" href="/ip/teoria">Protocolos (TCP/IP)</a></li>
+                    <li><a class="dropdown-item" href="/ip/calc">Calculadora CIDR</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/servers/teoria">Servidores (AAA/DNS)</a></li>
+                    <li><a class="dropdown-item" href="/core/teoria">Core (MPLS/BGP)</a></li>
+                    <li><a class="dropdown-item" href="/security/teoria">Segurança de Redes</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-briefcase"></i> Negócios
+                </a>
+                <ul class="dropdown-menu shadow border-dark">
+                    <li><a class="dropdown-item" href="/atendimento/teoria"><i class="bi bi-headset me-2 text-info"></i>Suporte N1/N2</a></li>
+                    <li><a class="dropdown-item" href="/vendas/teoria"><i class="bi bi-cart-check me-2 text-success"></i>Vendas & Comercial</a></li>
+                    <li><a class="dropdown-item" href="/gestao/teoria"><i class="bi bi-journal-text me-2 text-secondary"></i>Normas & ANATEL</a></li>
                 </ul>
             </li>
 
@@ -75,8 +85,15 @@
         {% endblock %}
     </div>
 
-    <footer class="text-center py-4 mt-5 text-muted border-top bg-white">
-        <small>Sistema de Estudo Técnico Profissional &copy; 2025</small>
+        <footer class="text-center py-4 mt-5 text-muted border-top bg-white shadow-sm">
+        <div class="container">
+            <small class="fw-bold">
+                <i class="bi bi-code-slash text-primary"></i> 
+                Desenvolvido pela equipe de programadores da <span class="text-primary">Dual Core Solutions</span> &copy; 2026
+            </small>
+            <br>
+            <small class="text-secondary">Plataforma de Treinamento Avançado em Telecomunicações</small>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

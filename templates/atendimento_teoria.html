@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12 text-center">
+        <h1 class="text-primary fw-bold"><i class="bi bi-headset"></i> Suporte N1/N2 e Atendimento</h1>
+        <p class="lead text-muted">A linha de frente do provedor. Técnicas de triagem para evitar o envio desnecessário de técnicos de campo.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm border-start border-primary border-4">
+            <div class="card-header bg-white fw-bold"><i class="bi bi-telephone-inbound text-primary"></i> A Missão do Suporte Nível 1</div>
+            <div class="card-body">
+                <p>Cerca de <strong>40% das visitas técnicas são "improdutivas"</strong> (O problema era o roteador desligado, cabo invertido na porta LAN/WAN ou fatura atrasada). O N1 tem a missão de filtrar isso.</p>
+                <ul class="mb-0">
+                    <li><strong>Empatia Ativa:</strong> O cliente sem internet já está irritado. Nunca diga "O senhor desconfigurou o roteador". Diga: "Vamos verificar juntos o equipamento para restaurar sua conexão."</li>
+                    <li><strong>Triagem de LOS (Loss of Signal):</strong> A primeira pergunta do script: "Senhor(a), qual a cor da luz que está piscando na caixinha da operadora?". Se relatar luz Vermelha (LOS), a fibra rompeu (Drop esticado, fusão quebrada). Aciona o técnico imediatamente.</li>
+                    <li><strong>Cabos Invertidos:</strong> Clientes costumam tirar o cabo para limpar a estante e colocar o cabo que vem da ONU na porta "LAN" do roteador Wi-Fi, em vez da porta "WAN". O N1 deve guiar visualmente a troca.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm border-start border-info border-4">
+            <div class="card-header bg-white fw-bold"><i class="bi bi-speedometer text-info"></i> A Ilusão da "Internet Lenta"</div>
+            <div class="card-body">
+                <p>A maior reclamação diária é lentidão. Na tecnologia óptica, é raro a lentidão ser do link; geralmente é gargalo no Wi-Fi interno do cliente.</p>
+                <div class="alert alert-info small mb-3">
+                    <strong>Script de Educação do Cliente:</strong> "O teste de velocidade foi feito no Wi-Fi ou no computador com cabo? O Wi-Fi 2.4GHz sofre interferência de micro-ondas e redes dos vizinhos, limitando-se a uns 50 Mega. Para testar seus 400 Mega, precisamos usar a rede 5G estando no mesmo cômodo do roteador."
+                </div>
+                <p class="mb-0"><strong>Suporte N2 (Avançado):</strong> Quando o N1 não resolve, o N2 entra no sistema da OLT (ou TR-069) para checar o sinal óptico (-dBm), verificar a tabela MAC, latência do PPPoE, mudar o canal do Wi-Fi remotamente ou checar gargalo de CPU no roteador do cliente.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card shadow-sm border-start border-dark border-4">
+            <div class="card-body">
+                <h5 class="fw-bold"><i class="bi bi-bar-chart-steps"></i> Indicadores de Qualidade (KPIs)</h5>
+                <div class="row text-center mt-3">
+                    <div class="col-md-4">
+                        <div class="p-2 border rounded bg-light">
+                            <span class="fw-bold text-dark d-block">SLA</span>
+                            <small class="text-muted">Acordo de Nível de Serviço. Tempo máximo prometido em contrato para resolver um chamado (ex: 4h para PJ, 24h para CPF).</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-2 border rounded bg-light">
+                            <span class="fw-bold text-dark d-block">MTTR</span>
+                            <small class="text-muted">Tempo Médio de Reparo. Quanto tempo a equipe leva, em média, do momento que o cabo rompeu até a fusão ser refeita.</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-2 border rounded bg-light">
+                            <span class="fw-bold text-dark d-block">MTBF</span>
+                            <small class="text-muted">Tempo Médio entre Falhas. Mede a confiabilidade da sua rede. Redes mal construídas têm o MTBF muito baixo.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

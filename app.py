@@ -6,7 +6,7 @@ import math
 app = Flask(__name__)
 
 # =================================================================
-# BANCO DE QUESTÕES (Mantido no topo)
+# BANCO DE QUESTÕES (Mantido intacto)
 # =================================================================
 QUIZ_FTTH = {
     "q1": {"pergunta": "Qual é a cor OBRIGATÓRIA do conector em redes GPON?", "opcoes": {"A": "Azul (UPC)", "B": "Verde (APC)", "C": "Preto (PC)"}, "resposta": "B", "modulo": "FTTH"},
@@ -32,19 +32,47 @@ QUIZ_RADIO = {
     "q5": {"pergunta": "Um cabo de rede de torre deve ser BLINDADO (STP/FTP) para proteger contra:", "opcoes": {"A": "Perda de atenuação", "B": "ESD (Descarga Eletrostática) e raios", "C": "Dobra e quebra"}, "resposta": "B", "modulo": "Rádio"},
 }
 
+# --- NOVOS BANCOS DE QUESTÕES ---
+QUIZ_ATENDIMENTO = {
+    "q1": {"pergunta": "Qual é a primeira pergunta obrigatória na triagem de um cliente sem conexão (sinal vermelho/piscando)?", "opcoes": {"A": "Qual é a sua senha do Wi-Fi?", "B": "Qual a cor da luz LOS na ONU?", "C": "O senhor pagou a fatura?"}, "resposta": "B", "modulo": "Atendimento"},
+    "q2": {"pergunta": "O que acontece se o cliente apertar o botão 'Reset' do roteador achando que vai reiniciar o aparelho?", "opcoes": {"A": "A internet fica mais rápida", "B": "Limpa o histórico de navegação", "C": "Apaga as configurações de PPPoE, exigindo visita técnica ou acesso remoto"}, "resposta": "C", "modulo": "Atendimento"},
+    "q3": {"pergunta": "Se um cliente reclama que o plano de 500 Mega está batendo apenas 45 Mbps no celular pelo Wi-Fi, o diagnóstico imediato é:", "opcoes": {"A": "O teste está sendo feito na rede 2.4GHz", "B": "A fibra está dobrada na rua", "C": "O roteador está queimado"}, "resposta": "A", "modulo": "Atendimento"},
+    "q4": {"pergunta": "O que a sigla MTTR mede em um provedor?", "opcoes": {"A": "O limite de banda", "B": "Tempo Médio de Reparo (rapidez da equipe de campo)", "C": "Tempo de instalação de um novo cliente"}, "resposta": "B", "modulo": "Atendimento"},
+    "q5": {"pergunta": "Qual a melhor abordagem ao atender um cliente irritado com lentidão?", "opcoes": {"A": "Dizer que no sistema está tudo normal", "B": "Exigir que ele fale baixo", "C": "Demonstrar empatia ativa e verificar o status da porta PON e roteador em conjunto"}, "resposta": "C", "modulo": "Atendimento"},
+}
+
+QUIZ_VENDAS = {
+    "q1": {"pergunta": "O que significa 'Churn' em Telecom?", "opcoes": {"A": "Taxa de cancelamento e perda de clientes", "B": "Sinal óptico fora do padrão", "C": "Acréscimo de velocidade"}, "resposta": "A", "modulo": "Vendas"},
+    "q2": {"pergunta": "Na metodologia de Vendas PAP (Porta a Porta), o que é o 'Gatilho da Dor'?", "opcoes": {"A": "Oferecer 3 meses grátis logo na abordagem", "B": "Focar nas frustrações atuais do cliente (ex: Netflix travando à noite)", "C": "Falar as especificações da ONU"}, "resposta": "B", "modulo": "Vendas"},
+    "q3": {"pergunta": "O que é 'Up-Sell' na base de assinantes?", "opcoes": {"A": "Vender o provedor para um concorrente", "B": "Entrar em contato com um cliente ativo e vender um plano de maior velocidade", "C": "Vender roteador usado"}, "resposta": "B", "modulo": "Vendas"},
+    "q4": {"pergunta": "Por que o Churn precoce (cancelamento em menos de 6 meses) gera grande prejuízo?", "opcoes": {"A": "Porque o Custo de Aquisição do Cliente (CAC - ONU, Drop, Mão de Obra) ainda não se pagou", "B": "Porque a Anatel aplica multas", "C": "Porque o roteador estraga ao ser recolhido"}, "resposta": "A", "modulo": "Vendas"},
+    "q5": {"pergunta": "O que é o Ticket Médio (ARPU)?", "opcoes": {"A": "A média de clientes que ligam no suporte", "B": "A Receita Média Gerada por cada Usuário no mês", "C": "O valor da multa de fidelidade"}, "resposta": "B", "modulo": "Vendas"},
+}
+
+QUIZ_GESTAO = {
+    "q1": {"pergunta": "A partir de qual altura a norma NR35 exige o uso de EPI e ancoragem com Fator de Queda correto?", "opcoes": {"A": "1,5 metros", "B": "2,0 metros", "C": "4,0 metros"}, "resposta": "B", "modulo": "Normas"},
+    "q2": {"pergunta": "Por que o uso de escadas de alumínio é estritamente PROIBIDO para técnicos de Telecom?", "opcoes": {"A": "Porque é pesada", "B": "Porque amassa fácil", "C": "Porque conduz eletricidade e gera risco de arco elétrico/choque (NR10)"}, "resposta": "C", "modulo": "Normas"},
+    "q3": {"pergunta": "Segundo a norma conjunta ANATEL/ANEEL, qual a distância mínima da rede de telecom para a rede de Baixa Tensão?", "opcoes": {"A": "Nenhuma", "B": "50 cm a 60 cm", "C": "2 metros"}, "resposta": "B", "modulo": "Normas"},
+    "q4": {"pergunta": "Como deve ser feita a ancoragem do Talabarte no poste para evitar ferimentos graves em caso de queda?", "opcoes": {"A": "Amarrar na escada", "B": "Ancorar no próprio poste e acima da cabeça (reduzindo impacto e impacto pendular)", "C": "Amarrar no mensageiro do cabo drop"}, "resposta": "B", "modulo": "Normas"},
+    "q5": {"pergunta": "O que acontece se as 'raquetes' de fibra (reserva técnica) ficarem espalhadas e despencando pelo poste?", "opcoes": {"A": "Nada, é permitido", "B": "Aumenta o sinal", "C": "A Concessionária de Energia aplica multas severas e pode cortar o cabo"}, "resposta": "C", "modulo": "Normas"},
+}
+
+# Atualização do Banco Mestre para incluir todos os módulos
 BANCO_MESTRE = {
     "ftth": QUIZ_FTTH,
     "ip": QUIZ_IP,
-    "radio": QUIZ_RADIO
+    "radio": QUIZ_RADIO,
+    "atendimento": QUIZ_ATENDIMENTO,
+    "vendas": QUIZ_VENDAS,
+    "gestao": QUIZ_GESTAO
 }
-# =================================================================
 
-# --- ROTA PRINCIPAL (DASHBOARD) ---
+# --- ROTA PRINCIPAL ---
 @app.route('/')
 def home():
     return render_template('home.html', titulo="Dashboard Principal")
 
-# --- MÓDULO FTTH (FIBRA) ---
+# --- MÓDULO FTTH ---
 @app.route('/ftth/teoria')
 def ftth_teoria():
     return render_template('ftth_teoria.html', titulo="FTTH: Engenharia & Arquitetura")
@@ -55,271 +83,161 @@ def ftth_hardware():
 
 @app.route('/ftth/calc', methods=['GET', 'POST'])
 def ftth_calc():
-    if request.method == 'GET':
-        return render_template('ftth_calc.html', titulo="FTTH: Simulador Pro")
     return render_template('ftth_calc.html', titulo="FTTH: Simulador Pro")
 
-# --- SUB-ROTAS: DETALHES DE HARDWARE FTTH (AS CAUSADORAS DO PROBLEMA) ---
-# TODAS ESSAS FUNÇÕES DEVEM EXISTIR NO SERVIDOR VERCEL
+@app.route('/ftth/simulador_avancado')
+def ftth_simulador_avancado():
+    return render_template('ftth_simulator.html', titulo="FTTH: Simulador End-to-End")
+
+@app.route('/ftth/simulador_campo')
+def ftth_simulador_campo():
+    return render_template('ftth_field_simulator.html', titulo="FTTH: Simulador de Campo")
+
+@app.route('/ftth/simulador_grafico')
+def ftth_simulador_grafico():
+    return render_template('ftth_visual_simulator.html', titulo="FTTH: Simulador Gráfico")
+
+# --- NOVO: MÓDULO CAD (MAPA INTERATIVO AVANÇADO) ---
+@app.route('/ftth/mapa_interativo')
+def ftth_mapa_interativo():
+    return render_template('ftth_interactive_map.html', titulo="FTTH: Mini CAD Profissional")
+
+# --- SUB-ROTAS DE HARDWARE FTTH ---
 @app.route('/ftth/hardware/olt')
-def ftth_hw_olt():
-    return render_template('ftth_hw_olt.html', titulo="HW: OLT")
-
+def ftth_hw_olt(): return render_template('ftth_hw_olt.html', titulo="HW: OLT")
 @app.route('/ftth/hardware/gbic')
-def ftth_hw_gbic():
-    return render_template('ftth_hw_gbic.html', titulo="HW: GBIC/SFP")
-
+def ftth_hw_gbic(): return render_template('ftth_hw_gbic.html', titulo="HW: GBIC/SFP")
 @app.route('/ftth/hardware/fibras')
-def ftth_hw_fibras():
-    return render_template('ftth_hw_fibras.html', titulo="HW: Fibras e Cabos")
-
+def ftth_hw_fibras(): return render_template('ftth_hw_fibras.html', titulo="HW: Fibras e Cabos")
 @app.route('/ftth/hardware/splitters')
-def ftth_hw_splitters():
-    return render_template('ftth_hw_splitters.html', titulo="HW: Splitters")
-
+def ftth_hw_splitters(): return render_template('ftth_hw_splitters.html', titulo="HW: Splitters")
 @app.route('/ftth/hardware/caixas')
-def ftth_hw_caixas():
-    return render_template('ftth_hw_caixas.html', titulo="HW: Caixas Ópticas")
-
+def ftth_hw_caixas(): return render_template('ftth_hw_caixas.html', titulo="HW: Caixas Ópticas")
 @app.route('/ftth/hardware/conectores')
-def ftth_hw_conectores():
-    return render_template('ftth_hw_conectores.html', titulo="HW: Conectores")
-
+def ftth_hw_conectores(): return render_template('ftth_hw_conectores.html', titulo="HW: Conectores")
 @app.route('/ftth/hardware/emendas')
-def ftth_hw_emendas():
-    return render_template('ftth_hw_emendas.html', titulo="HW: Tipos de Emenda")
-
+def ftth_hw_emendas(): return render_template('ftth_hw_emendas.html', titulo="HW: Tipos de Emenda")
 @app.route('/ftth/hardware/patchcords')
-def ftth_hw_patchcords():
-    return render_template('ftth_hw_patchcords.html', titulo="HW: Patch Cords")
-
+def ftth_hw_patchcords(): return render_template('ftth_hw_patchcords.html', titulo="HW: Patch Cords")
 @app.route('/ftth/hardware/ferragens')
-def ftth_hw_ferragens():
-    return render_template('ftth_hw_ferragens.html', titulo="HW: Infraestrutura de Poste")
-
+def ftth_hw_ferragens(): return render_template('ftth_hw_ferragens.html', titulo="HW: Infraestrutura de Poste")
 @app.route('/ftth/hardware/cpe')
-def ftth_hw_cpe():
-    return render_template('ftth_hw_cpe.html', titulo="HW: Equipamentos CPE")
-
+def ftth_hw_cpe(): return render_template('ftth_hw_cpe.html', titulo="HW: Equipamentos CPE")
 @app.route('/ftth/hardware/pto')
-def ftth_hw_pto():
-    return render_template('ftth_hw_pto.html', titulo="HW: PTO/Roseta")
+def ftth_hw_pto(): return render_template('ftth_hw_pto.html', titulo="HW: PTO/Roseta")
 
-# --- MÓDULO RÁDIO (WIRELESS) ---
+# --- MÓDULO RÁDIO ---
 @app.route('/radio/teoria', methods=['GET', 'POST'])
 def radio_teoria():
-    # Bloco GET: Apenas mostra a página
     if request.method == 'GET':
         return render_template('radio_teoria.html', titulo="Rádio: WISP Training", resultado_fresnel=None)
-    
-    # Bloco POST: Processa o cálculo de Fresnel (AGORA FUNCIONAL)
     if request.method == 'POST':
         try:
             distancia_km = float(request.form.get('radio_dist'))
             frequencia_ghz = float(request.form.get('radio_freq'))
-            
-            if distancia_km <= 0 or frequencia_ghz <= 0:
-                raise ValueError("Valores devem ser positivos.")
-
-            # FÓRMULA DE FRESNEL
             raio_100_percent = 17.32 * math.sqrt(distancia_km / (4 * frequencia_ghz))
             raio_60_percent = raio_100_percent * 0.6
-            
-            resultado = {
-                'raio_total': f"{raio_100_percent:.2f}",
-                'raio_livre': f"{raio_60_percent:.2f}",
-                'distancia': distancia_km,
-                'frequencia': frequencia_ghz
-            }
-
-            return render_template('radio_teoria.html', 
-                                   titulo="Rádio: WISP Training", 
-                                   resultado_fresnel=resultado)
-
-        except Exception as e:
-            return render_template('radio_teoria.html', 
-                                   titulo="Rádio: WISP Training", 
-                                   erro_fresnel="Erro no cálculo: Verifique se Distância e Frequência são números válidos.",
-                                   resultado_fresnel=None)
-
+            resultado = {'raio_total': f"{raio_100_percent:.2f}", 'raio_livre': f"{raio_60_percent:.2f}", 'distancia': distancia_km, 'frequencia': frequencia_ghz}
+            return render_template('radio_teoria.html', titulo="Rádio: WISP Training", resultado_fresnel=resultado)
+        except Exception:
+            return render_template('radio_teoria.html', titulo="Rádio: WISP Training", erro_fresnel="Erro no cálculo.", resultado_fresnel=None)
 
 @app.route('/radio/hardware')
-def radio_hardware():
-    return render_template('radio_hardware.html', titulo="Rádio: Enciclopédia de Hardware")
-
-# --- SUB-ROTAS: DETALHES DE HARDWARE RÁDIO ---
+def radio_hardware(): return render_template('radio_hardware.html', titulo="Rádio: Enciclopédia de Hardware")
 @app.route('/radio/hardware/acesso')
-def radio_hw_acesso():
-    return render_template('radio_hw_acesso.html', titulo="HW Rádio: Acesso e Backhaul")
-
+def radio_hw_acesso(): return render_template('radio_hw_acesso.html', titulo="HW Rádio: Acesso e Backhaul")
 @app.route('/radio/hardware/energia')
-def radio_hw_energia():
-    return render_template('radio_hw_energia.html', titulo="HW Rádio: Energia e Proteção")
-
+def radio_hw_energia(): return render_template('radio_hw_energia.html', titulo="HW Rádio: Energia e Proteção")
 @app.route('/radio/hardware/infra')
-def radio_hw_infra():
-    return render_template('radio_hw_infra.html', titulo="HW Rádio: Cabos e Infraestrutura")
-
+def radio_hw_infra(): return render_template('radio_hw_infra.html', titulo="HW Rádio: Cabos e Infraestrutura")
 @app.route('/radio/hardware/cliente')
-def radio_hw_cliente():
-    return render_template('radio_hw_cliente.html', titulo="HW Rádio: Cliente (CPE Interior)")
+def radio_hw_cliente(): return render_template('radio_hw_cliente.html', titulo="HW Rádio: Cliente (CPE Interior)")
 
-
-# --- MÓDULO IP (REDES LÓGICAS) ---
+# --- MÓDULO IP ---
 @app.route('/ip/teoria')
-def ip_teoria():
-    return render_template('ip_teoria.html', titulo="Redes IP: Protocolos")
+def ip_teoria(): return render_template('ip_teoria.html', titulo="Redes IP: Protocolos")
 
 @app.route('/ip/calc', methods=['GET', 'POST'])
 def ip_calc():
     context = {'titulo': "Calculadora IP (CIDR)"}
-
-    if request.method == 'GET':
-        return render_template('ip_calc.html', **context)
-    
+    if request.method == 'GET': return render_template('ip_calc.html', **context)
     if request.method == 'POST':
         ip_entrada = request.form.get('ip_address')
         cidr_entrada = int(request.form.get('cidr_mask'))
-        
-        context.update({
-            'ip_entrada': ip_entrada,
-            'cidr_entrada': cidr_entrada
-        })
-
+        context.update({'ip_entrada': ip_entrada, 'cidr_entrada': cidr_entrada})
         try:
             network = ipaddress.ip_network(f'{ip_entrada}/{cidr_entrada}', strict=False)
-            
-            network_address = str(network.network_address)
-            netmask = str(network.netmask)
-            broadcast_address = str(network.broadcast_address)
-            
-            if cidr_entrada == 32:
-                total_hosts = 1
-                first_usable = ip_entrada
-                last_usable = ip_entrada
-            elif cidr_entrada == 31:
-                total_hosts = 0
-                first_usable = "N/A"
-                last_usable = "N/A"
-            else:
-                total_hosts = network.num_addresses - 2
-                first_usable = str(network.network_address + 1)
-                last_usable = str(network.broadcast_address - 1)
-            
             context.update({
-                'resultado': True,
-                'net_addr': network_address,
-                'broadcast': broadcast_address,
-                'net_mask': netmask,
-                'first_ip': first_usable,
-                'last_ip': last_usable,
-                'hosts': total_hosts
+                'resultado': True, 'net_addr': str(network.network_address), 'broadcast': str(network.broadcast_address),
+                'net_mask': str(network.netmask), 'hosts': network.num_addresses - 2 if cidr_entrada < 31 else (1 if cidr_entrada == 32 else 0),
+                'first_ip': str(network.network_address + 1) if cidr_entrada < 31 else "N/A", 'last_ip': str(network.broadcast_address - 1) if cidr_entrada < 31 else "N/A"
             })
-
             return render_template('ip_calc.html', **context)
-
         except ValueError:
-            context['erro'] = "Endereço IP ou Máscara inválida! Verifique a sintaxe."
+            context['erro'] = "Endereço IP ou Máscara inválida!"
             return render_template('ip_calc.html', **context)
 
-# --- NOVOS MÓDULOS: PRÁTICA DE CAMPO ---
+# --- PRÁTICA DE CAMPO ---
 @app.route('/pratica')
-def pratica_home():
-    return render_template('pratica_home.html', titulo="Prática de Campo")
-
+def pratica_home(): return render_template('pratica_home.html', titulo="Prática de Campo")
 @app.route('/pratica/fibra')
-def pratica_fibra():
-    return render_template('pratica_fibra.html', titulo="Prática: Fibra Óptica")
-
+def pratica_fibra(): return render_template('pratica_fibra.html', titulo="Prática: Fibra Óptica")
 @app.route('/pratica/radio')
-def pratica_radio():
-    return render_template('pratica_radio.html', titulo="Prática: Instalação Rádio")
-
+def pratica_radio(): return render_template('pratica_radio.html', titulo="Prática: Instalação Rádio")
 @app.route('/pratica/ceo_cto')
-def pratica_ceo_cto():
-    return render_template('pratica_ceo_cto.html', titulo="Prática: Emendas e Caixas")
+def pratica_ceo_cto(): return render_template('pratica_ceo_cto.html', titulo="Prática: Emendas e Caixas")
 
-
-# --- MÓDULO DIAGNÓSTICO E QUIZ ---
+# --- DIAGNÓSTICO E QUIZ ---
 @app.route('/diag')
-def diag_home():
-    return render_template('diag_home.html', titulo="Central de Diagnóstico")
-
+def diag_home(): return render_template('diag_home.html', titulo="Central de Diagnóstico")
 
 @app.route('/diag/quiz', methods=['GET', 'POST'])
 def diag_quiz():
-    
-    # 1. IDENTIFICAÇÃO DO MÓDULO
-    modulo = request.args.get('modulo', 'ftth')
-    modulo = modulo.lower()
-    
-    if modulo not in BANCO_MESTRE:
-        modulo = 'ftth'
-
+    modulo = request.args.get('modulo', 'ftth').lower()
+    if modulo not in BANCO_MESTRE: modulo = 'ftth'
     quiz_original = BANCO_MESTRE[modulo]
     
-    # 2. SELEÇÃO ALEATÓRIA (Lógica de GET)
-    chaves = list(quiz_original.keys())
-    num_questoes = 5
-    chaves_aleatorias = random.sample(chaves, min(num_questoes, len(chaves)))
-    quiz_a_exibir = {chave: quiz_original[chave] for chave in chaves_aleatorias}
-
-
     if request.method == 'GET':
-        return render_template('diag_quiz_server.html', 
-                               titulo=f"Avaliação {modulo.upper()}", 
-                               modulo=modulo,
-                               quiz=quiz_a_exibir, 
-                               resultados=None)
-    
+        chaves = list(quiz_original.keys())
+        chaves_aleatorias = random.sample(chaves, min(5, len(chaves)))
+        return render_template('diag_quiz_server.html', titulo=f"Avaliação {modulo.upper()}", modulo=modulo, quiz={chave: quiz_original[chave] for chave in chaves_aleatorias}, resultados=None)
     
     if request.method == 'POST':
-        # --- Lógica de Correção (POST) ---
-        respostas_do_usuario = request.form
-        modulo_pos = respostas_do_usuario.get('modulo', 'ftth')
+        modulo_pos = request.form.get('modulo', 'ftth')
         quiz_original = BANCO_MESTRE[modulo_pos]
-        
         pontuacao = 0
         acertos = {}
         chaves_corrigir = []
-        
-        for key, resposta_dada in respostas_do_usuario.items():
+        for key, resposta_dada in request.form.items():
             if key in quiz_original:
-                item = quiz_original[key]
-                resposta_correta = item['resposta']
                 chaves_corrigir.append(key)
-                
-                if resposta_dada == resposta_correta:
+                if resposta_dada == quiz_original[key]['resposta']:
                     pontuacao += 1
                     acertos[key] = {'correta': True, 'dada': resposta_dada}
                 else:
-                    acertos[key] = {'correta': False, 'dada': resposta_dada, 'esperada': resposta_correta}
+                    acertos[key] = {'correta': False, 'dada': resposta_dada, 'esperada': quiz_original[key]['resposta']}
+        return render_template('diag_quiz_server.html', titulo=f"Resultado {modulo_pos.upper()}", modulo=modulo_pos, quiz=quiz_original, resultados=acertos, pontuacao=pontuacao, total=len(chaves_corrigir), porcentagem=(pontuacao/len(chaves_corrigir))*100)
 
-        total_perguntas = len(chaves_corrigir)
-
-        return render_template('diag_quiz_server.html', 
-                               titulo=f"Resultado {modulo_pos.upper()}", 
-                               modulo=modulo_pos,
-                               quiz=quiz_original, 
-                               resultados=acertos,
-                               pontuacao=pontuacao,
-                               total=total_perguntas,
-                               porcentagem=(pontuacao/total_perguntas)*100)
-
-
-# --- MÓDULO SERVIDORES & CORE & SEGURANÇA ---
+# --- SERVIDORES & CORE ---
 @app.route('/servers/teoria')
-def servers_teoria():
-    return render_template('servers_teoria.html', titulo="Servidores de Provedor (AAA)")
-
+def servers_teoria(): return render_template('servers_teoria.html', titulo="Servidores de Provedor (AAA)")
 @app.route('/core/teoria')
-def core_teoria():
-    return render_template('core_teoria.html', titulo="Engenharia de Core (MPLS/BGP)")
-
+def core_teoria(): return render_template('core_teoria.html', titulo="Engenharia de Core (MPLS/BGP)")
 @app.route('/security/teoria')
-def security_teoria():
-    return render_template('security_teoria.html', titulo="Segurança de Redes (Zero Trust)")
+def security_teoria(): return render_template('security_teoria.html', titulo="Segurança de Redes")
 
+# --- MÓDULOS DE NEGÓCIOS, SUPORTE E GESTÃO ---
+@app.route('/atendimento/teoria')
+def atendimento_teoria(): 
+    return render_template('atendimento_teoria.html', titulo="Suporte e Atendimento N1/N2")
 
+@app.route('/vendas/teoria')
+def vendas_teoria(): 
+    return render_template('vendas_teoria.html', titulo="Comercial e Vendas")
+
+@app.route('/gestao/teoria')
+def gestao_teoria(): 
+    return render_template('gestao_teoria.html', titulo="Normas, NR10/35 e ANATEL")
+    
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)

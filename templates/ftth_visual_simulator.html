@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    /* Estilos do Motor Gráfico do Simulador */
+    .sim-container {
+        background-color: #1e1e1e;
+        border-radius: 12px;
+        padding: 30px;
+        color: #fff;
+        position: relative;
+        min-height: 600px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        overflow-x: auto;
+        border: 4px solid #333;
+        box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+    }
+    
+    .topo-grid {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-width: 1000px;
+        margin-top: 40px;
+    }
+
+    /* Equipamentos */
+    .eq-box {
+        background: #2b2b2b;
+        border: 2px solid #555;
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        width: 220px;
+        position: relative;
+        transition: all 0.3s ease;
+        z-index: 2;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+    .eq-box:hover { border-color: #0d6efd; transform: translateY(-5px); }
+    
+    .eq-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #0dcaf0; border-bottom: 1px solid #444; padding-bottom: 5px; }
+    
+    /* Conexões de Fibra (Fios) */
+    .fiber-line {
+        flex-grow: 1;
+        height: 4px;
+        background-color: #ffd700; /* Amarelo padrão de cordão óptico monomodo */
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 0 8px #ffd700;
+        transition: all 0.5s;
+    }
+    .fiber-line::after {
+        content: attr(data-label);
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #000;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        color: #fff;
+        border: 1px solid #555;
+        white-space: nowrap;
+    }
+
+    /* Slots Vazios e Botões */
+    .slot {
+        background: #111; border: 1px dashed #777; border-radius: 4px; padding: 10px;
+        margin-top: 10px; font-size: 0.9rem; cursor: pointer; color: #aaa;
+    }
+    .slot:hover { background: #333; border-color: #fff; color: #fff; }
+    
+    .slot-filled { background: #004085; border: 1px solid #66b0ff; color: #fff; padding: 10px; border-radius: 4px; margin-top: 10px; }
+    .slot-filled.green { background: #0f5132; border-color: #75b798; }
+    .slot-filled.orange { background: #664d03; border-color: #ffc107; }
+
+    /* Power Meter Overlay */
+    #powerMeterWidget {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #000;
+        border: 3px solid #39ff14;
+        border-radius: 8px;
+        padding: 15px 25px;
+        color: #39ff14;
+        font-family: 'Courier New', Courier, monospace;
+        text-align: right;
+        box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+        z-index: 100;
+    }
+    #powerMeterWidget h2 { margin: 0; font-size: 2.5rem; font-weight: bold; }
+    #powerMeterWidget p { margin: 0; font-size: 0.9rem; color: #aaa; }
+
+    /* LEDs */
+    .led { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #333; box-shadow: inset 0 0 3px #000; margin-left: 5px; }
+    .led.green { background: #39ff14; box-shadow: 0 0 10px #39ff14; }
+    .led.red { background: #ff0000; box-shadow: 0 0 10px #ff0000; }
+    .led.blue { background: #00d2ff; box-shadow: 0 0 10px #00d2ff; }
+
+</style>
+
+<div class="row mb-3">
+    <div class="col-12">
+        <h2 class="text-danger fw-bold"><i class="bi bi-controller"></i> Topologia Gráfica Realista</h2>
+        <p class="text-muted">Clique nos slots tracejados para adicionar os equipamentos e cabos. O Power Meter atualizará em tempo real.</p>
+    </div>
+</div>
+
+<div class="sim-container">
+    
+    <div id="powerMeterWidget">
+        <p>POWER METER 1490nm</p>
+        <h2 id="pmValue">--.--</h2>
+        <p id="pmLocation">Sinal RX: Aguardando OLT...</p>
+    </div>
+
+    <div class="topo-grid">
+        
+        <div class="eq-box" onmouseover="showPower('OLT', state.oltPower)">
+            <div class="eq-title"><i class="bi bi-hdd-rack"></i> Datacenter (OLT)</div>
+            <div class="led blue mb-2"></div> PWR
+            <div id="slot-gbic" class="slot" onclick="addGbic()">+ Inserir SFP/GBIC</div>
+            <div id="slot-dio" class="slot d-none" onclick="addDio()">+ Conectar ao DIO</div>
+        </div>
+
+        <div id="line-tronco" class="fiber-line d-none" data-label="Cabo Tronco"></div>
+
+        <div class="eq-box d-none" id="box-ceo" onmouseover="showPower('CEO (Entrada)', state.ceoIn)">
+            <div class="eq-title"><i class="bi bi-signpost-split"></i> CEO (Rua)</div>
+            <div id="slot-tronco" class="slot" onclick="addBackbone()">+ Lançar Cabo Tronco</div>
+            <div id="slot-spl1" class="slot d-none" onclick="addSplitter1()">+ Instalar Splitter N1</div>
+        </div>
+
+        <div id="line-dist" class="fiber-line d-none" data-label="Cabo Distribuição"></div>
+
+        <div class="eq-box d-none" id="box-cto" onmouseover="showPower('CTO (Entrada)', state.ctoIn)">
+            <div class="eq-title"><i class="bi bi-box"></i> CTO (Poste)</div>
+            <div id="slot-dist" class="slot" onclick="addDistCable()">+ Lançar Cabo Dist.</div>
+            <div id="slot-spl2" class="slot d-none" onclick="addSplitter2()">+ Instalar Splitter N2</div>
+        </div>
+
+        <div id="line-drop" class="fiber-line d-none" data-label="Cabo Drop FLAT" style="background-color: #000; box-shadow: 0 0 5px #555;"></div>
+
+        <div class="eq-box d-none" id="box-onu" onmouseover="showPower('ONU (RX Final)', state.onuIn)">
+            <div class="eq-title"><i class="bi bi-house-door"></i> Cliente (ONU)</div>
+            
+            <div class="d-flex justify-content-center gap-3 mb-2">
+                <div><div id="led-pon" class="led"></div> PON</div>
+                <div><div id="led-los" class="led red"></div> LOS</div>
+            </div>
+
+            <div id="slot-drop" class="slot" onclick="addDropCable()">+ Lançar Drop p/ Casa</div>
+            <div id="slot-roseta" class="slot d-none" onclick="addRoseta()">+ Instalar Roseta e ONU</div>
+            
+            <div id="onu-status" class="mt-3 fw-bold text-danger d-none">OFFLINE</div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="choiceModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="modalTitle">Escolha o Equipamento</h5>
+            </div>
+            <div class="modal-body" id="modalBody">
+                </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-primary" onclick="confirmChoice()">Instalar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // ESTADO DA REDE (Máquina de Estados)
+    let state = {
+        oltPower: null,
+        dioLoss: 0,
+        ceoIn: null,
+        ceoOut: null,
+        ctoIn: null,
+        ctoOut: null,
+        onuIn: null,
+        currentAction: null
+    };
+
+    const modal = new bootstrap.Modal(document.getElementById('choiceModal'));
+
+    // --- FUNÇÕES DE INTERFACE ---
+    function updateMeter(value, location) {
+        let valStr = value === null ? "--.--" : value.toFixed(2);
+        document.getElementById('pmValue').innerText = valStr;
+        document.getElementById('pmLocation').innerText = "Medindo: " + location;
+        
+        let pm = document.getElementById('powerMeterWidget');
+        if(value !== null) {
+            if(value > -8) { pm.style.color = '#ffc107'; pm.style.borderColor = '#ffc107'; } // Alerta Amarelo
+            else if(value >= -25) { pm.style.color = '#39ff14'; pm.style.borderColor = '#39ff14'; } // Verde
+            else if(value >= -27) { pm.style.color = '#fd7e14'; pm.style.borderColor = '#fd7e14'; } // Laranja
+            else { pm.style.color = '#ff0000'; pm.style.borderColor = '#ff0000'; } // Vermelho
+        } else {
+            pm.style.color = '#39ff14'; pm.style.borderColor = '#39ff14';
+        }
+    }
+
+    function showPower(location, power) {
+        if(power !== null) updateMeter(power, location);
+    }
+
+    function openModal(title, html, actionName) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalBody').innerHTML = html;
+        state.currentAction = actionName;
+        modal.show();
+    }
+
+    // --- AÇÕES DE MONTAGEM DA REDE ---
+
+    function addGbic() {
+        let html = `
+            <label>Selecione a Classe do Laser (SFP):</label>
+            <select id="inputSfp" class="form-select mt-2">
+                <option value="3">Classe B+ (+3 dBm)</option>
+                <option value="5" selected>Classe C+ (+5 dBm)</option>
+                <option value="7">Classe C++ (+7 dBm)</option>
+            </select>
+        `;
+        openModal("Configurar Porta PON", html, 'saveGbic');
+    }
+
+    function addDio() {
+        let html = `
+            <label>Qualidade da Limpeza do Conector OLT -> DIO:</label>
+            <select id="inputDio" class="form-select mt-2">
+                <option value="0.5" selected>Limpo com Álcool Isopropílico (-0.5 dB)</option>
+                <option value="1.5">Sujo/Poeira (-1.5 dB)</option>
+            </select>
+        `;
+        openModal("Conexão no Datacenter", html, 'saveDio');
+    }
+
+    function addBackbone() {
+        let html = `
+            <label>Lançamento de Cabo Tronco (G.652D) até a CEO:</label>
+            <div class="input-group mt-2 mb-3">
+                <input type="number" id="inputKm" class="form-control" value="8" min="0.1">
+                <span class="input-group-text">km</span>
+            </div>
+            <label>Quantidade de caixas de emenda no caminho (Fusões retas):</label>
+            <input type="number" id="inputFusoes" class="form-control mt-2" value="2" min="0">
+        `;
+        openModal("Lançar Backbone", html, 'saveBackbone');
+    }
+
+    function addSplitter1() {
+        let html = `
+            <label>Splitter Primário (Nível 1) na Caixa de Emenda:</label>
+            <select id="inputSpl1" class="form-select mt-2">
+                <option value="7.3">Splitter Balanceado 1:4 (-7.3 dB)</option>
+                <option value="10.5" selected>Splitter Balanceado 1:8 (-10.5 dB)</option>
+                <option value="14.0">Splitter Balanceado 1:16 (-14.0 dB)</option>
+                <option value="1.2">Desbalanceado FBT 20/80 (Ramal Passante -1.2 dB)</option>
+            </select>
+        `;
+        openModal("Sangria e Splitagem", html, 'saveSplitter1');
+    }
+
+    function addDistCable() {
+        let html = `
+            <label>Cabo de Distribuição (CEO -> CTO):</label>
+            <div class="input-group mt-2 mb-3">
+                <input type="number" id="inputDistKm" class="form-control" value="2" min="0.1">
+                <span class="input-group-text">km</span>
+            </div>
+        `;
+        openModal("Lançar Distribuição", html, 'saveDistCable');
+    }
+
+    function addSplitter2() {
+        let html = `
+            <label>Splitter Secundário (Dentro da CTO do poste):</label>
+            <select id="inputSpl2" class="form-select mt-2">
+                <option value="10.5">Splitter Balanceado 1:8 (-10.5 dB)</option>
+                <option value="14.0" selected>Splitter Balanceado 1:16 (-14.0 dB)</option>
+            </select>
+        `;
+        openModal("Terminação na CTO", html, 'saveSplitter2');
+    }
+
+    function addDropCable() {
+        let html = `
+            <label>Cabo Drop Flat (CTO -> Casa do Cliente):</label>
+            <div class="input-group mt-2">
+                <input type="number" id="inputDropM" class="form-control" value="150" min="10">
+                <span class="input-group-text">metros</span>
+            </div>
+        `;
+        openModal("Lançar Última Milha", html, 'saveDropCable');
+    }
+
+    function addRoseta() {
+        let html = `
+            <label>Qualidade do Conector de Campo (Fast Connector):</label>
+            <select id="inputFast" class="form-select mt-2 mb-3">
+                <option value="0.5" selected>Clivagem Perfeita (-0.5 dB)</option>
+                <option value="2.0">Clivador cego / Fibra torta (-2.0 dB)</option>
+            </select>
+            <label>Acoplamento Roseta Óptica (PTO):</label>
+            <select id="inputPto" class="form-select mt-2">
+                <option value="0.5" selected>Cordão Padrão (-0.5 dB)</option>
+                <option value="3.0">Cordão muito dobrado/esmagado (-3.0 dB)</option>
+            </select>
+        `;
+        openModal("Instalação no Cliente", html, 'saveRoseta');
+    }
+
+    // --- SALVAMENTO E CÁLCULO (A MÁGICA DA MATEMÁTICA) ---
+
+    function confirmChoice() {
+        modal.hide();
+        let action = state.currentAction;
+
+        if(action === 'saveGbic') {
+            state.oltPower = parseFloat(document.getElementById('inputSfp').value);
+            replaceSlot('slot-gbic', `SFP C+ (${state.oltPower} dBm)`, 'slot-filled');
+            document.getElementById('slot-dio').classList.remove('d-none');
+            updateMeter(state.oltPower, "Saída Laser OLT");
+        }
+        else if(action === 'saveDio') {
+            state.dioLoss = parseFloat(document.getElementById('inputDio').value);
+            replaceSlot('slot-dio', `Conexão DIO (-${state.dioLoss} dB)`, 'slot-filled');
+            
+            // Revela a CEO e o cabo
+            document.getElementById('box-ceo').classList.remove('d-none');
+            document.getElementById('line-tronco').classList.remove('d-none');
+            updateMeter(state.oltPower - state.dioLoss, "Saída Datacenter");
+        }
+        else if(action === 'saveBackbone') {
+            let km = parseFloat(document.getElementById('inputKm').value);
+            let fusoes = parseInt(document.getElementById('inputFusoes').value);
+            let perdaFibra = km * 0.25;
+            let perdaFusao = (fusoes + 1) * 0.1; // +1 pela fusão de entrada na própria CEO
+            
+            state.ceoIn = state.oltPower - state.dioLoss - perdaFibra - perdaFusao;
+            
+            document.getElementById('line-tronco').setAttribute('data-label', `Cabo Tronco (${km}km)`);
+            replaceSlot('slot-tronco', `Entrada CEO (-${(perdaFibra+perdaFusao).toFixed(2)} dB)`, 'slot-filled orange');
+            document.getElementById('slot-spl1').classList.remove('d-none');
+            updateMeter(state.ceoIn, "Entrada CEO");
+        }
+        else if(action === 'saveSplitter1') {
+            let splLoss = parseFloat(document.getElementById('inputSpl1').value);
+            state.ceoOut = state.ceoIn - splLoss;
+            
+            replaceSlot('slot-spl1', `Splitter N1 (-${splLoss} dB)`, 'slot-filled green');
+            
+            document.getElementById('box-cto').classList.remove('d-none');
+            document.getElementById('line-dist').classList.remove('d-none');
+            updateMeter(state.ceoOut, "Saída CEO");
+        }
+        else if(action === 'saveDistCable') {
+            let km = parseFloat(document.getElementById('inputDistKm').value);
+            let perdaFibra = km * 0.25;
+            let perdaFusao = 0.1; // Entrada na CTO
+            
+            state.ctoIn = state.ceoOut - perdaFibra - perdaFusao;
+            
+            document.getElementById('line-dist').setAttribute('data-label', `Cabo Dist. (${km}km)`);
+            replaceSlot('slot-dist', `Entrada CTO (-${(perdaFibra+perdaFusao).toFixed(2)} dB)`, 'slot-filled orange');
+            document.getElementById('slot-spl2').classList.remove('d-none');
+            updateMeter(state.ctoIn, "Entrada CTO");
+        }
+        else if(action === 'saveSplitter2') {
+            let splLoss = parseFloat(document.getElementById('inputSpl2').value);
+            state.ctoOut = state.ctoIn - splLoss;
+            
+            replaceSlot('slot-spl2', `Splitter N2 (-${splLoss} dB)`, 'slot-filled green');
+            
+            document.getElementById('box-onu').classList.remove('d-none');
+            document.getElementById('line-drop').classList.remove('d-none');
+            updateMeter(state.ctoOut, "Porta CTO (Rua)");
+        }
+        else if(action === 'saveDropCable') {
+            let metros = parseFloat(document.getElementById('inputDropM').value);
+            let km = metros / 1000;
+            let perdaFibra = km * 0.25;
+            let conectorCto = 0.5; // Fast connector que engata na CTO
+            
+            state.onuIn = state.ctoOut - perdaFibra - conectorCto; // Calculo temporário pré-roseta
+            
+            document.getElementById('line-drop').setAttribute('data-label', `Drop Flat (${metros}m)`);
+            replaceSlot('slot-drop', `Cabo Lançado (-${(perdaFibra+conectorCto).toFixed(2)} dB)`, 'slot-filled orange');
+            document.getElementById('slot-roseta').classList.remove('d-none');
+            updateMeter(state.onuIn, "Ponta do Drop na Casa");
+        }
+        else if(action === 'saveRoseta') {
+            let fastLoss = parseFloat(document.getElementById('inputFast').value);
+            let ptoLoss = parseFloat(document.getElementById('inputPto').value);
+            let onuConnector = 0.5; // Engate na própria ONU
+            
+            let totalLoss = fastLoss + ptoLoss + onuConnector;
+            state.onuIn = state.onuIn - totalLoss; // Valor final definitivo
+            
+            replaceSlot('slot-roseta', `Instalação (-${totalLoss.toFixed(2)} dB)`, 'slot-filled green');
+            updateMeter(state.onuIn, "Sinal RX ONU");
+            
+            // VERIFICAÇÃO FINAL DOS LEDs
+            checkFinalStatus();
+        }
+    }
+
+    // Troca a div interativa por uma fixa preenchida
+    function replaceSlot(id, text, cssClass) {
+        let el = document.getElementById(id);
+        el.className = cssClass;
+        el.innerText = text;
+        el.onclick = null; // Remove o click
+    }
+
+    function checkFinalStatus() {
+        let statDiv = document.getElementById('onu-status');
+        let ponLed = document.getElementById('led-pon');
+        let losLed = document.getElementById('led-los');
+
+        statDiv.classList.remove('d-none', 'text-danger', 'text-success', 'text-warning');
+        
+        losLed.classList.remove('red'); // Apaga o LOS vermelho default
+
+        if(state.onuIn > -8) {
+            statDiv.innerText = "ALERTA: SINAL MUITO ALTO";
+            statDiv.classList.add('text-warning');
+            ponLed.classList.add('green'); // Liga verde, mas tá perigoso
+        }
+        else if(state.onuIn >= -27) {
+            statDiv.innerText = "ONLINE (AUTENTICADO)";
+            statDiv.classList.add('text-success');
+            ponLed.classList.add('green'); // Link UP!
+        }
+        else {
+            statDiv.innerText = "OFFLINE (SEM SINAL)";
+            statDiv.classList.add('text-danger');
+            losLed.classList.add('red'); // Acende vermelho (LOS)
+        }
+    }
+
+</script>
+{% endblock %}

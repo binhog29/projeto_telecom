@@ -2,30 +2,49 @@
 
 {% block conteudo %}
 <div class="p-5 mb-5 bg-white rounded-3 shadow-sm text-center border">
-    <h1 class="display-5 fw-bold text-primary">Domine as Telecomunicações</h1>
+    <h1 class="display-5 fw-bold text-primary d-flex align-items-center justify-content-center">
+  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none" class="me-3 text-primary" style="margin-top: -8px;">
+    <path d="M18 36C27.9411 36 36 27.9411 36 18C36 8.05887 27.9411 0 18 0C8.05887 0 0 8.05887 0 18C0 27.9411 8.05887 36 18 36Z" fill="#F0F8FF"/>
+    <path d="M18 10C13.5817 10 10 13.5817 10 18C10 22.4183 13.5817 26 18 26C22.4183 26 26 22.4183 26 18C26 13.5817 22.4183 10 18 10Z" stroke="#0080FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M18 5C10.8203 5 5 10.8203 5 18C5 25.1797 10.8203 31 18 31C25.1797 31 31 25.1797 31 18C31 10.8203 25.1797 5 18 5Z" stroke="#0080FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M18 14C15.7909 14 14 15.7909 14 18C14 20.2091 15.7909 22 18 22C20.2091 22 22 20.2091 22 18C22 15.7909 20.2091 14 18 14Z" fill="#0080FF"/>
+    <path d="M18 1C8.61116 1 1 8.61116 1 18C1 27.3888 8.61116 35 18 35C27.3888 35 35 27.3888 35 18C35 8.61116 27.3888 1 18 1Z" stroke="#0080FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M18 8C12.4772 8 8 12.4772 8 18C8 23.5228 12.4772 28 18 28C23.5228 28 28 23.5228 28 18C28 12.4772 23.5228 8 18 8Z" stroke="#0080FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  Universidade Corporativa Telecom
+</h1>
     <p class="col-md-8 fs-5 mx-auto text-muted">
-        Plataforma integrada para formação Nível Pleno: Físico, Lógico, Serviços, Core e Segurança.
+        A plataforma completa para formar times de alta performance: da Fibra Óptica ao Atendimento ao Cliente.
     </p>
 </div>
 
 <div class="row g-4">
     
-    <div class="col-lg-4 col-md-6">
-        <div class="card h-100 border-0 shadow-sm p-4 card-hover">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-primary text-white rounded-circle p-3 me-3 icon-circle">
-                    <i class="bi bi-optical-audio"></i>
+    <div class="col-lg-8 col-md-12">
+        <div class="card h-100 border-0 shadow-sm p-0 card-hover overflow-hidden">
+            <div class="row g-0 h-100">
+                <div class="col-md-5 p-4 d-flex flex-column bg-white">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary text-white rounded-circle p-3 me-3 icon-circle">
+                            <i class="bi bi-optical-audio"></i>
+                        </div>
+                        <h2 class="h4 mb-0 text-primary fw-bold">1. Fibra (FTTH)</h2>
+                    </div>
+                    <p class="text-muted small mb-4">GPON, OLTs, Hardware e projetos de rede óptica ponta a ponta.</p>
+                    <div class="d-flex gap-2 mt-auto">
+                        <a href="/ftth/teoria" class="btn btn-outline-primary fw-bold flex-fill">Teoria</a>
+                        <a href="/ftth/hardware" class="btn btn-outline-primary fw-bold flex-fill">Hardware</a>
+                    </div>
                 </div>
-                <h2 class="h5 mb-0 text-primary fw-bold">1. Fibra (FTTH)</h2>
-            </div>
-            <p class="text-muted small">GPON, OLTs, Hardware e cálculo de potência.</p>
-            <div class="mt-auto pt-3">
-                <div class="d-flex gap-2 mb-2">
-                    <a href="/ftth/teoria" class="btn btn-outline-primary fw-bold flex-fill">Teoria</a>
-                    <a href="/ftth/hardware" class="btn btn-outline-primary fw-bold flex-fill">Hardware</a>
-                </div>
-                <div class="d-grid">
-                    <a href="/ftth/calc" class="btn btn-primary fw-bold">Simulador</a>
+                <div class="col-md-7 p-4 bg-light border-start">
+                    <h6 class="fw-bold text-dark mb-3"><i class="bi bi-cpu-fill text-primary"></i> Laboratório de Engenharia</h6>
+                    <div class="row g-2">
+                        <div class="col-sm-6"><a href="/ftth/calc" class="btn bg-white border w-100 text-start fw-bold py-2 text-primary shadow-sm"><i class="bi bi-calculator me-1"></i> Calc. Básica</a></div>
+                        <div class="col-sm-6"><a href="/ftth/simulador_avancado" class="btn bg-white border w-100 text-start fw-bold py-2 text-primary shadow-sm"><i class="bi bi-diagram-3 me-1"></i> Calc. Avançada</a></div>
+                        <div class="col-sm-6"><a href="/ftth/simulador_campo" class="btn bg-white border w-100 text-start fw-bold py-2 text-success shadow-sm"><i class="bi bi-tools me-1"></i> Sangria/Campo</a></div>
+                        <div class="col-sm-6"><a href="/ftth/simulador_grafico" class="btn bg-white border w-100 text-start fw-bold py-2 text-danger shadow-sm"><i class="bi bi-bezier2 me-1"></i> Topologia Rápida</a></div>
+                        <div class="col-12 mt-3"><a href="/ftth/mapa_interativo" class="btn btn-info w-100 text-start fw-bold text-dark py-3 shadow border-info" style="font-size: 1.05rem;"><i class="bi bi-map-fill me-2"></i> Mini CAD Profissional (O Mapa)</a></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -55,9 +74,9 @@
                 <div class="bg-dark text-white rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-hdd-network"></i>
                 </div>
-                <h2 class="h5 mb-0 text-dark fw-bold">3. Redes IP & Lógica</h2>
+                <h2 class="h5 mb-0 text-dark fw-bold">3. Redes IP</h2>
             </div>
-            <p class="text-muted small">IPv4/IPv6, Sub-redes, DNS, DHCP e Roteamento.</p>
+            <p class="text-muted small">IPv4/IPv6, Sub-redes e Protocolos.</p>
             <div class="mt-auto pt-3 d-grid gap-2 d-md-flex">
                 <a href="/ip/teoria" class="btn btn-outline-dark fw-bold flex-fill">Protocolos</a>
                 <a href="/ip/calc" class="btn btn-dark fw-bold flex-fill">Calc. IP</a>
@@ -71,11 +90,11 @@
                 <div class="bg-secondary text-white rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-server"></i>
                 </div>
-                <h2 class="h5 mb-0 text-secondary fw-bold">4. Servidores & Autenticação</h2>
+                <h2 class="h5 mb-0 text-secondary fw-bold">4. Servidores</h2>
             </div>
-            <p class="text-muted small">O coração do provedor: PPPoE, RADIUS, BRAS e DNS Cache.</p>
+            <p class="text-muted small">PPPoE, RADIUS, BRAS e DNS Cache.</p>
             <div class="mt-auto pt-3 d-grid">
-                <a href="/servers/teoria" class="btn btn-outline-secondary fw-bold">Acessar Módulo Servidores →</a>
+                <a href="/servers/teoria" class="btn btn-outline-secondary fw-bold">Acessar Módulo →</a>
             </div>
         </div>
     </div>
@@ -84,62 +103,93 @@
         <div class="card h-100 border-info shadow-sm p-4 card-hover" style="border-width: 2px;">
             <div class="d-flex align-items-center mb-3">
                 <div class="bg-info text-white rounded-circle p-3 me-3 icon-circle">
-                    <i class="bi bi-bounding-box"></i>
+                    <i class="bi bi-shield-lock-fill"></i>
                 </div>
-                <h2 class="h5 mb-0 text-info fw-bold">5. Engenharia de Core</h2>
+                <h2 class="h5 mb-0 text-info fw-bold">5. Core e Segurança</h2>
             </div>
-            <p class="text-muted small">MPLS (VPNs), Roteamento BGP (iBGP/eBGP) e Qualidade de Serviço (QoS).</p>
-            <div class="mt-auto pt-3 d-grid">
-                <a href="/core/teoria" class="btn btn-info fw-bold text-white">Acessar Módulo Core →</a>
+            <p class="text-muted small">MPLS, BGP, Firewall e defesas anti-DDoS.</p>
+            <div class="mt-auto pt-3 d-grid gap-2 d-md-flex">
+                <a href="/core/teoria" class="btn btn-info fw-bold text-white flex-fill">Eng. Core</a>
+                <a href="/security/teoria" class="btn btn-outline-info fw-bold flex-fill">Segurança</a>
             </div>
         </div>
     </div>
     
     <div class="col-lg-4 col-md-6">
-        <div class="card h-100 border-success shadow-sm p-4 card-hover" style="border-width: 2px;">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-success text-white rounded-circle p-3 me-3 icon-circle">
-                    <i class="bi bi-shield-lock-fill"></i>
-                </div>
-                <h2 class="h5 mb-0 text-success fw-bold">6. Segurança de Redes</h2>
-            </div>
-            <p class="text-muted small">Firewall, Zero Trust, IPS/IDS e Defesa contra ataques DDoS.</p>
-            <div class="mt-auto pt-3 d-grid">
-                <a href="/security/teoria" class="btn btn-outline-success fw-bold">Acessar Módulo Segurança →</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-4 col-md-6 mx-auto">
-        <div class="card border-warning shadow-lg p-4 h-100 card-hover" style="border-width: 2px;">
+        <div class="card border-warning shadow-sm p-4 h-100 card-hover" style="border-width: 2px;">
              <div class="d-flex align-items-center mb-3">
                 <div class="bg-warning text-dark rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-tools"></i>
                 </div>
-                <h2 class="h5 mb-0 text-dark fw-bold">7. Prática de Campo</h2>
+                <h2 class="h5 mb-0 text-dark fw-bold">6. Prática de Campo</h2>
             </div>
-            <p class="text-muted small">Instalação, Manutenção, Fusão e Montagem de CTO/CEO.</p>
+            <p class="text-muted small">Instalação e Fusão de CTO/CEO física.</p>
             <div class="mt-auto pt-3 d-grid">
-                <a href="/pratica" class="btn btn-warning btn-lg fw-bold py-2 text-white">
+                <a href="/pratica" class="btn btn-warning fw-bold py-2 text-dark">
                     <i class="bi bi-hammer me-2"></i> INICIAR PRÁTICA
                 </a>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-4 col-md-6 mx-auto">
-        <div class="card border-danger shadow-lg p-4 h-100 card-hover" style="border-width: 2px;">
+    <div class="col-lg-4 col-md-6">
+        <div class="card border-danger shadow-sm p-4 h-100 card-hover" style="border-width: 2px;">
              <div class="d-flex align-items-center mb-3">
                 <div class="bg-danger text-white rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-heart-pulse-fill"></i>
                 </div>
-                <h2 class="h5 mb-0 text-danger fw-bold">8. Central de Diagnóstico</h2>
+                <h2 class="h5 mb-0 text-danger fw-bold">7. Teste (Diag)</h2>
             </div>
-            <p class="text-muted small">Fluxograma de falhas, Terminal Simulado e Avaliações Técnicas.</p>
+            <p class="text-muted small">Simulados e Avaliações Técnicas.</p>
             <div class="mt-auto pt-3 d-grid">
-                <a href="/diag" class="btn btn-danger btn-lg fw-bold py-2">
-                    <i class="bi bi-play-circle-fill me-2"></i> INICIAR DIAGNÓSTICO
+                <a href="/diag" class="btn btn-danger fw-bold py-2">
+                    <i class="bi bi-play-circle-fill me-2"></i> FAZER TESTES
                 </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6">
+        <div class="card h-100 border-0 shadow-sm p-4 card-hover" style="background: linear-gradient(145deg, #ffffff, #f0f8ff);">
+             <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary text-white rounded-circle p-3 me-3 icon-circle" style="opacity: 0.8;">
+                    <i class="bi bi-headset"></i>
+                </div>
+                <h2 class="h5 mb-0 text-dark fw-bold">8. Atendimento e N1</h2>
+            </div>
+            <p class="text-muted small">Scripts de atendimento, empatia, SLAs e triagem de LOS via telefone.</p>
+            <div class="mt-auto pt-3 d-grid">
+                <a href="/atendimento/teoria" class="btn btn-outline-primary fw-bold text-dark border-secondary">Módulo Suporte →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6">
+        <div class="card h-100 border-0 shadow-sm p-4 card-hover" style="background: linear-gradient(145deg, #ffffff, #f0fff4);">
+             <div class="d-flex align-items-center mb-3">
+                <div class="bg-success text-white rounded-circle p-3 me-3 icon-circle" style="opacity: 0.8;">
+                    <i class="bi bi-cart-check"></i>
+                </div>
+                <h2 class="h5 mb-0 text-dark fw-bold">9. Comercial (Vendas)</h2>
+            </div>
+            <p class="text-muted small">Técnicas PAP, gatilhos de upgrade de planos e retenção anti-churn.</p>
+            <div class="mt-auto pt-3 d-grid">
+                <a href="/vendas/teoria" class="btn btn-outline-success fw-bold text-dark border-secondary">Módulo Vendas →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6">
+        <div class="card h-100 border-0 shadow-sm p-4 card-hover" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+             <div class="d-flex align-items-center mb-3">
+                <div class="bg-dark text-white rounded-circle p-3 me-3 icon-circle" style="opacity: 0.8;">
+                    <i class="bi bi-journal-text"></i>
+                </div>
+                <h2 class="h5 mb-0 text-dark fw-bold">10. Gestão e Normas</h2>
+            </div>
+            <p class="text-muted small">Regras de posteamento, NR10/NR35, legislação ANATEL e segurança do trabalho.</p>
+            <div class="mt-auto pt-3 d-grid">
+                <a href="/gestao/teoria" class="btn btn-outline-dark fw-bold border-secondary">Módulo de Normas →</a>
             </div>
         </div>
     </div>

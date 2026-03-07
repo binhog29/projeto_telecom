@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12 text-center">
+        <h1 class="text-dark fw-bold"><i class="bi bi-journal-text"></i> Gestão, Normas e Segurança</h1>
+        <p class="lead text-muted">A vida do técnico é o ativo mais caro da empresa. Domine as exigências da NR10, NR35 e o regulamento de infraestrutura ANATEL/ANEEL.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card h-100 shadow-sm border-start border-danger border-4">
+            <div class="card-header bg-dark text-white fw-bold"><i class="bi bi-lightning-charge-fill text-warning"></i> NR 10 - Segurança em Instalações Elétricas</div>
+            <div class="card-body bg-light">
+                <p>Na rede externa (Drop e Backbone), o técnico de telecom divide espaço com a rede de Baixa e Média Tensão da concessionária de energia. A negligência com a NR10 é fatal.</p>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item bg-transparent"><strong>Zonas de Risco:</strong> O técnico de telecom trabalha na <em>Zona Livre</em>, mas frequentemente se aproxima da <em>Zona Controlada</em>. A invasão da Zona de Risco sem desenergização causa arco elétrico.</li>
+                    <li class="list-group-item bg-transparent"><strong>Tensão de Toque e Passo:</strong> Riscos associados à fuga de corrente em postes úmidos ou cabos mensageiros de aço energizados acidentalmente (fio de alta tensão caído no BAP).</li>
+                    <li class="list-group-item bg-transparent"><strong>EPIs Dielétricos (Classe B):</strong> O capacete do técnico de fibra DEVE ser Classe B (sem furos de ventilação, testado contra choques elétricos). Escadas de alumínio são <strong>proibidas</strong>; usa-se apenas escada de fibra de vidro (isolante).</li>
+                </ul>
+                <div class="alert alert-danger small mb-0">
+                    <i class="bi bi-exclamation-triangle-fill"></i> <strong>Atenção:</strong> Nunca encoste no cabo mensageiro de aço sem antes testá-lo com um detector de tensão por aproximação.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100 shadow-sm border-start border-warning border-4">
+            <div class="card-header bg-dark text-white fw-bold"><i class="bi bi-cone-striped text-warning"></i> NR 35 - Trabalho em Altura</div>
+            <div class="card-body bg-light">
+                <p>Qualquer atividade executada acima de <strong>2,0 metros</strong> do nível inferior, onde haja risco de queda, exige conformidade rigorosa com a NR35.</p>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item bg-transparent"><strong>Análise de Risco (AR):</strong> Antes de subir no poste, o técnico deve avaliar o ambiente (abelhas, estrutura do poste podre, trânsito de veículos pesados).</li>
+                    <li class="list-group-item bg-transparent"><strong>Fator de Queda:</strong> O talabarte Y (duplo) deve ser ancorado o mais alto possível (preferencialmente acima da cabeça) para garantir Fator de Queda menor que 1.</li>
+                    <li class="list-group-item bg-transparent"><strong>Trava-Quedas e Cinto:</strong> Uso obrigatório do Cinturão de Segurança tipo Paraquedista. Ao amarrar a escada no poste, o técnico deve ancorar a linha de vida no próprio poste, não nos degraus da escada.</li>
+                </ul>
+                <div class="alert alert-warning text-dark small mb-0">
+                    <i class="bi bi-shield-check"></i> <strong>Sinalização:</strong> Cones de sinalização não são enfeites. Eles criam a Zona de Exclusão para evitar que carros derrubem a escada com o técnico operando a máquina de fusão lá em cima.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card shadow-sm border-start border-success border-4">
+            <div class="card-header bg-white fw-bold fs-5"><i class="bi bi-diagram-2"></i> Resolução Conjunta ANATEL/ANEEL (Ocupação de Postes)</div>
+            <div class="card-body">
+                <p>O compartilhamento de infraestrutura entre concessionárias de energia e operadoras de telecom é regido pela <strong>Resolução Conjunta nº 4/2014</strong>. O desrespeito gera multas, corte de cabos e perda de licença.</p>
+                
+                <div class="row text-center mt-4">
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded h-100">
+                            <h5 class="text-success fw-bold">Distância de Segurança</h5>
+                            <p class="small text-muted">A rede de telecomunicações deve respeitar uma distância mínima vertical de <strong>50 cm a 60 cm</strong> (dependendo da norma da distribuidora estadual) em relação aos cabos de Baixa Tensão (rede elétrica secundária).</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded h-100">
+                            <h5 class="text-success fw-bold">Faixa de Ocupação</h5>
+                            <p class="small text-muted">Todos os cabos de todas as operadoras do poste devem ficar contidos dentro de um espaço vertical de <strong>50 cm</strong>. É proibido espalhar caixas e cabos por todo o poste.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded h-100">
+                            <h5 class="text-success fw-bold">Identificação e Reservas</h5>
+                            <p class="small text-muted">É terminantemente obrigatório instalar <strong>Plaquetas de Identificação</strong> a cada X metros com o nome da empresa e telefone. "Raquetes" (reserva técnica) não podem ficar caídas; devem usar cruzetas plásticas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

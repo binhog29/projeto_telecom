@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4"><div class="col-12">
+    <h1 class="text-primary fw-bold"><i class="bi bi-diagram-3-fill"></i> Simulador FTTH End-to-End</h1>
+    <p class="lead text-muted">Construa e simule uma rede óptica completa, da porta PON da OLT até a ONU do cliente, calculando a atenuação passo a passo.</p>
+</div></div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <form id="e2eSimulator">
+            
+            <div class="card shadow-sm border-0 mb-4 border-start border-primary border-5">
+                <div class="card-header bg-white fw-bold fs-5 text-primary">
+                    <i class="bi bi-hdd-network"></i> 1. Central Office (OLT & SFP)
+                </div>
+                <div class="card-body bg-light">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Potência de Saída do SFP/GBIC (dBm):</label>
+                            <select id="sfpPower" class="form-select">
+                                <option value="2.5">Classe B+ (+2.5 dBm Média)</option>
+                                <option value="5.0" selected>Classe C+ (+5.0 dBm Média)</option>
+                                <option value="7.5">Classe C++ (+7.5 dBm Média)</option>
+                                <option value="1.5">Módulo XGS-PON (+1.5 a +5 dBm)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Conectores no Rack/DIO (Qtd):</label>
+                            <input type="number" id="dioConns" class="form-control" value="1" min="0">
+                            <small class="text-muted">Geralmente 1 (Saída da OLT para o DIO)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 mb-4 border-start border-success border-5">
+                <div class="card-header bg-white fw-bold fs-5 text-success">
+                    <i class="bi bi-signpost-split"></i> 2. Rede Alimentadora e Emendas (CEO)
+                </div>
+                <div class="card-body bg-light">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Cabo Tronco (km):</label>
+                            <input type="number" id="backboneKm" class="form-control" value="5.0" step="0.1">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Atenuação Fibra (dB/km):</label>
+                            <select id="fiberLoss" class="form-select">
+                                <option value="0.25" selected>0.25 (1490nm - Down GPON)</option>
+                                <option value="0.35">0.35 (1310nm - Up GPON)</option>
+                                <option value="0.20">0.20 (1550nm - Vídeo CATV)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Fusões em CEOs (Qtd):</label>
+                            <input type="number" id="ceoFusions" class="form-control" value="3" min="0">
+                            <small class="text-muted">Cada fusão perde ~0.1dB</small>
+                        </div>
+                        
+                        <div class="col-md-12 mt-4">
+                            <label class="form-label fw-bold text-dark">Splitter Primário (Nível 1 - Dentro da CEO ou Armário):</label>
+                            <select id="primarySplitter" class="form-select border-success">
+                                <option value="0">--- Sem Splitter Primário (Ponto a Ponto) ---</option>
+                                <optgroup label="Balanceados (PLC)">
+                                    <option value="3.5">PLC 1:2 (-3.5 dB)</option>
+                                    <option value="7.3">PLC 1:4 (-7.3 dB)</option>
+                                    <option value="10.5" selected>PLC 1:8 (-10.5 dB)</option>
+                                    <option value="13.8">PLC 1:16 (-13.8 dB)</option>
+                                </optgroup>
+                                <optgroup label="Desbalanceados (FBT) - Ramal de Saída (TAP)">
+                                    <option value="14.5">FBT 5/95 (TAP: 5% / -14.5 dB)</option>
+                                    <option value="10.5">FBT 10/90 (TAP: 10% / -10.5 dB)</option>
+                                    <option value="7.4">FBT 20/80 (TAP: 20% / -7.4 dB)</option>
+                                    <option value="5.6">FBT 30/70 (TAP: 30% / -5.6 dB)</option>
+                                </optgroup>
+                                <optgroup label="Desbalanceados (FBT) - Ramal Principal (PASS)">
+                                    <option value="0.4">FBT 5/95 (PASS: 95% / -0.4 dB)</option>
+                                    <option value="0.6">FBT 10/90 (PASS: 90% / -0.6 dB)</option>
+                                    <option value="1.2">FBT 20/80 (PASS: 80% / -1.2 dB)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 mb-4 border-start border-warning border-5">
+                <div class="card-header bg-white fw-bold fs-5 text-warning" style="color: #d39e00 !important;">
+                    <i class="bi bi-box"></i> 3. Rede de Distribuição (CTO)
+                </div>
+                <div class="card-body bg-light">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Cabo de Distribuição (km):</label>
+                            <input type="number" id="distKm" class="form-control" value="2.0" step="0.1">
+                            <small class="text-muted">Da CEO até a CTO do cliente</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Fusões até a CTO (Qtd):</label>
+                            <input type="number" id="distFusions" class="form-control" value="1" min="0">
+                        </div>
+
+                        <div class="col-md-12 mt-4">
+                            <label class="form-label fw-bold text-dark">Splitter Secundário (Nível 2 - Dentro da CTO):</label>
+                            <select id="secondarySplitter" class="form-select border-warning">
+                                <option value="0">--- Sem Splitter Secundário ---</option>
+                                <optgroup label="Balanceados (PLC)">
+                                    <option value="7.3">PLC 1:4 (-7.3 dB)</option>
+                                    <option value="10.5">PLC 1:8 (-10.5 dB)</option>
+                                    <option value="13.8" selected>PLC 1:16 (-13.8 dB)</option>
+                                    <option value="17.2">PLC 1:32 (-17.2 dB)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 mb-4 border-start border-danger border-5">
+                <div class="card-header bg-white fw-bold fs-5 text-danger">
+                    <i class="bi bi-house-door"></i> 4. Atendimento Cliente (Drop & CPE)
+                </div>
+                <div class="card-body bg-light">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Cabo Drop (Metros):</label>
+                            <input type="number" id="dropMeters" class="form-control" value="150" min="1">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Conectores APC (Qtd):</label>
+                            <input type="number" id="clientConns" class="form-control" value="3" min="0">
+                            <small class="text-muted">Ex: 1 CTO, 1 Roseta, 1 ONU</small>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-danger">Emenda Mecânica (Qtd):</label>
+                            <input type="number" id="mechSplices" class="form-control" value="0" min="0">
+                            <small class="text-muted">Perda altíssima (~0.5dB cada)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div> <div class="col-lg-4">
+        
+        <div class="card shadow border-0 position-sticky" style="top: 100px;">
+            <div class="card-header bg-dark text-white text-center fw-bold py-3 fs-5">
+                DIAGNÓSTICO DO LINK
+            </div>
+            <div class="card-body p-4">
+                
+                <button type="button" onclick="runSimulation()" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm mb-4 py-3">
+                    <i class="bi bi-play-circle-fill"></i> GERAR SIMULAÇÃO
+                </button>
+
+                <div id="simResults" class="d-none">
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="fw-bold text-primary"><i class="bi bi-hdd-network"></i> Saída OLT:</span>
+                        <span id="resOlt" class="font-monospace fw-bold"></span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="fw-bold text-success"><i class="bi bi-signpost-split"></i> Chegada CEO:</span>
+                        <span id="resCeo" class="font-monospace fw-bold"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="fw-bold text-warning" style="color: #d39e00 !important;"><i class="bi bi-box"></i> Saída CTO:</span>
+                        <span id="resCto" class="font-monospace fw-bold"></span>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-center mt-3">
+                        <h6 class="text-muted fw-bold text-uppercase">Sinal Final na ONU (Cliente)</h6>
+                        <h1 id="resFinal" class="display-4 fw-bold my-2"></h1>
+                        <div id="resBadge" class="badge fs-6 px-4 py-2 mt-2 w-100"></div>
+                    </div>
+
+                    <hr>
+                    
+                    <h6 class="fw-bold text-muted mb-3 mt-4">RESUMO DE ATENUAÇÃO:</h6>
+                    <div class="small bg-light p-3 rounded border">
+                        <div class="d-flex justify-content-between border-bottom pb-1 mb-1">
+                            <span>Perda Total em Fibras:</span> <span id="lossFiber" class="fw-bold text-danger"></span>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-1 mb-1">
+                            <span>Perda Total em Splitters:</span> <span id="lossSpl" class="fw-bold text-danger"></span>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-1 mb-1">
+                            <span>Perda (Conectores/Mecânicas):</span> <span id="lossConn" class="fw-bold text-danger"></span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Perda (Fusões):</span> <span id="lossFus" class="fw-bold text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div> </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function runSimulation() {
+    // Constantes de Perda Padrão (Telecom)
+    const LOSS_CONNECTOR_APC = 0.5; // dB
+    const LOSS_FUSION = 0.1;        // dB
+    const LOSS_MECHANICAL = 0.5;    // dB
+
+    // 1. Coletar Dados: OLT
+    let currentPower = parseFloat(document.getElementById('sfpPower').value);
+    const dioConns = parseInt(document.getElementById('dioConns').value) || 0;
+    
+    // Calcula perda no DIO
+    let lossConnectors = dioConns * LOSS_CONNECTOR_APC;
+    currentPower -= lossConnectors;
+    const powerAtOltOut = currentPower;
+
+    // 2. Coletar Dados: Rede Alimentadora (Backbone -> CEO)
+    const backboneKm = parseFloat(document.getElementById('backboneKm').value) || 0;
+    const fiberLossDb = parseFloat(document.getElementById('fiberLoss').value) || 0.25;
+    const ceoFusions = parseInt(document.getElementById('ceoFusions').value) || 0;
+    const primarySpl = parseFloat(document.getElementById('primarySplitter').value) || 0;
+
+    let lossFiber = backboneKm * fiberLossDb;
+    let lossFusions = ceoFusions * LOSS_FUSION;
+    
+    // Potência chegando na CEO (Antes do Splitter Primário)
+    currentPower -= (lossFiber + lossFusions);
+    const powerAtCeoIn = currentPower;
+    
+    // Potência saindo da CEO (Após Splitter)
+    currentPower -= primarySpl;
+
+    // 3. Coletar Dados: Rede de Distribuição (CEO -> CTO)
+    const distKm = parseFloat(document.getElementById('distKm').value) || 0;
+    const distFusions = parseInt(document.getElementById('distFusions').value) || 0;
+    const secondarySpl = parseFloat(document.getElementById('secondarySplitter').value) || 0;
+
+    let distFiberLoss = distKm * fiberLossDb;
+    let distFusionLoss = distFusions * LOSS_FUSION;
+
+    lossFiber += distFiberLoss;
+    lossFusions += distFusionLoss;
+
+    // Potência chegando na CTO (Antes do Splitter Secundário)
+    currentPower -= (distFiberLoss + distFusionLoss);
+    
+    // Potência saindo da porta da CTO
+    currentPower -= secondarySpl;
+    const powerAtCtoOut = currentPower;
+
+    // 4. Coletar Dados: Rede de Acesso (Drop -> ONU)
+    const dropKm = (parseFloat(document.getElementById('dropMeters').value) || 0) / 1000;
+    const clientConns = parseInt(document.getElementById('clientConns').value) || 0;
+    const mechSplices = parseInt(document.getElementById('mechSplices').value) || 0;
+
+    let dropFiberLoss = dropKm * fiberLossDb;
+    let clientConnLoss = clientConns * LOSS_CONNECTOR_APC;
+    let mechLoss = mechSplices * LOSS_MECHANICAL;
+
+    lossFiber += dropFiberLoss;
+    lossConnectors += (clientConnLoss + mechLoss);
+
+    // Potência Final (ONU)
+    currentPower -= (dropFiberLoss + clientConnLoss + mechLoss);
+    const finalPower = currentPower;
+
+    // --- ATUALIZAR INTERFACE ---
+    document.getElementById('simResults').classList.remove('d-none');
+    
+    // Linha do tempo
+    document.getElementById('resOlt').innerText = powerAtOltOut.toFixed(2) + " dBm";
+    document.getElementById('resCeo').innerText = powerAtCeoIn.toFixed(2) + " dBm";
+    document.getElementById('resCto').innerText = powerAtCtoOut.toFixed(2) + " dBm";
+    document.getElementById('resFinal').innerText = finalPower.toFixed(2) + " dBm";
+
+    // Resumo de Perdas
+    document.getElementById('lossFiber').innerText = "- " + lossFiber.toFixed(2) + " dB";
+    document.getElementById('lossSpl').innerText = "- " + (primarySpl + secondarySpl).toFixed(2) + " dB";
+    document.getElementById('lossConn').innerText = "- " + lossConnectors.toFixed(2) + " dB";
+    document.getElementById('lossFus').innerText = "- " + lossFusions.toFixed(2) + " dB";
+
+    // Lógica de Aprovação (Sensibilidade padrão ONU: -8 a -27 dBm)
+    const badge = document.getElementById('resBadge');
+    if (finalPower > -8) {
+        badge.className = "badge fs-6 px-4 py-2 mt-2 w-100 bg-warning text-dark";
+        badge.innerHTML = '<i class="bi bi-exclamation-triangle"></i> SINAL MUITO FORTE (Risco de queima)';
+    } else if (finalPower >= -24) {
+        badge.className = "badge fs-6 px-4 py-2 mt-2 w-100 bg-success";
+        badge.innerHTML = '<i class="bi bi-check-circle"></i> SINAL EXCELENTE (Aprovado)';
+    } else if (finalPower >= -27) {
+        badge.className = "badge fs-6 px-4 py-2 mt-2 w-100 bg-warning text-dark";
+        badge.innerHTML = '<i class="bi bi-exclamation-circle"></i> SINAL NO LIMITE (Sem margem)';
+    } else {
+        badge.className = "badge fs-6 px-4 py-2 mt-2 w-100 bg-danger";
+        badge.innerHTML = '<i class="bi bi-x-octagon"></i> SINAL REPROVADO (ONU Offline)';
+    }
+}
+</script>
+{% endblock %}

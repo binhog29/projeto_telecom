@@ -1,0 +1,375 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    /* CSS para o Código de Cores das Fibras (Padrão Telebrás) */
+    .color-box { display: inline-block; width: 20px; height: 20px; border-radius: 50%; border: 1px solid #000; vertical-align: middle; margin-right: 8px; }
+    .cor-01 { background-color: #008000; } /* Verde */
+    .cor-02 { background-color: #FFFF00; } /* Amarelo */
+    .cor-03 { background-color: #FFFFFF; } /* Branco */
+    .cor-04 { background-color: #0000FF; } /* Azul */
+    .cor-05 { background-color: #FF0000; } /* Vermelho */
+    .cor-06 { background-color: #800080; } /* Violeta */
+    .cor-07 { background-color: #8B4513; } /* Marrom */
+    .cor-08 { background-color: #FFC0CB; } /* Rosa */
+    .cor-09 { background-color: #000000; } /* Preto */
+    .cor-10 { background-color: #808080; } /* Cinza */
+    .cor-11 { background-color: #FFA500; } /* Laranja */
+    .cor-12 { background-color: #40E0D0; } /* Turquesa */
+
+    .etapa-card { border-left: 6px solid #ccc; transition: all 0.3s ease; }
+    .etapa-card.active { border-left-color: #0d6efd; box-shadow: 0 4px 15px rgba(13, 110, 253, 0.15); }
+    .etapa-card.completed { border-left-color: #198754; opacity: 0.9; }
+    
+    .power-meter {
+        background: #111; color: #39ff14; font-family: 'Courier New', Courier, monospace;
+        padding: 15px; border-radius: 10px; text-align: center; border: 3px solid #333;
+        box-shadow: inset 0 0 15px #000;
+    }
+    .power-meter h3 { margin: 0; font-size: 2.5rem; font-weight: bold; }
+    .power-meter p { margin: 0; color: #aaa; font-size: 0.9rem; }
+    
+    .fibra-visual { height: 10px; width: 100%; border: 1px solid #333; margin-top: 10px; border-radius: 5px; }
+</style>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-success fw-bold"><i class="bi bi-tools"></i> Simulador de Campo FTTH</h1>
+        <p class="lead text-muted">Construção realista de rede óptica. Faça sangrias, fusões, escolhas de tubos loose e splitters passo a passo com o Power Meter em mãos.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8" id="campo-container">
+
+        <div class="card shadow-sm mb-4 etapa-card active" id="step-1">
+            <div class="card-header bg-white fw-bold fs-5"><i class="bi bi-hdd-network"></i> 1. Datacenter (Saída OLT)</div>
+            <div class="card-body bg-light">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-5">
+                        <label class="fw-bold">Potência do Laser SFP (dBm):</label>
+                        <select id="oltPower" class="form-select border-primary">
+                            <option value="3.0">Classe B+ (+3.0 dBm)</option>
+                            <option value="5.0" selected>Classe C+ (+5.0 dBm)</option>
+                            <option value="7.0">Classe C++ (+7.0 dBm)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="fw-bold">Conexão DIO (Patch Cord):</label>
+                        <select id="dioConn" class="form-select">
+                            <option value="0.5">SC/APC Limpo (-0.5 dB)</option>
+                            <option value="1.5">SC/APC Sujo (-1.5 dB)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100 fw-bold" onclick="concluirStep1()">Ligar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4 etapa-card d-none" id="step-2">
+            <div class="card-header bg-white fw-bold fs-5"><i class="bi bi-signpost-split"></i> 2. Sangria e Emenda na CEO (Caixa de Emenda)</div>
+            <div class="card-body bg-light">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="fw-bold">Distância até a CEO (km):</label>
+                        <input type="number" id="distBackbone" class="form-control" value="4.0" step="0.5">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fw-bold">Tubo Loose a sangrar:</label>
+                        <select class="form-select" id="tuboCor" onchange="atualizarCores('tuboCor', 'tuboVisual')">
+                            <option value="cor-01">Verde</option>
+                            <option value="cor-02">Amarelo</option>
+                            <option value="cor-03">Branco</option>
+                            <option value="cor-04">Azul</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fw-bold">Fibra Iluminada (Ativa):</label>
+                        <select class="form-select" id="fibraCor" onchange="atualizarCores('fibraCor', 'fibraVisual')">
+                            <option value="cor-01">01 - Verde</option>
+                            <option value="cor-02">02 - Amarelo</option>
+                            <option value="cor-03">03 - Branco</option>
+                            <option value="cor-04">04 - Azul</option>
+                            <option value="cor-05">05 - Vermelho</option>
+                            <option value="cor-06">06 - Violeta</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <div class="p-3 border rounded bg-white">
+                            <label class="fw-bold mb-2">Ação dentro da CEO (Fusão):</label>
+                            <select id="splCeo" class="form-select border-success mb-2">
+                                <option value="0">Apenas emendar fibra direto (Sem Splitter)</option>
+                                <option value="7.3">Fundir em Splitter PLC 1:4 (-7.3 dB)</option>
+                                <option value="10.5" selected>Fundir em Splitter PLC 1:8 (-10.5 dB)</option>
+                                <option value="1.2">Fundir em Splitter FBT 20/80 (Ramal Passante -1.2 dB)</option>
+                                <option value="7.4">Fundir em Splitter FBT 20/80 (Ramal TAP -7.4 dB)</option>
+                            </select>
+                            <small class="text-muted"><i class="bi bi-info-circle"></i> A máquina de fusão gerou uma perda de -0.1 dB nesta junção.</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 text-end">
+                        <button class="btn btn-success fw-bold px-4" onclick="concluirStep2()">Fechar CEO e Medir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4 etapa-card d-none" id="step-3">
+            <div class="card-header bg-white fw-bold fs-5"><i class="bi bi-box"></i> 3. Instalação da CTO (Caixa de Terminação)</div>
+            <div class="card-body bg-light">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="fw-bold">Distância da CEO até a CTO (km):</label>
+                        <input type="number" id="distDistribuicao" class="form-control" value="1.5" step="0.1">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-bold">Qualidade da Fusão de Entrada na CTO:</label>
+                        <select id="fusaoCto" class="form-select">
+                            <option value="0.05">Fusão Perfeita (-0.05 dB)</option>
+                            <option value="0.1" selected>Fusão Padrão (-0.1 dB)</option>
+                            <option value="0.5">Fusão Ruim / Refazer! (-0.5 dB)</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 mt-2">
+                        <label class="fw-bold">Splitter de Atendimento (Dentro da CTO):</label>
+                        <select id="splCto" class="form-select border-warning">
+                            <option value="0">Nenhum (Ligação direta)</option>
+                            <option value="10.5">Splitter PLC 1:8 (-10.5 dB)</option>
+                            <option value="13.8" selected>Splitter PLC 1:16 (-13.8 dB)</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <button class="btn btn-warning fw-bold px-4 text-dark" onclick="concluirStep3()">Liberar Portas da CTO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4 etapa-card d-none" id="step-4">
+            <div class="card-header bg-white fw-bold fs-5"><i class="bi bi-house-door"></i> 4. Ativação do Cliente (Drop + ONU)</div>
+            <div class="card-body bg-light">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="fw-bold">Cabo Drop Lançado (Metros):</label>
+                        <input type="number" id="dropMeters" class="form-control" value="120" min="10">
+                        <small class="text-danger d-none" id="dropAviso">Cabo drop acima de 400m perde certificação técnica!</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-bold">Montagem do Conector de Campo (Fast Connector):</label>
+                        <select id="fastConn" class="form-select border-danger">
+                            <option value="0.5" selected>Montagem Padrão/Limpa (-0.5 dB)</option>
+                            <option value="1.5">Gel seco/Ponta mal clivada (-1.5 dB)</option>
+                            <option value="3.0">Fibra trincada internamente (-3.0 dB)</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="fw-bold">Curvatura excessiva na casa do cliente? (Macrocurvatura)</label>
+                        <select id="curvatura" class="form-select">
+                            <option value="0" selected>Não. Cabeamento perfeito respeitando o ângulo.</option>
+                            <option value="2.0">Sim. O cliente esmagou o cabo atrás do sofá (-2.0 dB).</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 text-center mt-4">
+                        <button class="btn btn-danger btn-lg fw-bold w-100 py-3 shadow" onclick="concluirStep4()"><i class="bi bi-power"></i> LIGAR ONU E TESTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+        <div class="position-sticky" style="top: 100px;">
+            
+            <div class="power-meter mb-4">
+                <p>POWER METER (1490nm)</p>
+                <h3 id="pmDisplay">--.-- dBm</h3>
+                <p class="mt-2" id="pmStatus">Aguardando medição...</p>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-dark text-white fw-bold text-center">
+                    Identificação do Cabo
+                </div>
+                <div class="card-body bg-light text-center">
+                    <p class="mb-1 fw-bold text-muted">Cor do Tubo Loose:</p>
+                    <div id="tuboVisual" class="fibra-visual cor-01 mb-3" style="height: 15px;"></div>
+                    
+                    <p class="mb-1 fw-bold text-muted">Cor da Fibra Ativa:</p>
+                    <div id="fibraVisual" class="fibra-visual cor-01" style="height: 5px;"></div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-secondary text-white fw-bold">
+                    Diário de Obra (Log de Atenuação)
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush" id="logObra">
+                        <li class="list-group-item text-muted small">Inicie a ativação na OLT.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Variável global para rastrear o sinal em tempo real
+    let sinalAtual = 0;
+    const ATENUACAO_FIBRA_KM = 0.25; // dB por km (1490nm)
+
+    // Atualiza as divs de visualização de cor em tempo real
+    function atualizarCores(selectId, divId) {
+        const corClasse = document.getElementById(selectId).value;
+        const div = document.getElementById(divId);
+        div.className = "fibra-visual " + corClasse;
+    }
+
+    // Adiciona logs ao diário de obra
+    function adicionarLog(texto, perda) {
+        const ul = document.getElementById('logObra');
+        const li = document.createElement('li');
+        li.className = "list-group-item d-flex justify-content-between align-items-center small";
+        li.innerHTML = `<span>${texto}</span> <span class="badge bg-danger rounded-pill">${perda}</span>`;
+        ul.appendChild(li);
+    }
+
+    // Atualiza a tela do Power Meter
+    function atualizarPowerMeter(sinal, mensagem) {
+        const display = document.getElementById('pmDisplay');
+        const status = document.getElementById('pmStatus');
+        
+        display.innerText = sinal.toFixed(2) + " dBm";
+        status.innerText = mensagem;
+
+        // Efeito piscar
+        display.style.opacity = 0;
+        setTimeout(() => display.style.opacity = 1, 200);
+    }
+
+    // --- FUNÇÕES DOS PASSOS (BOTÕES) ---
+
+    function concluirStep1() {
+        const pwr = parseFloat(document.getElementById('oltPower').value);
+        const dio = parseFloat(document.getElementById('dioConn').value);
+        
+        sinalAtual = pwr - dio;
+        
+        document.getElementById('logObra').innerHTML = ""; // Limpa logs antigos
+        adicionarLog("Saída OLT (Laser)", "+" + pwr + " dBm");
+        adicionarLog("Conexão DIO", "-" + dio + " dB");
+        
+        atualizarPowerMeter(sinalAtual, "Medição no DIO central concluída.");
+        
+        // Ativa passo 2
+        document.getElementById('step-1').classList.remove('active');
+        document.getElementById('step-1').classList.add('completed');
+        document.getElementById('step-2').classList.remove('d-none');
+        document.getElementById('step-2').classList.add('active');
+    }
+
+    function concluirStep2() {
+        const dist = parseFloat(document.getElementById('distBackbone').value);
+        const perdaFibra = dist * ATENUACAO_FIBRA_KM;
+        const perdaFusao = 0.1; // Fusão padrão
+        const perdaSplitter = parseFloat(document.getElementById('splCeo').value);
+        
+        sinalAtual -= (perdaFibra + perdaFusao + perdaSplitter);
+
+        adicionarLog(`Cabo Tronco (${dist}km)`, "-" + perdaFibra.toFixed(2) + " dB");
+        adicionarLog("Fusão na CEO", "-0.10 dB");
+        if(perdaSplitter > 0) adicionarLog("Splitter Primário CEO", "-" + perdaSplitter + " dB");
+
+        atualizarPowerMeter(sinalAtual, "Medição na porta de saída da CEO.");
+
+        // Ativa passo 3
+        document.getElementById('step-2').classList.remove('active');
+        document.getElementById('step-2').classList.add('completed');
+        document.getElementById('step-3').classList.remove('d-none');
+        document.getElementById('step-3').classList.add('active');
+    }
+
+    function concluirStep3() {
+        const dist = parseFloat(document.getElementById('distDistribuicao').value);
+        const perdaFibra = dist * ATENUACAO_FIBRA_KM;
+        const perdaFusao = parseFloat(document.getElementById('fusaoCto').value);
+        const perdaSplitter = parseFloat(document.getElementById('splCto').value);
+
+        sinalAtual -= (perdaFibra + perdaFusao + perdaSplitter);
+
+        adicionarLog(`Cabo Distribuição (${dist}km)`, "-" + perdaFibra.toFixed(2) + " dB");
+        adicionarLog("Fusão na CTO", "-" + perdaFusao.toFixed(2) + " dB");
+        if(perdaSplitter > 0) adicionarLog("Splitter Secundário CTO", "-" + perdaSplitter + " dB");
+
+        atualizarPowerMeter(sinalAtual, "Medição na porta de atendimento da CTO (Rua).");
+
+        // Ativa passo 4
+        document.getElementById('step-3').classList.remove('active');
+        document.getElementById('step-3').classList.add('completed');
+        document.getElementById('step-4').classList.remove('d-none');
+        document.getElementById('step-4').classList.add('active');
+    }
+
+    function concluirStep4() {
+        const dropMeters = parseFloat(document.getElementById('dropMeters').value);
+        
+        // Alerta de drop longo
+        if(dropMeters > 400) document.getElementById('dropAviso').classList.remove('d-none');
+        else document.getElementById('dropAviso').classList.add('d-none');
+
+        const perdaDrop = (dropMeters / 1000) * ATENUACAO_FIBRA_KM;
+        const conectorFast = parseFloat(document.getElementById('fastConn').value);
+        const conectorRosetaEOnu = 1.0; // 0.5 roseta + 0.5 onu
+        const curva = parseFloat(document.getElementById('curvatura').value);
+
+        sinalAtual -= (perdaDrop + conectorFast + conectorRosetaEOnu + curva);
+
+        adicionarLog(`Cabo Drop (${dropMeters}m)`, "-" + perdaDrop.toFixed(2) + " dB");
+        adicionarLog("Fast Connector (Cliente)", "-" + conectorFast.toFixed(2) + " dB");
+        adicionarLog("Acoplamentos (Roseta+ONU)", "-1.00 dB");
+        if(curva > 0) adicionarLog("Defeito: Cabo dobrado", "-" + curva.toFixed(2) + " dB");
+
+        // Resultado Final
+        let msg = "";
+        let pmBox = document.querySelector('.power-meter');
+        
+        if (sinalAtual > -8) {
+            msg = "SINAL MUITO FORTE! ONU pode queimar.";
+            pmBox.style.color = "#ffc107"; // Amarelo
+        } else if (sinalAtual >= -25) {
+            msg = "SINAL EXCELENTE! Cliente Autenticado.";
+            pmBox.style.color = "#39ff14"; // Verde Neon
+        } else if (sinalAtual >= -27) {
+            msg = "SINAL NO LIMITE! Funciona, mas instável.";
+            pmBox.style.color = "#fd7e14"; // Laranja
+        } else {
+            msg = "SINAL REPROVADO! Luz Vermelha na ONU (LOS).";
+            pmBox.style.color = "#dc3545"; // Vermelho
+        }
+
+        atualizarPowerMeter(sinalAtual, msg);
+        
+        document.getElementById('step-4').classList.remove('active');
+        document.getElementById('step-4').classList.add('completed');
+    }
+
+    // Inicializa cores na primeira carga
+    window.onload = function() {
+        atualizarCores('tuboCor', 'tuboVisual');
+        atualizarCores('fibraCor', 'fibraVisual');
+    };
+</script>
+{% endblock %}
