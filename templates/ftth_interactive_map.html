@@ -55,8 +55,7 @@
     .tray-cto { border-color: #ffc107; background: #2a2512; }
     .tray-client { border-color: #dc3545; background: #3a1519; }
 
-    .cable-box { background: #222; border: 1px solid #555; padding: 12px; flex: 1; min-width: 280px; border-radius: 8px; box-shadow: inset 0 0 10px #000;}
-    .cable-box h6 { color: #ffffff; font-weight: bold; font-size: 1rem; }
+    .cable-box { background: #222; border: 1px solid #555; padding: 12px; flex: 1; min-width: 300px; border-radius: 8px; box-shadow: inset 0 0 10px #000;}
     .panel-cto { border: 2px dashed #ffc107; background: #1c180b; }
     .panel-fbt { border: 2px solid #0dcaf0; background: #0a2530; }
 
@@ -70,6 +69,7 @@
     .fiber-item.selected { border-color: #0dcaf0; background: #0d4290; box-shadow: 0 0 10px rgba(13,202,240,0.8); color: #fff; }
     .fiber-item.spliced { border-left: 6px solid #198754; background: #1a2e20; opacity: 1; }
     .fiber-item.passante { border-left: 6px solid #0dcaf0; background: #0a2530; opacity: 1; }
+    .fiber-item.plugged { border-left: 6px solid #ffc107; background: #332701; opacity: 1; }
     
     .f-color { width: 16px; height: 16px; border-radius: 50%; border: 1px solid #fff; margin-right: 12px; flex-shrink: 0;}
     
@@ -90,7 +90,7 @@
 <div class="row mb-3">
     <div class="col-12">
         <h2 class="text-info fw-bold"><i class="bi bi-bezier2"></i> CAD de Redes FTTH (Engenharia Realista)</h2>
-        <p class="text-muted mb-0">Crie redes contínuas com Auto-Passante. Selecione a fibra e faça Sangrias exatas onde a CTO for instalada.</p>
+        <p class="text-muted mb-0">Crie redes contínuas, renomeie cabos clicando neles e conecte Drops aos Splitters usando acopladores.</p>
     </div>
 </div>
 
@@ -153,8 +153,9 @@
                     <div class="box-controls d-flex flex-wrap gap-2 align-items-center">
                         
                         <div class="btn-group border border-secondary rounded shadow-sm">
-                            <button class="btn btn-primary fw-bold" onclick="fusionFibers()"><i class="bi bi-link"></i> Fusão Manual</button>
-                            <button class="btn btn-danger" onclick="breakFusion()"><i class="bi bi-scissors"></i> Romper (Fazer Sangria)</button>
+                            <button class="btn btn-primary fw-bold" onclick="fusionFibers()" title="Perda de 0.1dB"><i class="bi bi-link"></i> Fusão</button>
+                            <button class="btn btn-warning text-dark fw-bold" onclick="connectDrop()" title="Perda de 0.5dB"><i class="bi bi-usb-plug-fill"></i> Conectar/Acoplar</button>
+                            <button class="btn btn-danger" onclick="breakFusion()"><i class="bi bi-scissors"></i> Romper</button>
                             <button class="btn btn-success" onclick="measurePower()"><i class="bi bi-speedometer2"></i> Medir Sinal</button>
                         </div>
                         
@@ -193,7 +194,7 @@
                     </div>
                     
                     <div class="alert alert-dark border-secondary py-2 small mb-3 text-light">
-                        <i class="bi bi-info-circle text-info"></i> Fibras azuis indicam tubo <strong>Passante Direto</strong>. Selecione e clique em "Romper" para fazer a Sangria de um tubo na CTO.
+                        <i class="bi bi-info-circle text-info"></i> Fibras azuis indicam tubo <strong>Passante Direto</strong>. Selecione as pontas para plugar Drops ou fundir.
                     </div>
 
                     <div class="fiber-tray" id="tray-container"></div>
@@ -227,6 +228,25 @@
     </div>
 </div>
 
+<div class="modal fade" id="customPromptModal" tabindex="-1" aria-hidden="true" style="z-index: 1070;">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content bg-dark text-white border-info shadow-lg">
+            <div class="modal-header border-secondary py-2 bg-black">
+                <h6 class="modal-title fw-bold text-info" id="customPromptTitle">Entrada de Dados</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body bg-dark">
+                <label id="customPromptLabel" class="form-label small text-muted mb-2">Mensagem</label>
+                <input type="text" id="customPromptInput" class="form-control bg-secondary text-white border-secondary fw-bold" autocomplete="off">
+            </div>
+            <div class="modal-footer border-secondary py-1">
+                <button type="button" class="btn btn-sm btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-info fw-bold text-dark" id="customPromptConfirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -247,6 +267,58 @@
         `;
         document.getElementById('toast-container').appendChild(toast);
         setTimeout(() => { if(toast) toast.remove(); }, 5000);
+    }
+
+    // --- SISTEMA DE INPUT MODAL (PROMPT PERSONALIZADO) ---
+    let promptModalInstance;
+    
+    function customPrompt(title, label, defaultValue) {
+        return new Promise((resolve) => {
+            const modalEl = document.getElementById('customPromptModal');
+            if (!promptModalInstance) promptModalInstance = new bootstrap.Modal(modalEl);
+
+            document.getElementById('customPromptTitle').innerHTML = title;
+            document.getElementById('customPromptLabel').innerHTML = label;
+            const inputEl = document.getElementById('customPromptInput');
+            inputEl.value = defaultValue || '';
+
+            const confirmBtn = document.getElementById('customPromptConfirm');
+
+            const cleanup = () => {
+                confirmBtn.removeEventListener('click', onConfirm);
+                modalEl.removeEventListener('hidden.bs.modal', onCancel);
+                inputEl.removeEventListener('keydown', onEnter);
+            };
+
+            const onConfirm = () => {
+                const val = inputEl.value;
+                promptModalInstance.hide();
+                cleanup();
+                resolve(val);
+            };
+
+            const onCancel = () => {
+                cleanup();
+                resolve(null);
+            };
+
+            const onEnter = (e) => {
+                if(e.key === 'Enter') { e.preventDefault(); confirmBtn.click(); }
+            }
+
+            confirmBtn.addEventListener('click', onConfirm);
+            modalEl.addEventListener('hidden.bs.modal', onCancel);
+            inputEl.addEventListener('keydown', onEnter);
+
+            promptModalInstance.show();
+            
+            // Foco automático no input quando a janela abre
+            modalEl.addEventListener('shown.bs.modal', function onShow() {
+                inputEl.focus();
+                inputEl.select();
+                modalEl.removeEventListener('shown.bs.modal', onShow);
+            });
+        });
     }
 
     // --- NÚCLEO DO MOTOR GRÁFICO ---
@@ -374,7 +446,6 @@
         div.onclick = (e) => handleNodeClick(e, id);
         document.getElementById('map-area').appendChild(div);
         
-        // Mantém a ferramenta na mão a não ser que seja OLT
         if(type === 'olt') setTool('select');
         updatePowerNetwork();
     }
@@ -401,11 +472,10 @@
                 if(nodeToConnect !== id) {
                     addCable(nodeToConnect, id);
                     document.getElementById(nodeToConnect).style.boxShadow = ""; 
-                    // AUTO-SELECIONA O NOVO NÓ PARA DESENHO CONTÍNUO
                     nodeToConnect = id; 
                     document.getElementById(id).style.boxShadow = "0 0 15px #ffc107";
                 } else {
-                    document.getElementById(nodeToConnect).style.boxShadow = ""; nodeToConnect = null; // Clicou no mesmo, desmarca
+                    document.getElementById(nodeToConnect).style.boxShadow = ""; nodeToConnect = null; 
                 }
             }
         } else if (currentTool === 'select') { openBox(id); }
@@ -417,20 +487,20 @@
         let nA = nodes[srcId]; let nB = nodes[tgtId];
         let distKm = Math.max(0.1, (Math.sqrt(Math.pow(nB.x - nA.x, 2) + Math.pow(nB.y - nA.y, 2)) / 200)).toFixed(2);
 
-        cables[id] = { id, src: srcId, tgt: tgtId, capacity: cap, dist: parseFloat(distKm) };
+        let labelPadrao = `Cabo ${id.replace('c','')}`;
+        cables[id] = { id, src: srcId, tgt: tgtId, capacity: cap, dist: parseFloat(distKm), label: labelPadrao };
         
-        // LOGICA DE AUTO-PASSANTE (Se o nó tiver exatamente 2 cabos de mesma capacidade backbone, une eles)
         [srcId, tgtId].forEach(nodeId => {
             let node = nodes[nodeId];
             if(node.type !== 'olt' && node.type !== 'client') {
                 let attached = Object.values(cables).filter(c => c.src === nodeId || c.tgt === nodeId);
                 if(attached.length === 2) {
                     let cA = attached[0]; let cB = attached[1];
-                    if(cA.capacity === cB.capacity && cA.capacity > 1) { // Só faz passante automático em cabos troncos, drop não.
+                    if(cA.capacity === cB.capacity) { 
                         for(let i=0; i<cA.capacity; i++) {
                             let pA = `${cA.id}_f${i}`; let pB = `${cB.id}_f${i}`;
                             let emUso = splices[nodeId].some(s => s.portA === pA || s.portB === pA || s.portA === pB || s.portB === pB);
-                            if(!emUso) splices[nodeId].push({ portA: pA, portB: pB, loss: 0.0 }); // Perda 0.0 = Cabo Contínuo
+                            if(!emUso) splices[nodeId].push({ portA: pA, portB: pB, loss: 0.0, type: 'passante' });
                         }
                     }
                 }
@@ -438,6 +508,20 @@
         });
 
         drawCables(); updatePowerNetwork();
+    }
+
+    // RENOMEAR CABO USANDO O MODAL NOVO (Assíncrono)
+    async function renameCable(id) {
+        let c = cables[id];
+        let newName = await customPrompt('<i class="bi bi-diagram-2"></i> Renomear Cabo', 'Nome do Cabo (Ex: Alimentação CTO 01):', c.label || `Cabo ${id.replace('c','')}`);
+        
+        if(newName !== null && newName.trim() !== "") {
+            c.label = newName.trim();
+            if(!document.getElementById('box-fusion-panel').classList.contains('d-none')){
+                renderTray(); 
+            }
+            showToast("Cabo Atualizado", `Nome alterado para: ${c.label}`, "success");
+        }
     }
 
     function drawCables() {
@@ -458,8 +542,14 @@
 
             line.onclick = (e) => {
                 e.stopPropagation();
-                if(currentTool === 'delete') removeCable(c.id);
-                else showToast(`Cabo de Rede`, `ID: ${c.id}<br>Fibras: ${c.capacity}FO<br>Distância: ${c.dist} km`, 'info');
+                if(currentTool === 'delete') {
+                    removeCable(c.id);
+                } else if (currentTool === 'select') {
+                    renameCable(c.id);
+                } else {
+                    let cName = c.label || `Cabo ${c.id.replace('c','')}`;
+                    showToast(`Cabo de Rede`, `Nome: ${cName}<br>Fibras: ${c.capacity}FO<br>Distância: ${c.dist} km`, 'info');
+                }
             };
             svg.appendChild(line);
         });
@@ -525,10 +615,12 @@
         showToast("OLT", `Laser configurado para ${newPwr} dBm.`, "success");
     }
 
-    function renameActiveNode() {
+    // RENOMEAR CLIENTE USANDO O MODAL NOVO
+    async function renameActiveNode() {
         let node = nodes[activeNodeId];
-        let newName = prompt("Nome do Cliente:", node.label);
-        if(newName && newName.trim() !== "") {
+        let newName = await customPrompt('<i class="bi bi-person-fill"></i> Renomear Cliente', 'Nome do Assinante:', node.label);
+        
+        if(newName !== null && newName.trim() !== "") {
             node.label = newName.trim();
             document.getElementById('boxTitle').innerHTML = `<i class="bi bi-house-door text-danger"></i> Instalação: ${node.label}`;
             updatePowerNetwork(); 
@@ -556,7 +648,12 @@
     function formatPortName(portStr) {
         if(portStr === 'TX') return "Laser TX"; if(portStr === 'RX') return "ONU";
         if(portStr.startsWith('spl_')) { let p = portStr.split('_'); return `Splitter ${parseInt(p[1])+1} - ${p[2].toUpperCase()}`; }
-        if(portStr.startsWith('c')) { let p = portStr.split('_'); return `Cabo ${p[0].replace('c','')} - F${parseInt(p[1].replace('f',''))+1}`; }
+        if(portStr.startsWith('c')) { 
+            let p = portStr.split('_'); 
+            let cabId = p[0];
+            let cabName = cables[cabId] && cables[cabId].label ? cables[cabId].label : `Cabo ${cabId.replace('c','')}`;
+            return `${cabName} - F${parseInt(p[1].replace('f',''))+1}`; 
+        }
         return portStr;
     }
 
@@ -565,13 +662,15 @@
         let node = nodes[activeNodeId];
 
         if(node.type === 'olt') {
-            tray.innerHTML += createTrayGroup("Placa PON", [{ portId: 'TX', name: `SFP TX (+${node.oltPower} dBm)`, colorClass: 'bg-primary' }]);
+            let t = `<h6 class="border-bottom border-secondary pb-2 text-white fw-bold m-0">Placa PON</h6>`;
+            tray.innerHTML += createTrayGroup(t, [{ portId: 'TX', name: `SFP TX (+${node.oltPower} dBm)`, colorClass: 'bg-primary' }]);
         }
         
         if(node.type === 'client') {
             let pwr = calculatePowerAtPort(activeNodeId, 'RX');
             let pTxt = pwr !== null ? `${pwr.toFixed(2)} dBm` : 'Sem Sinal';
-            tray.innerHTML += createTrayGroup("Equipamento Casa", [{ portId: 'RX', name: `Porta Óptica ONU (Sinal: ${pTxt})`, colorClass: 'bg-danger' }]);
+            let t = `<h6 class="border-bottom border-secondary pb-2 text-white fw-bold m-0">Equipamento Casa</h6>`;
+            tray.innerHTML += createTrayGroup(t, [{ portId: 'RX', name: `Porta Óptica ONU (Sinal: ${pTxt})`, colorClass: 'bg-danger' }]);
         }
 
         Object.values(cables).filter(c => c.src === activeNodeId || c.tgt === activeNodeId).forEach(c => {
@@ -580,13 +679,19 @@
             let directionText = isInput ? `Vem de: ${nodes[c.src].label}` : `Vai para: ${nodes[c.tgt].label}`;
             
             let isDrop = c.capacity === 1;
-            let title = `<i class="bi bi-diagram-2-fill"></i> Cabo ${c.id.replace('c','')} (${c.capacity}FO) ${directionBadge} <br><div class="mt-2 text-info small"><i class="bi bi-arrow-right-short"></i> ${directionText}</div>`;
+            let cName = c.label || `Cabo ${c.id.replace('c','')}`;
+            let t = `
+                <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2">
+                    <h6 class="text-white fw-bold m-0"><i class="bi bi-diagram-2-fill text-secondary"></i> <span class="text-secondary small me-1">[Nº ${c.id.replace('c','')}]</span> ${cName} (${c.capacity}FO) ${directionBadge}</h6>
+                    <button class="btn btn-sm btn-outline-light py-0 px-2 border-secondary" onclick="renameCable('${c.id}')" title="Renomear Cabo"><i class="bi bi-pencil-square"></i></button>
+                </div>
+                <div class="mt-1 mb-3 text-info small"><i class="bi bi-arrow-right-short"></i> ${directionText}</div>`;
             
             let ports = [];
             for(let i=0; i<c.capacity; i++) {
                 let fInfo = getFiberInfo(i, isDrop); ports.push({ portId: `${c.id}_f${i}`, name: fInfo.name, colorClass: fInfo.colorClass });
             }
-            tray.innerHTML += createTrayGroup(title, ports);
+            tray.innerHTML += createTrayGroup(t, ports);
         });
 
         node.splitters.forEach((spl, idx) => {
@@ -608,12 +713,17 @@
             }
             
             let htmlType = isFBT ? spl.replace('_',' ') : spl.replace('_', ' ');
-            tray.innerHTML += createTrayGroup(`${headerIcon} <br><small class="text-white">${htmlType}</small> <button class="btn btn-sm btn-danger float-end py-0" onclick="removeSplitter(${idx})"><i class="bi bi-trash"></i></button>`, ports, extraClass);
+            let t = `
+                <div class="d-flex justify-content-between border-bottom border-secondary pb-2 mb-3">
+                    <h6 class="text-white fw-bold m-0">${headerIcon}<br><small class="text-white">${htmlType}</small></h6>
+                    <button class="btn btn-sm btn-danger py-0 px-2" style="height: 30px;" onclick="removeSplitter(${idx})"><i class="bi bi-trash"></i></button>
+                </div>`;
+            tray.innerHTML += createTrayGroup(t, ports, extraClass);
         });
     }
 
-    function createTrayGroup(title, ports, extraClass = "") {
-        let html = `<div class="cable-box ${extraClass}"><h6 class="border-bottom border-secondary pb-2 mb-3 text-white">${title}</h6>`;
+    function createTrayGroup(titleHTML, ports, extraClass = "") {
+        let html = `<div class="cable-box ${extraClass}"><div class="tray-title-wrapper">${titleHTML}</div>`;
         ports.forEach(p => {
             let conn = splices[activeNodeId].find(s => s.portA === p.portId || s.portB === p.portId);
             
@@ -622,10 +732,16 @@
             
             if(conn) {
                 let targetStr = formatPortName(conn.portA===p.portId ? conn.portB : conn.portA);
-                // IDENTIFICA SE É PASSANTE DIRETO (Perda 0)
-                if(conn.loss === 0.0) {
+                
+                let connType = conn.type;
+                if (!connType) { connType = (conn.loss === 0.0) ? 'passante' : 'fusao'; }
+
+                if(connType === 'passante') {
                     cssSpliced = 'passante';
                     subText = `<div class="mt-1 text-info fw-bold" style="font-size:0.8rem;"><i class="bi bi-arrow-left-right"></i> Passante: ${targetStr}</div>`;
+                } else if (connType === 'conector') {
+                    cssSpliced = 'plugged';
+                    subText = `<div class="mt-1 text-warning fw-bold" style="font-size:0.8rem;"><i class="bi bi-usb-plug-fill"></i> Plugado: ${targetStr}</div>`;
                 } else {
                     cssSpliced = 'spliced';
                     subText = `<div class="mt-1 text-success fw-bold" style="font-size:0.8rem;"><i class="bi bi-link"></i> Fusão: ${targetStr}</div>`;
@@ -661,18 +777,25 @@
         nodes[activeNodeId].splitters.splice(idx, 1); updatePowerNetwork(); renderTray();
     }
 
-    function bulkSplice() {
+    // PASSANTE MÚLTIPLO USANDO O MODAL NOVO
+    async function bulkSplice() {
         let cabosAtivos = Object.values(cables).filter(c => c.src === activeNodeId || c.tgt === activeNodeId);
         if(cabosAtivos.length < 2) return showToast("Erro", "Precisa de 2 cabos.", "error");
-        let idA = prompt("NÚMERO do Cabo Entrada (Ex: 1):"); let idB = prompt("NÚMERO do Cabo Saída:");
-        if(!idA || !idB) return; let cA = `c${idA}`; let cB = `c${idB}`;
-        if(!cables[cA] || !cables[cB]) return showToast("Erro", "Cabo não existe.", "error");
+        
+        let idA = await customPrompt('<i class="bi bi-arrow-left-right"></i> Passante Múltiplo', 'NÚMERO do Cabo de Entrada (Ex: 1):', '');
+        if(!idA) return;
+
+        let idB = await customPrompt('<i class="bi bi-arrow-left-right"></i> Passante Múltiplo', 'NÚMERO do Cabo de Saída (Ex: 2):', '');
+        if(!idB) return;
+
+        let cA = `c${idA}`; let cB = `c${idB}`;
+        if(!cables[cA] || !cables[cB]) return showToast("Erro", "Cabo não existe no mapa.", "error");
 
         let limite = Math.min(cables[cA].capacity, cables[cB].capacity); let cont = 0;
         for(let i=0; i<limite; i++) {
             let pA = `${cA}_f${i}`; let pB = `${cB}_f${i}`;
             let emUso = splices[activeNodeId].some(s => s.portA === pA || s.portB === pA || s.portA === pB || s.portB === pB);
-            if(!emUso) { splices[activeNodeId].push({ portA: pA, portB: pB, loss: 0.0 }); cont++; } // Auto passante perda zero
+            if(!emUso) { splices[activeNodeId].push({ portA: pA, portB: pB, loss: 0.0, type: 'passante' }); cont++; } 
         }
         updatePowerNetwork(); renderTray(); showToast("Passante", `${cont} fibras conectadas direto.`, "success");
     }
@@ -685,7 +808,19 @@
         let loss = 0.1; // Fusão padrão
         if(pA === 'RX' || pB === 'RX') loss = nodes[activeNodeId].hasRoseta ? 1.0 : 0.5;
         
-        splices[activeNodeId].push({ portA: pA, portB: pB, loss: loss });
+        splices[activeNodeId].push({ portA: pA, portB: pB, loss: loss, type: 'fusao' });
+        selectedPorts = []; updatePowerNetwork(); renderTray();
+    }
+
+    function connectDrop() {
+        if(selectedPorts.length !== 2) return showToast("Atenção", "Selecione 2 pontas para plugar.", "warning");
+        let pA = selectedPorts[0]; let pB = selectedPorts[1];
+        if(splices[activeNodeId].some(s => s.portA === pA || s.portB === pA || s.portA === pB || s.portB === pB)) return showToast("Erro", "Ponta ocupada.", "error");
+        
+        let loss = 0.5; // Perda de conectorização / acoplador
+        if(pA === 'RX' || pB === 'RX') loss = nodes[activeNodeId].hasRoseta ? 1.0 : 0.5;
+        
+        splices[activeNodeId].push({ portA: pA, portB: pB, loss: loss, type: 'conector' });
         selectedPorts = []; updatePowerNetwork(); renderTray();
     }
 
@@ -695,7 +830,7 @@
         splices[activeNodeId] = splices[activeNodeId].filter(s => s.portA !== p && s.portB !== p);
         if(splices[activeNodeId].length === len) return showToast("Aviso", "Esta fibra já está solta.", "info");
         selectedPorts = []; updatePowerNetwork(); renderTray();
-        showToast("Sangria", "A fibra foi rompida e está livre.", "success");
+        showToast("Desconectado", "A fibra foi solta.", "success");
     }
 
     function measurePower() {
