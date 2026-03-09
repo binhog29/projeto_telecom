@@ -350,64 +350,98 @@
         projectModalInstance = new bootstrap.Modal(document.getElementById('projectModal'));
     });
 
-    // --- SALVAMENTO ---
+    // --- SALVAMENTO NO BANCO DE DADOS (SERVIDOR) ---
     function openProjectManager() { renderProjectList(); projectModalInstance.show(); }
     
-    function saveProject() {
+    async function saveProject() {
         let name = document.getElementById('projectName').value.trim() || "Projeto_" + new Date().getTime();
         let data = { nodes, cables, splices, nodeIdCounter, cableIdCounter };
-        let saved = JSON.parse(localStorage.getItem('ftth_cad')) || {};
-        saved[name] = data; localStorage.setItem('ftth_cad', JSON.stringify(saved));
-        document.getElementById('projectName').value = ''; renderProjectList();
-        showToast("Salvo", `Projeto "${name}" guardado na memória.`, 'success');
+        
+        try {
+            let response = await fetch('/api/projetos/salvar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome: name, dados: data })
+            });
+            if(response.ok) {
+                document.getElementById('projectName').value = ''; 
+                renderProjectList();
+                showToast("Salvo", `Projeto "${name}" guardado no servidor de forma segura.`, 'success');
+            }
+        } catch (e) {
+            showToast("Erro", "Falha de comunicação com o Banco de Dados.", 'error');
+        }
     }
 
-    function renderProjectList() {
-        let listDiv = document.getElementById('project-list'); listDiv.innerHTML = '';
-        let saved = JSON.parse(localStorage.getItem('ftth_cad')) || {};
-        let names = Object.keys(saved);
-        if(names.length === 0) { listDiv.innerHTML = '<p class="text-muted text-center py-3">Nenhum projeto.</p>'; return; }
+    async function renderProjectList() {
+        let listDiv = document.getElementById('project-list'); 
+        listDiv.innerHTML = '<p class="text-center text-info py-3"><i class="bi bi-hourglass-split"></i> A carregar do Banco de Dados...</p>';
+        
+        try {
+            let response = await fetch('/api/projetos');
+            let projetos = await response.json();
+            
+            listDiv.innerHTML = '';
+            if(projetos.length === 0) { 
+                listDiv.innerHTML = '<p class="text-muted text-center py-3"><i class="bi bi-folder-x"></i> Nenhum projeto salvo na sua conta.</p>'; 
+                return; 
+            }
 
-        names.forEach(name => {
-            let qt = Object.keys(saved[name].nodes || {}).length;
-            listDiv.innerHTML += `
-                <div class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
-                    <div><span class="fw-bold text-info">${name}</span> <small class="text-muted">(${qt} equipamentos)</small></div>
-                    <div>
-                        <button class="btn btn-sm btn-primary me-2 fw-bold" onclick="loadProject('${name}')">Abrir</button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteProject('${name}')"><i class="bi bi-trash"></i></button>
-                    </div>
-                </div>`;
-        });
+            projetos.forEach(p => {
+                listDiv.innerHTML += `
+                    <div class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                        <div><i class="bi bi-file-earmark-text text-info me-2"></i><span class="fw-bold text-white">${p.nome}</span></div>
+                        <div>
+                            <button class="btn btn-sm btn-primary me-2 fw-bold shadow-sm" onclick="loadProject('${p.nome}')"><i class="bi bi-cloud-download"></i> Abrir</button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteProject('${p.nome}')"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </div>`;
+            });
+        } catch(e) {
+            listDiv.innerHTML = '<p class="text-danger text-center py-3">Erro ao procurar os projetos.</p>';
+        }
     }
 
-    function loadProject(name) {
-        let saved = JSON.parse(localStorage.getItem('ftth_cad')) || {};
-        if(!saved[name]) return; let pData = saved[name];
-        nodes = pData.nodes || {}; cables = pData.cables || {}; splices = pData.splices || {};
-        nodeIdCounter = pData.nodeIdCounter || 1; cableIdCounter = pData.cableIdCounter || 1;
+    async function loadProject(name) {
+        try {
+            let response = await fetch(`/api/projetos/${name}`);
+            if(response.ok) {
+                let pData = await response.json();
+                nodes = pData.nodes || {}; cables = pData.cables || {}; splices = pData.splices || {};
+                nodeIdCounter = pData.nodeIdCounter || 1; cableIdCounter = pData.cableIdCounter || 1;
 
-        document.querySelectorAll('.cad-node').forEach(el => el.remove());
-        Object.values(nodes).forEach(node => {
-            let div = document.createElement('div');
-            div.id = node.id; div.className = `cad-node node-${node.type} ${node.type === 'client' ? 'offline' : ''}`; 
-            div.style.left = node.x + 'px'; div.style.top = node.y + 'px';
-            let icon = node.type === 'olt' ? '<i class="bi bi-hdd-network"></i>' : (node.type === 'client' ? '<i class="bi bi-house"></i>' : (node.type === 'ceo' ? 'C' : (node.type === 'cto' ? 'T' : '')));
-            div.innerHTML = `${icon}<span>${node.label}</span>`; div.onclick = (e) => handleNodeClick(e, node.id);
-            document.getElementById('map-area').appendChild(div);
-        });
-        drawCables(); updatePowerNetwork(); projectModalInstance.hide(); setTool('select');
-        showToast("Carregado", `Projeto "${name}" aberto.`, 'info');
+                document.querySelectorAll('.cad-node').forEach(el => el.remove());
+                Object.values(nodes).forEach(node => {
+                    let div = document.createElement('div');
+                    div.id = node.id; div.className = `cad-node node-${node.type} ${node.type === 'client' ? 'offline' : ''}`; 
+                    div.style.left = node.x + 'px'; div.style.top = node.y + 'px';
+                    let icon = node.type === 'olt' ? '<i class="bi bi-hdd-network"></i>' : (node.type === 'client' ? '<i class="bi bi-house"></i>' : (node.type === 'ceo' ? 'C' : (node.type === 'cto' ? 'T' : '')));
+                    div.innerHTML = `${icon}<span>${node.label}</span>`; div.onclick = (e) => handleNodeClick(e, node.id);
+                    document.getElementById('map-area').appendChild(div);
+                });
+                drawCables(); updatePowerNetwork(); projectModalInstance.hide(); setTool('select');
+                showToast("Carregado", `Projeto "${name}" aberto com sucesso do servidor.`, 'info');
+            }
+        } catch(e) {
+            showToast("Erro", "Falha ao carregar o projeto.", 'error');
+        }
     }
 
-    function deleteProject(name) {
-        if(!confirm(`Apagar permanentemente "${name}"?`)) return;
-        let saved = JSON.parse(localStorage.getItem('ftth_cad')) || {};
-        delete saved[name]; localStorage.setItem('ftth_cad', JSON.stringify(saved)); renderProjectList();
+    async function deleteProject(name) {
+        if(!confirm(`Apagar permanentemente "${name}" do servidor?`)) return;
+        try {
+            let response = await fetch(`/api/projetos/${name}`, { method: 'DELETE' });
+            if(response.ok) {
+                renderProjectList();
+                showToast("Apagado", `O projeto foi apagado do Banco de Dados.`, 'success');
+            }
+        } catch(e) {
+            showToast("Erro", "Falha ao apagar o projeto.", 'error');
+        }
     }
 
     function clearMap() {
-        if(!confirm("Apagar toda a tela atual?")) return;
+        if(!confirm("Apagar toda a tela atual? O arquivo salvo não será afetado até salvar por cima.")) return;
         nodes = {}; cables = {}; splices = {}; nodeIdCounter = 1; cableIdCounter = 1;
         document.querySelectorAll('.cad-node').forEach(el => el.remove());
         drawCables(); updatePowerNetwork(); projectModalInstance.hide();

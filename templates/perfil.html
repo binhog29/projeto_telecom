@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card shadow border-secondary bg-dark text-white rounded-4">
+            <div class="card-header bg-black border-secondary py-3 text-center rounded-top-4">
+                <h4 class="mb-0 fw-bold text-primary"><i class="bi bi-shield-lock-fill"></i> Segurança da Conta</h4>
+            </div>
+            <div class="card-body p-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} fw-bold"><i class="bi bi-check-circle-fill"></i> {{ message }}</div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <form method="POST">
+                    <div class="mb-4">
+                        <label class="form-label text-info fw-bold">Nome de Usuário (Login)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-secondary border-secondary text-white"><i class="bi bi-person"></i></span>
+                            <input type="text" name="novo_usuario" class="form-control bg-dark text-white border-secondary fw-bold" value="{{ session['usuario'] }}" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-info fw-bold">Nova Senha</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-secondary border-secondary text-white"><i class="bi bi-key"></i></span>
+                            <input type="password" name="nova_senha" class="form-control bg-dark text-white border-secondary" placeholder="Digite apenas se quiser alterar">
+                        </div>
+                        <div class="form-text text-muted mt-2"><i class="bi bi-info-circle"></i> Deixe em branco para manter a senha atual. A nova senha será criptografada com Hash no banco de dados.</div>
+                    </div>
+                    <hr class="border-secondary my-4">
+                    <button type="submit" class="btn btn-success btn-lg fw-bold w-100 shadow"><i class="bi bi-floppy-fill me-2"></i> Salvar Alterações</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
