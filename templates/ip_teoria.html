@@ -1,113 +1,208 @@
 {% extends "base.html" %}
 
 {% block conteudo %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h1 class="text-dark"><i class="bi bi-hdd-network"></i> Engenharia de Redes Lógicas</h1>
-        <p class="lead text-muted">Domine a camada invisível: Protocolos, Transporte e Roteamento Avançado.</p>
+<style>
+    .teoria-header {
+        background: linear-gradient(135deg, #0d223f 0%, #061224 100%);
+        border-bottom: 3px solid #0d6efd;
+        border-radius: 10px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+    .concept-card {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-left: 5px solid #0dcaf0;
+        border-radius: 8px;
+        padding: 20px;
+        height: 100%;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .concept-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(13, 202, 240, 0.2);
+        border-color: #0dcaf0;
+    }
+    .concept-icon {
+        font-size: 2.5rem;
+        color: #0dcaf0;
+        margin-bottom: 15px;
+    }
+    .l2l-section {
+        background: linear-gradient(135deg, #1a2a24 0%, #0d1b15 100%);
+        border: 1px solid #198754;
+        border-radius: 12px;
+    }
+    .journey-box {
+        background: #111;
+        border: 1px dashed #555;
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        position: relative;
+    }
+    .journey-arrow {
+        color: #ffc107;
+        font-size: 1.5rem;
+    }
+    .badge-protocol {
+        background-color: #333;
+        color: #0dcaf0;
+        border: 1px solid #0dcaf0;
+    }
+</style>
+
+<div class="teoria-header text-white">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-diagram-3-fill me-4 text-primary" style="font-size: 4rem;"></i>
+        <div>
+            <h1 class="fw-bold mb-1">Fundamentos de Redes IP</h1>
+            <p class="text-info mb-0 fs-5">A espinha dorsal das telecomunicações: De LANs a WANs, entenda como o mundo se conecta.</p>
+        </div>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-lg-8">
+<div class="row mb-5 g-4">
+    <div class="col-12">
+        <h3 class="text-white border-bottom border-secondary pb-2 mb-4"><i class="bi bi-globe2 text-primary"></i> As Escalas de Rede (Topologia Geográfica)</h3>
+        <p class="text-muted">Para um provedor de internet (ISP), dominar a escala da rede é fundamental para vender o produto certo e diagnosticar problemas no local correto. </p>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="concept-card">
+            <i class="bi bi-pc-display concept-icon"></i>
+            <h4 class="text-white fw-bold">LAN</h4>
+            <h6 class="text-secondary small">Local Area Network (Rede Local)</h6>
+            <p class="text-light mt-3">É a rede interna do cliente. Abrange uma casa, escritório ou prédio. Tudo que está conectado nas portas amarelas do roteador faz parte da LAN.</p>
+            <span class="badge badge-protocol">IP Privado</span> <span class="badge badge-protocol">Switch/Hub</span>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="concept-card" style="border-left-color: #ffc107;">
+            <i class="bi bi-wifi concept-icon" style="color: #ffc107;"></i>
+            <h4 class="text-white fw-bold">WLAN</h4>
+            <h6 class="text-secondary small">Wireless LAN (LAN Sem Fio)</h6>
+            <p class="text-light mt-3">É a extensão da rede local através de radiofrequência (Wi-Fi). Sofre com interferências de paredes e outros roteadores. Onde ocorrem 90% das reclamações de lentidão.</p>
+            <span class="badge badge-protocol border-warning text-warning">802.11 b/g/n/ac/ax</span>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="concept-card" style="border-left-color: #20c997;">
+            <i class="bi bi-buildings concept-icon" style="color: #20c997;"></i>
+            <h4 class="text-white fw-bold">MAN</h4>
+            <h6 class="text-secondary small">Metropolitan Area Network</h6>
+            <p class="text-light mt-3">A rede que abrange bairros e cidades inteiras. <strong>A rede de fibra (GPON) do seu provedor é uma MAN</strong>, conectando todas as CTOs dos bairros à sua OLT central.</p>
+            <span class="badge badge-protocol border-success text-success">GPON / EPON</span> <span class="badge badge-protocol border-success text-success">Metro Ethernet</span>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="concept-card" style="border-left-color: #dc3545;">
+            <i class="bi bi-globe-americas concept-icon" style="color: #dc3545;"></i>
+            <h4 class="text-white fw-bold">WAN</h4>
+            <h6 class="text-secondary small">Wide Area Network</h6>
+            <p class="text-light mt-3">Redes de longa distância que ligam países e continentes. A Internet em si é a maior WAN. É o "Link Dedicado" que o seu provedor compra (Trânsito IP) para dar acesso ao mundo.</p>
+            <span class="badge badge-protocol border-danger text-danger">BGP / MPLS</span> <span class="badge badge-protocol border-danger text-danger">Fibras Submarinas</span>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="l2l-section p-4 p-md-5 shadow-lg">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <span class="badge bg-success mb-2 px-3 py-2 fw-bold"><i class="bi bi-briefcase-fill"></i> Solução Corporativa (B2B)</span>
+                    <h2 class="text-white fw-bold mb-3">Conexão LAN-to-LAN (L2L / Clear Channel)</h2>
+                    <p class="text-light fs-6">
+                        Imagine que um Banco tem uma Matriz no centro da cidade e uma Agência num bairro distante. Eles precisam que o computador da Agência aceda ao servidor da Matriz como se estivessem na mesma sala, com segurança extrema e sem passar pela internet pública.
+                    </p>
+                    <p class="text-light">
+                        <strong>O que o provedor faz:</strong> Em vez de entregar internet (PPPoE/NAT) para esses locais, o provedor cria um "Túnel Virtual" na sua própria infraestrutura (na sua OLT e nos seus Switches Core). Para os roteadores do Banco, é como se o provedor tivesse esticado um cabo de rede gigante e invisível ligando a Agência diretamente à Matriz.
+                    </p>
+                    <ul class="text-info fw-bold mt-4 list-unstyled">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Vantagem 1: Nenhuma gota de dados vai para a internet aberta (Segurança).</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Vantagem 2: Latência baixíssima (Ping de 1ms ou 2ms).</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Tecnologias usadas no Core: VLAN Q-in-Q, VPLS ou MPLS.</li>
+                    </ul>
+                </div>
+                <div class="col-lg-5 text-center mt-4 mt-lg-0">
+                    <div class="bg-dark p-4 rounded border border-secondary shadow">
+                        <h5 class="text-white border-bottom border-secondary pb-2 mb-4">Esquema do Túnel L2L</h5>
+                        
+                        <div class="d-flex justify-content-between align-items-center text-light mt-3 small">
+                            <div class="text-center">
+                                <i class="bi bi-building fs-1 text-primary"></i><br>Matriz (LAN A)<br><span class="badge bg-secondary">192.168.0.0/24</span>
+                            </div>
+                            <div class="journey-arrow">
+                                <i class="bi bi-arrow-left-right"></i><br>
+                                <span class="badge bg-success" style="font-size: 0.6rem;">Nuvem do Provedor (VLAN)</span>
+                            </div>
+                            <div class="text-center">
+                                <i class="bi bi-shop fs-1 text-info"></i><br>Filial (LAN B)<br><span class="badge bg-secondary">192.168.0.0/24</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-12">
+        <h3 class="text-white border-bottom border-secondary pb-2 mb-4"><i class="bi bi-send-check text-warning"></i> A Jornada do Pacote (Como tudo se encaixa)</h3>
+        <p class="text-muted mb-4">Quando um cliente envia uma mensagem de WhatsApp ou clica num vídeo no TikTok, a informação passa por vários equipamentos e mudanças de estado. Entender este caminho é o segredo para diagnosticar onde um problema está a ocorrer.</p>
         
-        <h2 class="section-title text-dark" style="border-color: #212529 !important;"><i class="bi bi-layers-half"></i> 1. Modelos de Referência</h2>
-        <div class="mt-3 mb-5">
-            <details>
-                <summary>Modelo OSI (7 Camadas)</summary>
-                <div class="details-content">
-                    <ul class="list-group list-group-flush small">
-                        <li class="list-group-item"><strong>7. Aplicação:</strong> HTTP, FTP, SMTP (O que o usuário vê).</li>
-                        <li class="list-group-item"><strong>6. Apresentação:</strong> Criptografia (SSL/TLS), Formatos (JPG).</li>
-                        <li class="list-group-item"><strong>5. Sessão:</strong> Controle de diálogo.</li>
-                        <li class="list-group-item list-group-item-primary"><strong>4. Transporte:</strong> TCP (Confiável) vs UDP (Rápido).</li>
-                        <li class="list-group-item list-group-item-primary"><strong>3. Rede:</strong> Endereçamento IP e Roteamento.</li>
-                        <li class="list-group-item list-group-item-primary"><strong>2. Enlace:</strong> MAC Address, Switches, VLANs.</li>
-                        <li class="list-group-item"><strong>1. Física:</strong> Cabos, Fibra, RF (Sinais elétricos/ópticos).</li>
-                    </ul>
-                </div>
-            </details>
-            <details>
-                <summary>TCP vs UDP (Transporte)</summary>
-                <div class="details-content">
-                    <p><strong>TCP:</strong> Garante a entrega. Se perder, reenvia. Lento, mas confiável. (Web, Email, Arquivos)</p>
-                    <p><strong>UDP:</strong> Dispara e esquece. Rápido, mas pode perder pacotes. (VoIP, Jogos, Streaming ao vivo)</p>
-                </div>
-            </details>
-        </div>
-
-        <h2 class="section-title text-dark" style="border-color: #212529 !important;"><i class="bi bi-123"></i> 2. Endereçamento Avançado</h2>
-        <div class="mt-3 mb-5">
-            <details>
-                <summary>CIDR e Sub-redes (/24, /30)</summary>
-                <div class="details-content">
-                    <ul>
-                        <li><code>/32</code> = 1 IP (Loopback/Cliente único)</li>
-                        <li><code>/30</code> = 4 IPs (2 úteis). Para enlace entre roteadores.</li>
-                        <li><code>/29</code> = 8 IPs (6 úteis). Para clientes corporativos com IPs fixos.</li>
-                        <li><code>/24</code> = 256 IPs (254 úteis). Padrão para redes locais (LAN).</li>
-                    </ul>
-                </div>
-            </details>
-             <details>
-                <summary>VLAN (802.1Q)</summary>
-                <div class="details-content">
-                    <p>Redes virtuais dentro do mesmo cabo físico. Separa tráfego de clientes, gerência e VoIP usando "tags" (etiquetas).</p>
-                </div>
-            </details>
-        </div>
-
-        <h2 class="section-title text-dark" style="border-color: #212529 !important;"><i class="bi bi-signpost-split-fill"></i> 3. Roteamento & Serviços</h2>
-        <div class="mt-3 mb-5">
-            <details>
-                <summary>Roteamento Dinâmico (OSPF/BGP)</summary>
-                <div class="details-content">
-                    <p><strong>OSPF (IGP):</strong> Roteamento interno. Acha o caminho mais rápido dentro da sua rede.</p>
-                    <p><strong>BGP (EGP):</strong> Roteamento externo. É o protocolo que conecta seu provedor à Internet mundial.</p>
-                </div>
-            </details>
-            <details>
-                <summary>NAT e CGNAT</summary>
-                <div class="details-content">
-                    <p><strong>NAT:</strong> Vários dispositivos privados compartilham 1 IP público.</p>
-                    <p><strong>CGNAT:</strong> NAT feito pelo provedor em grande escala. Economiza IPs públicos, mas atrapalha jogos e serviços que precisam de portas abertas.</p>
-                </div>
-            </details>
-        </div>
-
-    </div>
-
-    <div class="col-lg-4">
-        <div class="card bg-dark text-white shadow-sm mb-4 sticky-top" style="top: 100px; z-index: 1;">
-            <div class="card-header fw-bold">
-                <i class="bi bi-tools"></i> Toolbox do Analista
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3">
+            
+            <div class="journey-box flex-fill w-100 border-light">
+                <i class="bi bi-phone text-light fs-2"></i>
+                <h6 class="text-white mt-2 mb-1">1. Celular do Cliente</h6>
+                <small class="text-secondary">Conectado via WLAN (Wi-Fi). Envia sinal de rádio.</small>
             </div>
-            <div class="card-body">
-                <ul class="list-unstyled small mb-0">
-                    <li class="mb-3"><strong class="text-info">> ping 8.8.8.8</strong><br>Testa conectividade (Camada 3).</li>
-                    <li class="mb-3"><strong class="text-info">> traceroute google.com</strong><br>Mostra a rota (saltos) até o destino.</li>
-                    <li class="mb-3"><strong class="text-info">> nslookup site.com</strong><br>Testa resolução de nomes DNS.</li>
-                    <li><strong class="text-info">> telnet 192.168.1.1 80</strong><br>Testa se uma porta TCP está aberta.</li>
-                </ul>
+            
+            <i class="bi bi-chevron-right journey-arrow d-none d-lg-block"></i>
+            <i class="bi bi-chevron-down journey-arrow d-lg-none my-2"></i>
+            
+            <div class="journey-box flex-fill w-100 border-warning">
+                <i class="bi bi-router text-warning fs-2"></i>
+                <h6 class="text-white mt-2 mb-1">2. Roteador / ONU</h6>
+                <small class="text-secondary">Recebe rádio e converte em luz (Laser TX). Autentica PPPoE.</small>
             </div>
+            
+            <i class="bi bi-chevron-right journey-arrow d-none d-lg-block"></i>
+            <i class="bi bi-chevron-down journey-arrow d-lg-none my-2"></i>
+
+            <div class="journey-box flex-fill w-100 border-info">
+                <i class="bi bi-diagram-2 text-info fs-2"></i>
+                <h6 class="text-white mt-2 mb-1">3. Rede Externa (Física)</h6>
+                <small class="text-secondary">A luz viaja pelo Drop, CTO e CEO através da rede MAN.</small>
+            </div>
+
+            <i class="bi bi-chevron-right journey-arrow d-none d-lg-block"></i>
+            <i class="bi bi-chevron-down journey-arrow d-lg-none my-2"></i>
+
+            <div class="journey-box flex-fill w-100 border-primary">
+                <i class="bi bi-hdd-network text-primary fs-2"></i>
+                <h6 class="text-white mt-2 mb-1">4. Datacenter (Core)</h6>
+                <small class="text-secondary">A OLT recebe a luz. O BRAS roteia e aplica o plano de banda.</small>
+            </div>
+
+            <i class="bi bi-chevron-right journey-arrow d-none d-lg-block"></i>
+            <i class="bi bi-chevron-down journey-arrow d-lg-none my-2"></i>
+
+            <div class="journey-box flex-fill w-100 border-danger">
+                <i class="bi bi-cloud-globe text-danger fs-2"></i>
+                <h6 class="text-white mt-2 mb-1">5. Internet (WAN)</h6>
+                <small class="text-secondary">Saída via Trânsito IP (BGP) para os servidores globais.</small>
+            </div>
+
         </div>
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card border-info shadow-sm" style="background-color: #f8f9fa;">
-            <div class="card-body d-flex align-items-start">
-                <div class="me-3 text-info">
-                    <i class="bi bi-lightbulb-fill fs-1"></i>
-                </div>
-                <div>
-                    <h4 class="card-title fw-bold text-dark">Você sabia?</h4>
-                    <p class="card-text fs-5">Em provedores de internet (ISPs), o método mais comum para autenticar clientes residenciais não é o DHCP puro, mas sim o <strong>PPPoE</strong> (Point-to-Point Protocol over Ethernet).</p>
-                    <p class="text-muted mb-0">Ele cria um "túnel" virtual discado que permite ao provedor exigir usuário e senha para liberar a conexão, facilitar o controle de banda e isolar cada cliente na rede.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}
