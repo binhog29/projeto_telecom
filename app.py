@@ -369,6 +369,11 @@ def vendas_teoria(): return render_template('vendas_teoria.html', titulo="Comerc
 @app.route('/gestao/teoria')
 def gestao_teoria(): return render_template('gestao_teoria.html', titulo="Normas, NR10/35 e ANATEL")
     
+@app.route('/servers/mikrotik_sim')
+@login_required
+def mikrotik_sim(): 
+    return render_template('mikrotik_simulator.html', titulo="WinBox Simulator Pro")
+    
 @app.route('/sw.js')
 def sw():
     return app.send_static_file('sw.js')

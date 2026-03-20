@@ -1,0 +1,574 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    /* Estilos do Simulador WinBox (Dark Mode) */
+    .winbox-container {
+        width: 100%; height: 75vh; min-height: 600px;
+        background-color: #1e1e1e; border: 2px solid #444;
+        border-radius: 8px; display: flex; flex-direction: column;
+        overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    
+    .wb-topbar {
+        background-color: #2d2d30; padding: 5px 15px; border-bottom: 1px solid #000;
+        display: flex; justify-content: space-between; align-items: center; color: #ccc;
+        font-size: 0.85rem; user-select: none; flex-wrap: wrap; gap: 5px;
+    }
+    .wb-topbar select {
+        background: #1e1e1e; color: #0dcaf0; border: 1px solid #555;
+        padding: 2px 10px; border-radius: 4px; font-weight: bold; outline: none; max-width: 100%;
+    }
+
+    .wb-main { display: flex; flex-grow: 1; position: relative; overflow: hidden; }
+
+    .wb-sidebar {
+        width: 180px; background-color: #252526; border-right: 1px solid #000;
+        display: flex; flex-direction: column; padding-top: 10px; overflow-y: auto;
+    }
+    .wb-menu-item {
+        padding: 8px 15px; color: #eee; cursor: pointer; font-size: 0.9rem;
+        display: flex; align-items: center; border-left: 3px solid transparent;
+        white-space: nowrap; overflow: hidden;
+    }
+    .wb-menu-item:hover { background-color: #3e3e42; border-left-color: #0dcaf0; }
+    .wb-menu-item i { margin-right: 10px; width: 16px; text-align: center; color: #aaa; font-size: 1.1rem; }
+    
+    .wb-desktop { flex-grow: 1; background-color: #1e1e1e; position: relative; overflow: hidden; }
+
+    .wb-window {
+        position: absolute; background-color: #252526; border: 1px solid #007acc;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5); border-radius: 4px 4px 0 0;
+        display: none; flex-direction: column; 
+    }
+    .wb-window-header {
+        background-color: #007acc; color: white; padding: 5px 10px; font-size: 0.85rem;
+        font-weight: bold; display: flex; justify-content: space-between; align-items: center;
+        cursor: grab; border-radius: 3px 3px 0 0; touch-action: none;
+    }
+    .wb-window-header:active { cursor: grabbing; }
+    .wb-window-close { cursor: pointer; background: transparent; border: none; color: white; font-weight: bold; }
+    .wb-window-close:hover { color: #ff4c4c; }
+    .wb-window-toolbar { background-color: #333; padding: 5px; border-bottom: 1px solid #000; display: flex; gap: 5px; overflow-x: auto;}
+    .wb-btn { background-color: #444; color: white; border: 1px solid #555; padding: 2px 8px; cursor: pointer; font-size: 0.8rem; border-radius: 3px; white-space: nowrap;}
+    .wb-btn:hover { background-color: #555; }
+    .wb-window-content { padding: 0; flex-grow: 1; background: #1e1e1e; overflow-y: auto; overflow-x: auto; max-height: 400px; }
+
+    .wb-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; color: #ddd; white-space: nowrap; }
+    .wb-table th { background-color: #333; text-align: left; padding: 4px 8px; border-right: 1px solid #444; border-bottom: 1px solid #000; font-weight: normal; }
+    .wb-table td { padding: 4px 8px; border-right: 1px solid #333; border-bottom: 1px solid #222; }
+    .wb-table tr:hover { background-color: #094771; }
+    
+    .clickable-row { cursor: pointer; transition: background 0.1s; }
+    .selected-row { background-color: #007acc !important; color: white !important; }
+    
+    .status-running { color: #198754; font-weight: bold; font-style: italic; }
+    .status-disabled { color: #666 !important; font-style: italic; opacity: 0.6; }
+
+    .wb-terminal { background-color: #000; color: #ccc; font-family: monospace; padding: 10px; font-size: 0.9rem; min-height: 250px; }
+    .term-logo { color: #0dcaf0; white-space: pre; font-size: 0.6rem; }
+
+    /* FORÇAR MODO APP NO CELULAR */
+    @media (max-width: 992px) {
+        .winbox-container { height: 85vh !important; min-height: 500px !important; }
+        .wb-topbar { flex-direction: column !important; align-items: stretch !important; padding: 10px !important; }
+        .wb-topbar > div { margin-bottom: 8px; }
+        .wb-main { flex-direction: column-reverse !important; } 
+        
+        .wb-sidebar { 
+            width: 100% !important; height: 75px !important; min-height: 75px !important;
+            flex-direction: row !important; align-items: center !important; justify-content: flex-start !important;
+            overflow-x: auto !important; overflow-y: hidden !important; border-right: none !important; 
+            border-top: 2px solid #000 !important; padding: 0 !important; background-color: #1a1a1a !important;
+        }
+        .wb-menu-item { 
+            flex-direction: column !important; justify-content: center !important; padding: 5px 15px !important; 
+            border-left: none !important; border-bottom: 3px solid transparent !important; flex: 0 0 auto !important; 
+            height: 100% !important; text-align: center !important;
+        }
+        .wb-menu-item i { margin: 0 0 5px 0 !important; font-size: 1.5rem !important; }
+        .wb-menu-item span { display: block !important; font-size: 0.7rem !important; white-space: nowrap !important; }
+        .wb-menu-text-category, .wb-sidebar .border-top { display: none !important; }
+        
+        .wb-desktop { flex-grow: 1 !important; width: 100% !important; }
+        
+        .wb-window { 
+            top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+            width: 100% !important; height: 100% !important; max-width: 100% !important; 
+            border-radius: 0 !important; border: none !important; transform: none !important;
+        }
+        .wb-window-content { max-height: none !important; padding-bottom: 20px !important; }
+        .wb-window-header { padding: 15px 15px !important; font-size: 1.1rem !important; }
+        .wb-window-close { font-size: 2rem !important; padding: 0 10px !important; }
+        .wb-table td, .wb-table th { padding: 12px 10px !important; font-size: 1rem !important; }
+        .wb-btn { padding: 10px 20px !important; font-size: 1.1rem !important; }
+        .term-logo { display: none !important; }
+    }
+</style>
+
+<div class="row mb-3">
+    <div class="col-12">
+        <h2 class="text-danger fw-bold"><i class="bi bi-router"></i> Simulador WinBox Pro</h2>
+        <p class="text-muted">Treine configurações de NOC em equipamentos MikroTik virtuais sem risco de indisponibilidade.</p>
+    </div>
+</div>
+
+<div class="winbox-container">
+    <div class="wb-topbar">
+        <div>
+            <i class="bi bi-shield-check text-success me-1"></i> admin@<span id="router-identity">MikroTik</span>
+        </div>
+        <div class="d-flex align-items-center">
+            <select id="router-model" class="form-select form-select-sm" onchange="changeHardware()">
+                <option value="rb750gr3">RB750Gr3 (hEX)</option>
+                <option value="hapac2">hAP ac2</option>
+                <option value="hapac_lite_tc">RB952Ui-5ac2nD-TC (hAP ac lite)</option>
+                <option value="rb3011">RB3011UiAS</option>
+                <option value="ccr1009">CCR1009-7G-1C</option>
+                <option value="ccr1036">CCR1036-8G-2S+</option>
+            </select>
+        </div>
+        <div class="d-none d-lg-block">
+            CPU: <span id="cpu-load" class="text-info">1%</span> | Uptime: <span id="uptime">00:15:32</span>
+        </div>
+    </div>
+
+    <div class="wb-main">
+        <div class="wb-sidebar">
+            <div class="wb-menu-item" onclick="openWindow('win-interfaces')"><i class="bi bi-ethernet"></i> <span>Interfaces</span></div>
+            <div class="wb-menu-item" onclick="openWindow('win-wireless')"><i class="bi bi-wifi"></i> <span>Wireless</span></div>
+            <div class="wb-menu-item" onclick="openWindow('win-bridge')"><i class="bi bi-diagram-3"></i> <span>Bridge</span></div>
+            <div class="wb-menu-item" onclick="openWindow('win-ppp')"><i class="bi bi-globe"></i> <span>PPP</span></div>
+            <div class="wb-menu-item text-secondary mt-2 mb-1 wb-menu-text-category"><i class="bi bi-chevron-down"></i> <span>IP</span></div>
+            <div class="wb-menu-item" onclick="openWindow('win-addresses')"><i class="bi bi-card-list"></i> <span>Addresses</span></div>
+            <div class="wb-menu-item mt-3 border-top border-dark pt-3" onclick="openWindow('win-terminal')"><i class="bi bi-terminal"></i> <span>Terminal</span></div>
+        </div>
+
+        <div class="wb-desktop" id="desktop">
+            
+            <div class="wb-window" id="win-interfaces" style="top: 10px; left: 20px; width: 600px;">
+                <div class="wb-window-header" onmousedown="dragWindow(event, 'win-interfaces')">
+                    <span>Interface List</span>
+                    <button class="wb-window-close" onclick="closeWindow('win-interfaces')">✕</button>
+                </div>
+                <div class="wb-window-toolbar">
+                    <button class="wb-btn text-success fw-bold" onclick="addVlan()">+</button>
+                    <button class="wb-btn text-danger fw-bold" onclick="removeInterface()">-</button>
+                    <button class="wb-btn" onclick="toggleInterfaceStatus('interfaces-list', true)"><i class="bi bi-check-lg text-primary"></i></button>
+                    <button class="wb-btn" onclick="toggleInterfaceStatus('interfaces-list', false)"><i class="bi bi-x-lg text-danger"></i></button>
+                </div>
+                <div class="wb-window-content">
+                    <table class="wb-table">
+                        <thead><tr><th width="30"></th><th>Name</th><th>Type</th><th>Tx</th><th>Rx</th></tr></thead>
+                        <tbody id="interfaces-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="wb-window" id="win-wireless" style="top: 25px; left: 35px; width: 550px;">
+                <div class="wb-window-header" onmousedown="dragWindow(event, 'win-wireless')">
+                    <span>Wireless Tables</span>
+                    <button class="wb-window-close" onclick="closeWindow('win-wireless')">✕</button>
+                </div>
+                <div class="wb-window-toolbar">
+                    <button class="wb-btn" onclick="toggleInterfaceStatus('wireless-list', true)"><i class="bi bi-check-lg text-primary"></i></button>
+                    <button class="wb-btn" onclick="toggleInterfaceStatus('wireless-list', false)"><i class="bi bi-x-lg text-danger"></i></button>
+                    <button class="wb-btn" onclick="editWirelessConfig()" title="Configurar SSID e Senha"><i class="bi bi-pencil-square text-warning"></i></button>
+                </div>
+                <div class="wb-window-content">
+                    <table class="wb-table">
+                        <thead><tr><th width="30"></th><th>Name</th><th>Mode</th><th>Band</th><th>SSID</th></tr></thead>
+                        <tbody id="wireless-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="wb-window" id="win-bridge" style="top: 45px; left: 50px; width: 450px;">
+                <div class="wb-window-header" onmousedown="dragWindow(event, 'win-bridge')">
+                    <span>Bridge</span>
+                    <button class="wb-window-close" onclick="closeWindow('win-bridge')">✕</button>
+                </div>
+                <div class="wb-window-toolbar">
+                    <button class="wb-btn text-success fw-bold" onclick="addBridge()">+</button>
+                    <button class="wb-btn text-danger fw-bold" onclick="removeBridge()">-</button>
+                    <button class="wb-btn" onclick="toggleInterfaceStatus('bridge-list', true)"><i class="bi bi-check-lg text-primary"></i></button>
+                    <button class="wb-btn" onclick="toggleInterfaceStatus('bridge-list', false)"><i class="bi bi-x-lg text-danger"></i></button>
+                </div>
+                <div class="wb-window-content">
+                    <table class="wb-table">
+                        <thead><tr><th width="30"></th><th>Name</th><th>Type</th><th>MTU</th></tr></thead>
+                        <tbody id="bridge-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="wb-window" id="win-addresses" style="top: 60px; left: 70px; width: 450px;">
+                <div class="wb-window-header" onmousedown="dragWindow(event, 'win-addresses')">
+                    <span>Address List</span>
+                    <button class="wb-window-close" onclick="closeWindow('win-addresses')">✕</button>
+                </div>
+                <div class="wb-window-toolbar">
+                    <button class="wb-btn text-success fw-bold" onclick="addIPPrompt()">+</button>
+                    <button class="wb-btn text-danger fw-bold" onclick="clearIPs()">-</button>
+                </div>
+                <div class="wb-window-content">
+                    <table class="wb-table">
+                        <thead><tr><th>Address</th><th>Network</th><th>Interface</th></tr></thead>
+                        <tbody id="address-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="wb-window" id="win-terminal" style="top: 80px; left: 90px; width: 550px;">
+                <div class="wb-window-header" onmousedown="dragWindow(event, 'win-terminal')">
+                    <span>Terminal</span>
+                    <button class="wb-window-close" onclick="closeWindow('win-terminal')">✕</button>
+                </div>
+                <div class="wb-window-content wb-terminal">
+                    <div class="term-logo">
+  MMM      MMM       K   K RRRRRR  OOOOOO  TTTTTTT IIIIII K   K
+  M M M  M M M       K  K  R    R  O    O     T      I    K  K
+  M   M  M   M   I   K K   R    R  O    O     T      I    K K
+  M     M    M   I   K K   RRRRRR  O    O     T      I    K K
+  M          M   I   K  K  R   R   O    O     T      I    K  K
+  M          M   I   K   K R    R  OOOOOO     T    IIIIII K   K
+                    </div>
+                    <div id="term-hardware-text">MikroTik RouterOS</div>
+                    <br><span style="color: #0dcaf0;">[admin@MikroTik] ></span> <span class="blink">_</span>
+                </div>
+            </div>
+
+            <div class="wb-window" id="win-ppp" style="top: 100px; left: 110px; width: 500px;">
+                <div class="wb-window-header" onmousedown="dragWindow(event, 'win-ppp')">
+                    <span>PPP</span>
+                    <button class="wb-window-close" onclick="closeWindow('win-ppp')">✕</button>
+                </div>
+                <div class="wb-window-toolbar">
+                    <button class="wb-btn text-success fw-bold" onclick="addPPPoE()">+ PPPoE Server</button>
+                </div>
+                <div class="wb-window-content">
+                    <table class="wb-table">
+                        <thead><tr><th>Name</th><th>Service</th><th>Interface</th></tr></thead>
+                        <tbody id="ppp-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    const routerModels = {
+        'rb750gr3': { name: 'RB750Gr3', ports: 5, sfp: 0, sfpPlus: 0, wlan: 0 },
+        'hapac2': { name: 'hAP ac^2', ports: 5, sfp: 0, sfpPlus: 0, wlan: 2 },
+        'hapac_lite_tc': { name: 'hAP ac lite TC', ports: 5, sfp: 0, sfpPlus: 0, wlan: 2 },
+        'rb3011': { name: 'RB3011UiAS-RM', ports: 10, sfp: 1, sfpPlus: 0, wlan: 0 },
+        'ccr1009': { name: 'CCR1009-7G-1C-1S+', ports: 7, sfp: 1, sfpPlus: 1, wlan: 0 },
+        'ccr1036': { name: 'CCR1036-8G-2S+', ports: 8, sfp: 0, sfpPlus: 2, wlan: 0 }
+    };
+
+    let activeInterfaces = [];
+    let isMobile = window.innerWidth <= 992;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        changeHardware();
+        setInterval(simulateTraffic, 2000); 
+    });
+
+    window.addEventListener('resize', () => { isMobile = window.innerWidth <= 992; });
+
+    function selectRow(element) {
+        let table = element.closest('table');
+        table.querySelectorAll('tr').forEach(row => row.classList.remove('selected-row'));
+        element.classList.add('selected-row');
+    }
+
+    function changeHardware() {
+        const modelKey = document.getElementById('router-model').value;
+        const hw = routerModels[modelKey];
+        document.getElementById('term-hardware-text').innerText = `MikroTik RouterOS 7.12 (c) 1999-2026\nModel: ${hw.name}`;
+        
+        activeInterfaces = [];
+        let html = '';
+        let wirelessHtml = '';
+
+        for(let i=1; i<=hw.ports; i++) { activeInterfaces.push(`ether${i}`); html += generateInterfaceRow(`ether${i}`, 'Ethernet'); }
+        for(let i=1; i<=hw.sfp; i++) { activeInterfaces.push(`sfp${i}`); html += generateInterfaceRow(`sfp${i}`, 'SFP'); }
+        for(let i=1; i<=hw.sfpPlus; i++) { activeInterfaces.push(`sfp-sfpplus${i}`); html += generateInterfaceRow(`sfp-sfpplus${i}`, 'SFP+'); }
+        
+        if(hw.wlan > 0) {
+            for(let i=1; i<=hw.wlan; i++) { 
+                let name = `wlan${i}`;
+                let band = i === 1 ? '2GHz-b/g/n' : '5GHz-a/n/ac';
+                activeInterfaces.push(name); 
+                html += generateInterfaceRow(name, 'WLAN'); 
+                wirelessHtml += `<tr class="clickable-row" onclick="selectRow(this)" data-name="${name}" data-ssid="Telecom_Pro" data-pass=""><td class="text-center fw-bold text-secondary">R</td><td class="status-running"><i class="bi bi-wifi me-2 text-secondary"></i>${name}</td><td class="text-muted">ap-bridge</td><td class="text-muted">${band}</td><td class="text-info ssid-cell">Telecom_Pro</td></tr>`;
+            }
+        } else {
+            wirelessHtml = `<tr class="text-muted fst-italic"><td colspan="5" class="text-center py-3">No wireless interfaces on this hardware</td></tr>`;
+        }
+
+        document.getElementById('interfaces-list').innerHTML = html;
+        document.getElementById('wireless-list').innerHTML = wirelessHtml;
+        
+        activeInterfaces.push('bridge1');
+        document.getElementById('bridge-list').innerHTML = `<tr class="clickable-row" onclick="selectRow(this)" data-name="bridge1"><td class="text-center fw-bold text-secondary">R</td><td class="status-running"><i class="bi bi-diagram-3-fill me-2 text-secondary"></i>bridge1</td><td class="text-muted">Bridge</td><td class="text-muted">1500</td></tr>`;
+        document.getElementById('interfaces-list').innerHTML += generateInterfaceRow('bridge1', 'Bridge', true);
+        
+        document.getElementById('address-list').innerHTML = `<tr id="ip-default" class="clickable-row" onclick="manageIP('ip-default', '192.168.88.1/24', 'ether1')"><td>192.168.88.1/24</td><td>192.168.88.0</td><td>ether1</td></tr>`;
+        document.getElementById('ppp-list').innerHTML = `<tr class="text-muted fst-italic"><td colspan="3" class="text-center py-3">No PPPoE Servers configured</td></tr>`;
+    }
+
+    function generateInterfaceRow(name, type, forceRunning=false) {
+        let isRunning = forceRunning ? 'R' : (Math.random() > 0.5 ? 'R' : ''); 
+        let statusClass = isRunning ? 'status-running' : '';
+        let icon = type === 'WLAN' ? 'bi-wifi' : (type === 'Bridge' ? 'bi-diagram-3-fill' : (type === 'VLAN' ? 'bi-vr' : 'bi-hdd-network-fill'));
+        return `<tr class="clickable-row" onclick="selectRow(this)" data-name="${name}" data-type="${type}"><td class="text-center fw-bold text-secondary">${isRunning}</td><td class="${statusClass}"><i class="bi ${icon} me-2 text-secondary"></i>${name}</td><td class="text-muted">${type}</td><td class="tx-rate text-success">0 bps</td><td class="rx-rate text-info">0 bps</td></tr>`;
+    }
+
+    // --- NOVA FUNÇÃO: EDITAR WIRELESS ---
+    async function editWirelessConfig() {
+        let list = document.getElementById('wireless-list');
+        let selected = list.querySelector('.selected-row');
+        
+        if(!selected) {
+            Swal.fire({ title: 'Atenção', text: 'Selecione uma placa wireless na lista tocando nela primeiro.', icon: 'warning', background: '#252526', color: '#fff', confirmButtonColor: '#007acc' });
+            return;
+        }
+
+        let name = selected.getAttribute('data-name');
+        let currentSsid = selected.getAttribute('data-ssid');
+        let currentPass = selected.getAttribute('data-pass');
+
+        const { value: formValues } = await Swal.fire({
+            title: `<i class="bi bi-wifi text-warning"></i> Configurar ${name}`,
+            background: '#252526', color: '#fff',
+            html:
+                '<div style="text-align: left; font-size: 0.9rem; margin-bottom: 5px;">SSID (Nome da Rede):</div>' +
+                `<input id="swal-ssid" class="swal2-input" value="${currentSsid}" style="background: #1e1e1e; color: #0dcaf0; border: 1px solid #555; width: 85%; margin-top: 0;">` +
+                '<div style="text-align: left; font-size: 0.9rem; margin-top: 15px; margin-bottom: 5px;">Security Profile (Senha):</div>' +
+                `<input id="swal-pass" class="swal2-input" placeholder="Em branco = Aberto" value="${currentPass}" style="background: #1e1e1e; color: #0dcaf0; border: 1px solid #555; width: 85%; margin-top: 0;">`,
+            showCancelButton: true, confirmButtonColor: '#007acc', cancelButtonColor: '#444', confirmButtonText: 'Aplicar', cancelButtonText: 'Cancelar',
+            preConfirm: () => {
+                return [document.getElementById('swal-ssid').value, document.getElementById('swal-pass').value]
+            }
+        });
+
+        if (formValues) {
+            let newSsid = formValues[0];
+            let newPass = formValues[1];
+
+            selected.setAttribute('data-ssid', newSsid);
+            selected.setAttribute('data-pass', newPass);
+            selected.querySelector('.ssid-cell').innerText = newSsid;
+
+            Swal.fire({
+                title: 'Sucesso!', text: `A rede agora chama-se "${newSsid}".`, icon: 'success',
+                background: '#252526', color: '#fff', timer: 2000, showConfirmButton: false
+            });
+        }
+    }
+
+    function toggleInterfaceStatus(listId, enable) {
+        let list = document.getElementById(listId);
+        let selected = list.querySelector('.selected-row');
+        if(!selected) {
+            Swal.fire({ title: 'Atenção', text: 'Selecione uma interface na lista primeiro.', icon: 'warning', background: '#252526', color: '#fff', confirmButtonColor: '#007acc' });
+            return;
+        }
+        let name = selected.getAttribute('data-name');
+        
+        function applyStatus(tableId) {
+            let row = document.getElementById(tableId)?.querySelector(`tr[data-name="${name}"]`);
+            if(row) {
+                if(enable) {
+                    row.cells[0].innerText = 'R';
+                    row.cells[1].classList.remove('status-disabled');
+                    row.cells[1].classList.add('status-running');
+                } else {
+                    row.cells[0].innerText = '';
+                    row.cells[1].classList.remove('status-running');
+                    row.cells[1].classList.add('status-disabled');
+                    if(row.cells[3]) row.cells[3].innerText = '0 bps';
+                    if(row.cells[4]) row.cells[4].innerText = '0 bps';
+                }
+            }
+        }
+        applyStatus('interfaces-list'); applyStatus('wireless-list'); applyStatus('bridge-list');
+    }
+
+    async function addVlan() {
+        let optionsHtml = activeInterfaces.map(i => `<option value="${i}">${i}</option>`).join('');
+        const { value: formValues } = await Swal.fire({
+            title: 'New VLAN', background: '#252526', color: '#fff',
+            html: '<div style="text-align: left; font-size: 0.9rem; margin-bottom: 5px;">Name:</div><input id="vlan-name" class="swal2-input" value="vlan10" style="background: #1e1e1e; color: #0dcaf0; border: 1px solid #555; width: 85%; margin-top: 0;"><div style="text-align: left; font-size: 0.9rem; margin-top: 15px; margin-bottom: 5px;">Interface:</div><select id="vlan-intf" class="swal2-select" style="background: #1e1e1e; color: #fff; border: 1px solid #555; width: 85%; margin-top: 0;">' + optionsHtml + '</select>',
+            showCancelButton: true, confirmButtonColor: '#007acc', cancelButtonColor: '#444'
+        });
+        if (formValues) {
+            let name = document.getElementById('vlan-name').value;
+            activeInterfaces.push(name);
+            document.getElementById('interfaces-list').innerHTML += generateInterfaceRow(name, 'VLAN', true);
+        }
+    }
+
+    function removeInterface() {
+        let selected = document.getElementById('interfaces-list').querySelector('.selected-row');
+        if(!selected) return;
+        let type = selected.getAttribute('data-type');
+        let name = selected.getAttribute('data-name');
+        if(['Ethernet', 'SFP', 'SFP+', 'WLAN'].includes(type)) {
+            Swal.fire({ title: 'Erro', text: 'Você não pode excluir uma interface física do hardware!', icon: 'error', background: '#252526', color: '#fff', confirmButtonColor: '#007acc' });
+            return;
+        }
+        selected.remove();
+        activeInterfaces = activeInterfaces.filter(i => i !== name);
+    }
+
+    async function addBridge() {
+        const { value: name } = await Swal.fire({
+            title: 'New Bridge', input: 'text', inputValue: 'bridge2', background: '#252526', color: '#fff', showCancelButton: true, confirmButtonColor: '#007acc'
+        });
+        if (name) {
+            activeInterfaces.push(name);
+            document.getElementById('bridge-list').innerHTML += `<tr class="clickable-row" onclick="selectRow(this)" data-name="${name}"><td class="text-center fw-bold text-secondary">R</td><td class="status-running"><i class="bi bi-diagram-3-fill me-2 text-secondary"></i>${name}</td><td class="text-muted">Bridge</td><td class="text-muted">1500</td></tr>`;
+            document.getElementById('interfaces-list').innerHTML += generateInterfaceRow(name, 'Bridge', true);
+        }
+    }
+
+    function removeBridge() {
+        let selected = document.getElementById('bridge-list').querySelector('.selected-row');
+        if(!selected) return;
+        let name = selected.getAttribute('data-name');
+        selected.remove();
+        let intfRow = document.getElementById('interfaces-list').querySelector(`tr[data-name="${name}"]`);
+        if(intfRow) intfRow.remove();
+        activeInterfaces = activeInterfaces.filter(i => i !== name);
+    }
+
+    function simulateTraffic() {
+        if(document.getElementById('cpu-load')) document.getElementById('cpu-load').innerText = Math.floor(Math.random() * 5) + 1 + '%';
+        const rows = document.getElementById('interfaces-list').getElementsByTagName('tr');
+        for(let row of rows) {
+            if(row.cells[0].innerText === 'R') { 
+                row.cells[3].innerText = formatBytes(Math.floor(Math.random() * 5000) + 100);
+                row.cells[4].innerText = formatBytes(Math.floor(Math.random() * 15000) + 500);
+            }
+        }
+    }
+    function formatBytes(kbits) { return kbits > 1000 ? (kbits/1000).toFixed(1) + ' Mbps' : kbits + ' kbps'; }
+
+    let zIndexCounter = 100;
+    function openWindow(id) { let win = document.getElementById(id); win.style.display = 'flex'; win.style.zIndex = ++zIndexCounter; }
+    function closeWindow(id) { document.getElementById(id).style.display = 'none'; }
+    function dragWindow(e, windowId) {
+        if(isMobile) return; 
+        let win = document.getElementById(windowId); win.style.zIndex = ++zIndexCounter; 
+        let offsetX = e.clientX - win.getBoundingClientRect().left; let offsetY = e.clientY - win.getBoundingClientRect().top;
+        let parentRect = document.getElementById('desktop').getBoundingClientRect();
+        function moveEvent(e) {
+            win.style.left = Math.max(0, Math.min(e.clientX - parentRect.left - offsetX, parentRect.width - 50)) + 'px';
+            win.style.top = Math.max(0, Math.min(e.clientY - parentRect.top - offsetY, parentRect.height - 30)) + 'px';
+        }
+        function upEvent() { document.removeEventListener('mousemove', moveEvent); document.removeEventListener('mouseup', upEvent); }
+        document.addEventListener('mousemove', moveEvent); document.addEventListener('mouseup', upEvent);
+    }
+
+    async function addPPPoE() {
+        let optionsHtml = activeInterfaces.map(i => `<option value="${i}">${i}</option>`).join('');
+        const { value: formValues } = await Swal.fire({
+            title: 'New PPPoE Server', background: '#252526', color: '#fff',
+            html: '<div style="text-align: left; font-size: 0.9rem; margin-bottom: 5px;">Service Name:</div><input id="swal-ppp-name" class="swal2-input" value="pppoe-service1" style="background: #1e1e1e; color: #0dcaf0; border: 1px solid #555; width: 85%; margin-top: 0;"><div style="text-align: left; font-size: 0.9rem; margin-top: 15px; margin-bottom: 5px;">Interface:</div><select id="swal-ppp-intf" class="swal2-select" style="background: #1e1e1e; color: #fff; border: 1px solid #555; width: 85%; margin-top: 0;">' + optionsHtml + '</select>',
+            showCancelButton: true, confirmButtonColor: '#007acc', cancelButtonColor: '#444'
+        });
+        if (formValues) {
+            let name = document.getElementById('swal-ppp-name').value;
+            let intf = document.getElementById('swal-ppp-intf').value;
+            let rowId = 'ppp-' + Date.now();
+            let tbody = document.getElementById('ppp-list');
+            if(tbody.innerText.includes("No PPPoE")) tbody.innerHTML = ''; 
+            tbody.innerHTML += `<tr id="${rowId}" class="clickable-row" onclick="managePPP('${rowId}', '${name}', '${intf}')"><td><i class="bi bi-play-fill text-success"></i> pppoe-in-${intf}</td><td>${name}</td><td>${intf}</td></tr>`;
+        }
+    }
+    function managePPP(rowId, name, intf) {
+        Swal.fire({
+            title: name, text: "O que deseja fazer com este servidor?", background: '#252526', color: '#fff',
+            showDenyButton: true, showCancelButton: true, confirmButtonText: 'Editar', denyButtonText: 'Excluir', confirmButtonColor: '#007acc', denyButtonColor: '#dc3545'
+        }).then((result) => {
+            if (result.isConfirmed) { editPPP(rowId, name, intf); } 
+            else if (result.isDenied) {
+                document.getElementById(rowId).remove();
+                if(document.getElementById('ppp-list').children.length === 0) { document.getElementById('ppp-list').innerHTML = `<tr class="text-muted fst-italic"><td colspan="3" class="text-center py-3">No PPPoE Servers configured</td></tr>`; }
+            }
+        });
+    }
+    async function editPPP(rowId, currentName, currentIntf) {
+        let optionsHtml = activeInterfaces.map(i => `<option value="${i}" ${i === currentIntf ? 'selected' : ''}>${i}</option>`).join('');
+        const { value: formValues } = await Swal.fire({
+            title: 'Edit PPPoE', background: '#252526', color: '#fff',
+            html: `<div style="text-align: left; font-size: 0.9rem; margin-bottom: 5px;">Service Name:</div><input id="swal-ppp-name" class="swal2-input" value="${currentName}" style="background: #1e1e1e; color: #0dcaf0; border: 1px solid #555; width: 85%; margin-top: 0;"><div style="text-align: left; font-size: 0.9rem; margin-top: 15px; margin-bottom: 5px;">Interface:</div><select id="swal-ppp-intf" class="swal2-select" style="background: #1e1e1e; color: #fff; border: 1px solid #555; width: 85%; margin-top: 0;">${optionsHtml}</select>`,
+            showCancelButton: true, confirmButtonColor: '#007acc', cancelButtonColor: '#444'
+        });
+        if (formValues) {
+            let name = document.getElementById('swal-ppp-name').value;
+            let intf = document.getElementById('swal-ppp-intf').value;
+            document.getElementById(rowId).outerHTML = `<tr id="${rowId}" class="clickable-row" onclick="managePPP('${rowId}', '${name}', '${intf}')"><td><i class="bi bi-play-fill text-success"></i> pppoe-in-${intf}</td><td>${name}</td><td>${intf}</td></tr>`;
+        }
+    }
+
+    async function addIPPrompt() {
+        let optionsHtml = activeInterfaces.map(i => `<option value="${i}">${i}</option>`).join('');
+        const { value: formValues } = await Swal.fire({
+            title: 'New Address', background: '#252526', color: '#fff',
+            html: '<div style="text-align: left; font-size: 0.9rem; margin-bottom: 5px;">Address:</div><input id="swal-ip" class="swal2-input" placeholder="ex: 10.0.0.1/24" style="background: #1e1e1e; color: #0dcaf0; border: 1px solid #555; width: 85%; margin-top: 0;"><div style="text-align: left; font-size: 0.9rem; margin-top: 15px; margin-bottom: 5px;">Interface:</div><select id="swal-intf" class="swal2-select" style="background: #1e1e1e; color: #fff; border: 1px solid #555; width: 85%; margin-top: 0;">' + optionsHtml + '</select>',
+            showCancelButton: true, confirmButtonColor: '#007acc', cancelButtonColor: '#444'
+        });
+        if (formValues) {
+            let ip = document.getElementById('swal-ip').value;
+            let intf = document.getElementById('swal-intf').value;
+            let network = ip.split('/')[0].split('.').slice(0,3).join('.') + '.0'; 
+            let rowId = 'ip-' + Date.now();
+            document.getElementById('address-list').innerHTML += `<tr id="${rowId}" class="clickable-row" onclick="manageIP('${rowId}', '${ip}', '${intf}')"><td>${ip}</td><td>${network}</td><td>${intf}</td></tr>`;
+        }
+    }
+    function manageIP(rowId, ip, intf) {
+        Swal.fire({
+            title: ip, text: "O que deseja fazer com este IP?", background: '#252526', color: '#fff',
+            showDenyButton: true, showCancelButton: true, confirmButtonText: 'Editar', denyButtonText: 'Excluir', confirmButtonColor: '#007acc', denyButtonColor: '#dc3545'
+        }).then((result) => {
+            if (result.isConfirmed) { editIP(rowId, ip, intf); } 
+            else if (result.isDenied) { document.getElementById(rowId).remove(); }
+        });
+    }
+    async function editIP(rowId, currentIp, currentIntf) {
+        let optionsHtml = activeInterfaces.map(i => `<option value="${i}" ${i === currentIntf ? 'selected' : ''}>${i}</option>`).join('');
+        const { value: formValues } = await Swal.fire({
+            title: 'Edit Address', background: '#252526', color: '#fff',
+            html: `<div style="text-align: left; font-size: 0.9rem; margin-bottom: 5px;">Address:</div><input id="swal-ip" class="swal2-input" value="${currentIp}" style="background: #1e1e1e; color: #0dcaf0; border: 1px solid #555; width: 85%; margin-top: 0;"><div style="text-align: left; font-size: 0.9rem; margin-top: 15px; margin-bottom: 5px;">Interface:</div><select id="swal-intf" class="swal2-select" style="background: #1e1e1e; color: #fff; border: 1px solid #555; width: 85%; margin-top: 0;">${optionsHtml}</select>`,
+            showCancelButton: true, confirmButtonColor: '#007acc', cancelButtonColor: '#444'
+        });
+        if (formValues) {
+            let ip = document.getElementById('swal-ip').value;
+            let intf = document.getElementById('swal-intf').value;
+            let network = ip.split('/')[0].split('.').slice(0,3).join('.') + '.0'; 
+            document.getElementById(rowId).outerHTML = `<tr id="${rowId}" class="clickable-row" onclick="manageIP('${rowId}', '${ip}', '${intf}')"><td>${ip}</td><td>${network}</td><td>${intf}</td></tr>`;
+        }
+    }
+    function clearIPs() {
+        Swal.fire({
+            title: 'Remover IPs?', text: "Deseja apagar os IPs inseridos?", icon: 'warning', background: '#252526', color: '#fff',
+            showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#444'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('address-list').innerHTML = `<tr id="ip-default" class="clickable-row" onclick="manageIP('ip-default', '192.168.88.1/24', 'ether1')"><td>192.168.88.1/24</td><td>192.168.88.0</td><td>ether1</td></tr>`;
+            }
+        });
+    }
+</script>
+{% endblock %}

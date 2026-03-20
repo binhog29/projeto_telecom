@@ -59,42 +59,57 @@
                 <h2 class="h5 mb-0 text-success fw-bold">2. Rádio (WISP)</h2>
             </div>
             <p class="text-muted small">Enlaces 5.8GHz, Zona de Fresnel e infra de torres.</p>
-            <div class="mt-auto pt-3">
-                <div class="d-flex gap-2 mb-2">
-                    <a href="/radio/teoria" class="btn btn-outline-success fw-bold flex-fill">Teoria</a>
-                    <a href="/radio/hardware" class="btn btn-success fw-bold flex-fill">Hardware</a>
-                </div>
+            <div class="mt-auto pt-3 d-grid gap-2 d-md-flex">
+                <a href="/radio/teoria" class="btn btn-outline-success fw-bold flex-fill">Teoria</a>
+                <a href="/radio/hardware" class="btn btn-success fw-bold flex-fill">Hardware</a>
             </div>
         </div>
     </div>
 
     <div class="col-lg-4 col-md-6">
-        <div class="card h-100 border-0 shadow-sm p-4 card-hover">
+        <div class="card h-100 border-0 shadow-sm p-4 card-hover bg-dark text-white">
             <div class="d-flex align-items-center mb-3">
-                <div class="bg-dark text-white rounded-circle p-3 me-3 icon-circle">
+                <div class="bg-light text-dark rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-hdd-network"></i>
                 </div>
-                <h2 class="h5 mb-0 text-dark fw-bold">3. Redes IP</h2>
+                <h2 class="h5 mb-0 text-white fw-bold">3. Redes IP & Core</h2>
             </div>
-            <p class="text-muted small">IPv4/IPv6, Sub-redes e Protocolos.</p>
+            <p class="text-light small">Protocolos TCP/IP, Roteamento, BGP e Sub-redes.</p>
             <div class="mt-auto pt-3 d-grid gap-2 d-md-flex">
-                <a href="/ip/teoria" class="btn btn-outline-dark fw-bold flex-fill">Protocolos</a>
-                <a href="/ip/calc" class="btn btn-dark fw-bold flex-fill">Calc. IP</a>
+                <a href="/ip/teoria" class="btn btn-outline-light fw-bold flex-fill">Teoria IP</a>
+                <a href="/ip/calc" class="btn btn-light text-dark fw-bold flex-fill"><i class="bi bi-calculator me-1"></i> Calc. IP</a>
             </div>
         </div>
     </div>
     
     <div class="col-lg-4 col-md-6">
-        <div class="card h-100 border-secondary shadow-sm p-4 card-hover">
+        <div class="card h-100 border-secondary shadow-sm p-4 card-hover" style="border-width: 2px;">
             <div class="d-flex align-items-center mb-3">
                 <div class="bg-secondary text-white rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-server"></i>
                 </div>
-                <h2 class="h5 mb-0 text-secondary fw-bold">4. Servidores</h2>
+                <h2 class="h5 mb-0 text-secondary fw-bold">4. Servidores (AAA)</h2>
             </div>
-            <p class="text-muted small">PPPoE, RADIUS, BRAS e DNS Cache.</p>
+            <p class="text-muted small">Aulas sobre PPPoE, Autenticação RADIUS, CGNAT e DNS Cache.</p>
             <div class="mt-auto pt-3 d-grid">
-                <a href="/servers/teoria" class="btn btn-outline-secondary fw-bold">Acessar Módulo →</a>
+                <a href="/servers/teoria" class="btn btn-outline-secondary fw-bold">Acessar Teoria de Servidores →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6">
+        <div class="card h-100 border-danger shadow-sm p-4 card-hover" style="border-width: 2px; background: linear-gradient(145deg, #fffafa, #ffebeb);">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-danger text-white rounded-circle p-3 me-3 icon-circle shadow">
+                    <i class="bi bi-router"></i>
+                </div>
+                <h2 class="h5 mb-0 text-danger fw-bold">Simulador WinBox</h2>
+            </div>
+            <p class="text-muted small">Treine NOC na prática! Acesse o emulador visual do MikroTik RouterOS.</p>
+            <div class="mt-auto pt-3 d-grid">
+                <a href="/servers/mikrotik_sim" class="btn btn-danger fw-bold shadow-sm">
+                    <i class="bi bi-play-circle-fill me-2"></i> Iniciar Simulador
+                </a>
             </div>
         </div>
     </div>
@@ -105,12 +120,11 @@
                 <div class="bg-info text-white rounded-circle p-3 me-3 icon-circle">
                     <i class="bi bi-shield-lock-fill"></i>
                 </div>
-                <h2 class="h5 mb-0 text-info fw-bold">5. Core e Segurança</h2>
+                <h2 class="h5 mb-0 text-info fw-bold">5. Segurança de Redes</h2>
             </div>
-            <p class="text-muted small">MPLS, BGP, Firewall e defesas anti-DDoS.</p>
-            <div class="mt-auto pt-3 d-grid gap-2 d-md-flex">
-                <a href="/core/teoria" class="btn btn-info fw-bold text-white flex-fill">Eng. Core</a>
-                <a href="/security/teoria" class="btn btn-outline-info fw-bold flex-fill">Segurança</a>
+            <p class="text-muted small">Conceitos de Firewall e defesas anti-DDoS no Provedor.</p>
+            <div class="mt-auto pt-3 d-grid">
+                <a href="/security/teoria" class="btn btn-outline-info fw-bold text-dark">Acessar Módulo Segurança →</a>
             </div>
         </div>
     </div>
