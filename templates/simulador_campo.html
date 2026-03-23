@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    .sim-header { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); padding: 30px; border-radius: 10px; border-bottom: 3px solid #0dcaf0; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+    .workspace { background-color: #1a1a1a; border: 2px solid #333; border-radius: 10px; padding: 20px; position: relative; overflow: hidden; }
+    
+    .panel-title { font-size: 1.1rem; font-weight: bold; color: #aaa; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 20px; }
+    
+    /* Tubos e Fibras */
+    .tube-container { background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 15px; cursor: pointer; transition: 0.2s; }
+    .tube-container:hover { border-color: #0dcaf0; background: #2a2a2a; }
+    .tube-color { width: 20px; height: 20px; border-radius: 50%; display: inline-block; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+    
+    .fiber-grid { display: none; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #555; }
+    .fiber-item { height: 35px; border-radius: 5px; cursor: pointer; text-align: center; color: #fff; font-weight: bold; line-height: 35px; text-shadow: 1px 1px 2px #000; box-shadow: 0 2px 4px rgba(0,0,0,0.3); transition: transform 0.1s; }
+    .fiber-item:active { transform: scale(0.95); }
+    
+    /* Cores Padrão Telebras */
+    .c-verde { background-color: #28a745; } .c-amarelo { background-color: #ffc107; color: #000; text-shadow: none; }
+    .c-branco { background-color: #f8f9fa; color: #000; text-shadow: none; } .c-azul { background-color: #0d6efd; }
+    .c-vermelho { background-color: #dc3545; } .c-violeta { background-color: #6f42c1; }
+    .c-marrom { background-color: #8b4513; } .c-rosa { background-color: #ff69b4; }
+    .c-preto { background-color: #000; border: 1px solid #555; } .c-cinza { background-color: #6c757d; }
+    .c-laranja { background-color: #fd7e14; } .c-aqua { background-color: #20c997; }
+
+    /* Emenda e Splitter */
+    .splice-tray { background: #252525; border: 2px dashed #666; border-radius: 10px; padding: 20px; text-align: center; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .splitter-box { background: linear-gradient(to bottom, #333, #222); border: 1px solid #555; border-radius: 5px; padding: 15px; width: 100%; box-shadow: inset 0 0 10px #000; }
+    
+    /* Painel de Laser */
+    .laser-meter { background: #000; border: 3px solid #333; border-radius: 8px; padding: 15px; font-family: 'Courier New', monospace; text-align: center; }
+    .dbm-value { font-size: 2.5rem; font-weight: bold; text-shadow: 0 0 10px; }
+    .dbm-perfect { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+    .dbm-warning { color: #ffcc00; text-shadow: 0 0 10px #ffcc00; }
+    .dbm-danger { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+    .dbm-los { color: #dc3545; text-shadow: none; }
+</style>
+
+<div class="sim-header text-white">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-tools me-4" style="font-size: 3.5rem; color: #0dcaf0;"></i>
+        <div>
+            <h1 class="fw-bold mb-1">Simulador de Sangria e Fusão (CTO)</h1>
+            <p class="text-light mb-0 fs-5">Engenharia de Redes: Abra o cabo, funda a fibra, calcule a perda (dBm).</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-dark border-info text-info">
+            <i class="bi bi-info-circle-fill me-2"></i> <strong>Cenário:</strong> A OLT está a emitir <strong>+2.5 dBm</strong>. O cabo AS 36FO percorreu <strong>3 km</strong> até esta CTO. Escolha uma fibra do tubo, faça a fusão no Splitter e meça o sinal no cliente!
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 workspace shadow-lg">
+    <div class="col-lg-4 col-md-12">
+        <div class="panel-title"><i class="bi bi-bezier2"></i> 1. Cabo Tronco (AS 36FO)</div>
+        <p class="text-muted small">Clique num tubo loose para decapar e ver as fibras.</p>
+        
+        <div class="tube-container" onclick="toggleTube('tubo1')">
+            <div class="d-flex align-items-center">
+                <span class="tube-color c-verde me-3"></span>
+                <span class="text-white fw-bold">Tubo 01 - Verde (Fibras 1 a 12)</span>
+            </div>
+            <div class="fiber-grid" id="tubo1">
+                </div>
+        </div>
+
+        <div class="tube-container" onclick="toggleTube('tubo2')">
+            <div class="d-flex align-items-center">
+                <span class="tube-color c-amarelo me-3"></span>
+                <span class="text-white fw-bold">Tubo 02 - Amarelo (Fibras 13 a 24)</span>
+            </div>
+            <div class="fiber-grid" id="tubo2">
+                </div>
+        </div>
+        
+        <div class="tube-container" onclick="toggleTube('tubo3')">
+            <div class="d-flex align-items-center">
+                <span class="tube-color c-branco me-3"></span>
+                <span class="text-white fw-bold">Tubo 03 - Branco (Fibras 25 a 36)</span>
+            </div>
+            <div class="fiber-grid" id="tubo3">
+                </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-12">
+        <div class="panel-title"><i class="bi bi-lightning-charge-fill"></i> 2. Bandeja & Fusão</div>
+        
+        <div class="splice-tray" id="tray-area">
+            <i class="bi bi-scissors text-secondary mb-3" style="font-size: 3rem;"></i>
+            <h5 class="text-muted">Aguardando Sangria...</h5>
+            <p class="text-secondary small">Nenhuma fibra cortada.</p>
+        </div>
+
+        <div class="mt-4" id="splitter-area" style="display: none;">
+            <div class="splitter-box">
+                <h6 class="text-info fw-bold text-center border-bottom border-dark pb-2 mb-3">SPLITTER PLC 1x8</h6>
+                <div class="d-flex justify-content-between text-muted small">
+                    <span>IN (Fibra OLT)</span>
+                    <span>OUT (Clientes)</span>
+                </div>
+                <div class="d-flex align-items-center justify-content-between mt-2">
+                    <div id="splitter-in" class="p-2 border border-secondary rounded text-white" style="background: #111;">Vazio</div>
+                    <i class="bi bi-arrow-right text-success fs-4"></i>
+                    <div class="d-flex gap-1 flex-wrap justify-content-end" style="width: 50%;">
+                        <span class="badge bg-secondary">P1</span><span class="badge bg-secondary">P2</span>
+                        <span class="badge bg-secondary">P3</span><span class="badge bg-secondary">P4</span>
+                        <span class="badge bg-secondary">P5</span><span class="badge bg-secondary">P6</span>
+                        <span class="badge bg-secondary">P7</span><span class="badge bg-secondary">P8</span>
+                    </div>
+                </div>
+                <button class="btn btn-success w-100 mt-3 fw-bold shadow-sm" onclick="fazerFusao()"><i class="bi bi-fire me-1"></i> Executar Fusão Óptica</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-12">
+        <div class="panel-title"><i class="bi bi-speedometer2"></i> 3. Power Meter (Sinal do Cliente)</div>
+        
+        <div class="laser-meter mt-3 shadow">
+            <div class="text-muted mb-2">Power Meter PON</div>
+            <div class="dbm-value dbm-los" id="display-dbm">LOS</div>
+            <div class="mt-2 fw-bold text-secondary" id="display-status">Sem Sinal Lúminoso</div>
+        </div>
+
+        <div class="card bg-dark border-secondary mt-4">
+            <div class="card-header border-secondary text-info fw-bold">Memorial de Cálculo (Perdas)</div>
+            <div class="card-body p-2 small text-light font-monospace" id="calc-log">
+                Sinal OLT TX: +2.50 dBm<br>
+                Atenuação Cabo (3km): -0.00 dB<br>
+                Fusões: -0.00 dB<br>
+                Splitter 1x8: -0.00 dB<br>
+                -------------------------<br>
+                <strong>Sinal RX Esperado: LOS</strong>
+            </div>
+        </div>
+        
+        <button class="btn btn-outline-danger w-100 mt-3" onclick="resetSimulador()"><i class="bi bi-arrow-clockwise"></i> Limpar e Reiniciar</button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Padrão de Cores Fibras (1 a 12)
+    const colorClasses = ['c-verde', 'c-amarelo', 'c-branco', 'c-azul', 'c-vermelho', 'c-violeta', 'c-marrom', 'c-rosa', 'c-preto', 'c-cinza', 'c-laranja', 'c-aqua'];
+    
+    // Variáveis de Estado do Simulador
+    let fibraSelecionada = null;
+    let fibraNome = "";
+    let tuboNome = "";
+    let colorClass = "";
+    
+    // Constantes Ópticas Reais (Engenharia)
+    const OLT_POWER = 2.50; // +2.5 dBm (Sinal saindo da OLT)
+    const KM_CABO = 3.0; // Distância em km
+    const PERDA_KM = 0.35; // Perda por km na janela 1490nm
+    const PERDA_FUSAO = 0.10; // Perda média por fusão
+    const PERDA_SPLITTER_1X8 = 10.50; // Perda de inserção do splitter 1x8
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        // Gerar 12 fibras para cada tubo
+        gerarFibras('tubo1', 1);
+        gerarFibras('tubo2', 13);
+        gerarFibras('tubo3', 25);
+    });
+
+    function gerarFibras(idTubo, inicioIdx) {
+        let html = '';
+        for(let i=0; i<12; i++) {
+            let numFibra = inicioIdx + i;
+            let cClass = colorClasses[i];
+            html += `<div class="fiber-item ${cClass}" onclick="sangrarFibra(${numFibra}, '${cClass}', '${idTubo}')">${numFibra}</div>`;
+        }
+        document.getElementById(idTubo).innerHTML = html;
+    }
+
+    function toggleTube(id) {
+        let grid = document.getElementById(id);
+        if(grid.style.display === 'grid') { grid.style.display = 'none'; } 
+        else { grid.style.display = 'grid'; }
+    }
+
+    function sangrarFibra(num, cClass, tuboId) {
+        event.stopPropagation(); // Evita fechar o tubo
+        
+        let nomeTuboText = "";
+        if(tuboId === 'tubo1') nomeTuboText = "Verde";
+        if(tuboId === 'tubo2') nomeTuboText = "Amarelo";
+        if(tuboId === 'tubo3') nomeTuboText = "Branco";
+
+        fibraSelecionada = num;
+        fibraNome = `Fibra ${num}`;
+        tuboNome = nomeTuboText;
+        colorClass = cClass;
+
+        // Atualiza a Bandeja
+        let tray = document.getElementById('tray-area');
+        tray.innerHTML = `
+            <div class="fiber-item ${cClass} w-50 mx-auto shadow-lg border border-light" style="height: 50px; line-height: 50px; font-size: 1.2rem; pointer-events: none;">${fibraNome}</div>
+            <h5 class="text-white mt-3 fw-bold">Fibra Cortada (Sangria)</h5>
+            <p class="text-info small">Pronta para fusão no Splitter.</p>
+        `;
+        
+        // Mostra o Splitter e prepara
+        document.getElementById('splitter-area').style.display = 'block';
+        document.getElementById('splitter-in').innerHTML = `<span class="fiber-color-dot ${cClass}" style="width:12px; height:12px; display:inline-block; border-radius:50%; margin-right:5px; border:1px solid #fff;"></span>${fibraNome}`;
+        
+        // Zera o painel de luz (pois a fibra foi cortada e não está fundida ainda)
+        document.getElementById('display-dbm').innerText = "LOS";
+        document.getElementById('display-dbm').className = "dbm-value dbm-los";
+        document.getElementById('display-status').innerText = "Fibra aberta (Sem link)";
+        document.getElementById('display-status').className = "mt-2 fw-bold text-danger";
+        
+        atualizarLog(0, 0, 0, "LOS");
+
+        Swal.fire({
+            title: 'Sangria Realizada!',
+            text: `Você abriu o Tubo ${nomeTuboText} e cortou a Fibra ${num}.`,
+            icon: 'success', background: '#252526', color: '#fff', timer: 2000, showConfirmButton: false
+        });
+    }
+
+    function fazerFusao() {
+        if(!fibraSelecionada) return;
+
+        Swal.fire({
+            title: 'Máquina de Fusão Trabalhando...',
+            html: 'Alinhando os núcleos no eixo X e Y...<br><br><div class="spinner-border text-info" role="status"></div>',
+            background: '#252526', color: '#fff',
+            showConfirmButton: false, allowOutsideClick: false, timer: 2500
+        }).then(() => {
+            calcularSinalOptico();
+        });
+    }
+
+    function calcularSinalOptico() {
+        // Cálculo do Sinal
+        let atenuacaoCabo = KM_CABO * PERDA_KM; // 3 * 0.35 = 1.05 dB
+        let atenuacaoTotal = atenuacaoCabo + PERDA_FUSAO + PERDA_SPLITTER_1X8;
+        let sinalFinal = OLT_POWER - atenuacaoTotal;
+        let sinalFormatado = sinalFinal.toFixed(2);
+
+        // Atualiza Display
+        let display = document.getElementById('display-dbm');
+        let status = document.getElementById('display-status');
+        display.innerText = sinalFormatado + " dBm";
+        
+        if (sinalFinal >= -22.0 && sinalFinal <= -15.0) {
+            display.className = "dbm-value dbm-perfect";
+            status.innerText = "Sinal Excelente (RX Perfeito)";
+            status.className = "mt-2 fw-bold text-success";
+        } else if (sinalFinal > -15.0) {
+            display.className = "dbm-value dbm-warning";
+            status.innerText = "Sinal Alto (Risco de saturar ONU)";
+            status.className = "mt-2 fw-bold text-warning";
+        } else if (sinalFinal < -22.0 && sinalFinal >= -27.0) {
+            display.className = "dbm-value dbm-warning";
+            status.innerText = "Sinal Fraco (Margem baixa)";
+            status.className = "mt-2 fw-bold text-warning";
+        } else {
+            display.className = "dbm-value dbm-danger";
+            status.innerText = "Sinal Crítico (Possível LOS na casa)";
+            status.className = "mt-2 fw-bold text-danger";
+        }
+
+        atualizarLog(atenuacaoCabo, PERDA_FUSAO, PERDA_SPLITTER_1X8, sinalFormatado);
+
+        // Som de Beep Sucesso (Opcional, usando Audio Context)
+        tocarBeep();
+
+        Swal.fire({
+            title: 'Fusão Perfeita! (0.01 dB)',
+            text: `A luz da OLT passou pelo Splitter e o Power Meter mediu ${sinalFormatado} dBm.`,
+            icon: 'success', background: '#252526', color: '#fff', confirmButtonColor: '#007acc'
+        });
+    }
+
+    function atualizarLog(cabo, fusao, splitter, final) {
+        document.getElementById('calc-log').innerHTML = `
+            Sinal OLT TX: +2.50 dBm<br>
+            Atenuação Cabo (3km): -${cabo.toFixed(2)} dB<br>
+            Perda Fusão: -${fusao.toFixed(2)} dB<br>
+            Splitter 1x8: -${splitter.toFixed(2)} dB<br>
+            -------------------------<br>
+            <strong class="text-info">Sinal RX Cliente: ${final} dBm</strong>
+        `;
+    }
+
+    function resetSimulador() {
+        fibraSelecionada = null;
+        document.getElementById('tray-area').innerHTML = `<i class="bi bi-scissors text-secondary mb-3" style="font-size: 3rem;"></i><h5 class="text-muted">Aguardando Sangria...</h5><p class="text-secondary small">Nenhuma fibra cortada.</p>`;
+        document.getElementById('splitter-area').style.display = 'none';
+        document.getElementById('display-dbm').innerText = "LOS";
+        document.getElementById('display-dbm').className = "dbm-value dbm-los";
+        document.getElementById('display-status').innerText = "Sem Sinal Lúminoso";
+        document.getElementById('display-status').className = "mt-2 fw-bold text-secondary";
+        atualizarLog(0, 0, 0, "LOS");
+    }
+
+    function tocarBeep() {
+        try {
+            let ctx = new (window.AudioContext || window.webkitAudioContext)();
+            let osc = ctx.createOscillator();
+            let gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = "sine";
+            osc.frequency.value = 800;
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.2);
+        } catch(e) {} // Ignora se o navegador bloquear o som
+    }
+</script>
+{% endblock %}

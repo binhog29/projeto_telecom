@@ -235,7 +235,7 @@ def ftth_simulador_avancado(): return render_template('ftth_simulator.html', tit
 
 @app.route('/ftth/simulador_campo')
 def ftth_simulador_campo(): return render_template('ftth_field_simulator.html', titulo="FTTH: Simulador de Campo")
-
+    
 @app.route('/ftth/simulador_grafico')
 def ftth_simulador_grafico(): return render_template('ftth_visual_simulator.html', titulo="FTTH: Simulador Gráfico")
 
@@ -323,6 +323,9 @@ def pratica_fibra(): return render_template('pratica_fibra.html', titulo="Práti
 def pratica_radio(): return render_template('pratica_radio.html', titulo="Prática: Instalação Rádio")
 @app.route('/pratica/ceo_cto')
 def pratica_ceo_cto(): return render_template('pratica_ceo_cto.html', titulo="Prática: Emendas e Caixas")
+@app.route('/pratica_cto')
+def simulador_pratica():
+    return render_template('simulador_campo.html')
 
 @app.route('/diag')
 @login_required
@@ -364,6 +367,16 @@ def security_teoria(): return render_template('security_teoria.html', titulo="Se
 
 @app.route('/atendimento/teoria')
 def atendimento_teoria(): return render_template('atendimento_teoria.html', titulo="Suporte e Atendimento N1/N2")
+@app.route('/atendimento/repetidores')
+def repetidores_teoria():
+    return render_template('repetidores_teoria.html')
+@app.route('/atendimento/simulador_repetidor')
+def simulador_repetidor():
+    return render_template('simulador_repetidor.html')
+@app.route('/atendimento/simulador_roteador')
+def simulador_roteador():
+    return render_template('simulador_roteador.html')
+
 @app.route('/vendas/teoria')
 def vendas_teoria(): return render_template('vendas_teoria.html', titulo="Comercial e Vendas")
 @app.route('/gestao/teoria')

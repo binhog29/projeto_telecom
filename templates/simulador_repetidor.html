@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    .sim-header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 30px; border-radius: 10px; border-bottom: 3px solid #0dcaf0; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+    .workspace { background-color: #1a1a1a; border: 2px solid #333; border-radius: 10px; padding: 20px; }
+    .panel-title { font-size: 1.1rem; font-weight: bold; color: #aaa; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 20px; }
+    
+    /* Caixa de Missão com Alto Contraste */
+    .mission-box {
+        background-color: #2b2205 !important; 
+        border: 1px solid #ffc107 !important; 
+        color: #f8f9fa !important; 
+        border-radius: 8px;
+    }
+
+    /* Planta da Casa */
+    .house-map { border: 2px solid #555; border-radius: 8px; overflow: hidden; }
+    .room { padding: 20px 10px; text-align: center; border-right: 1px solid #444; position: relative; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+    .room:last-child { border-right: none; }
+    
+    .device-icon { font-size: 2.5rem; transition: all 0.3s ease; }
+    
+    /* Repetidor Visual */
+    .o-repetidor {
+        font-size: 2rem;
+        border-radius: 8px;
+        padding: 5px 15px;
+        transition: all 0.3s;
+    }
+    .repetidor-sem-fio { color: #ffc107; background: #333; border: 2px dashed #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.2); }
+    .repetidor-com-fio { color: #0dcaf0; background: #333; border: 2px solid #0dcaf0; box-shadow: 0 0 15px rgba(13, 202, 240, 0.3); }
+
+    /* Display do Telemóvel do Cliente */
+    .phone-screen { background: #000; border: 4px solid #444; border-radius: 15px; padding: 15px; text-align: center; height: 100%; box-shadow: inset 0 0 20px rgba(0,0,0,1); }
+    .wifi-bars { font-size: 2rem; }
+    .metric-box { background: #222; border: 1px solid #333; border-radius: 5px; padding: 10px; margin-bottom: 10px; }
+    .metric-value { font-size: 1.5rem; font-weight: bold; font-family: monospace; }
+    
+    .status-ok { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+    .status-warn { color: #ffcc00; text-shadow: 0 0 5px #ffcc00; }
+    .status-danger { color: #ff0000; text-shadow: 0 0 5px #ff0000; }
+    
+    .texto-legivel { color: #e0e0e0 !important; }
+    
+    @media (max-width: 768px) {
+        .house-map { flex-direction: column; }
+        .room { border-right: none; border-bottom: 1px solid #444; min-height: 140px; }
+        .room:last-child { border-bottom: none; }
+    }
+</style>
+
+<div class="sim-header text-white">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-router me-4" style="font-size: 3.5rem; color: #0dcaf0;"></i>
+        <div>
+            <h1 class="fw-bold mb-1">Laboratório Wi-Fi: Repetidor</h1>
+            <p class="text-light mb-0 fs-5">Posicione e configure o repetidor sem destruir a rede do cliente.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert mission-box p-3 shadow-sm d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill fs-2 me-3 text-warning"></i>
+            <div>
+                <strong class="text-warning">Missão:</strong> O roteador principal (ONT) está na Sala entregando 200 Mbps no Canal 6 (IP 192.168.1.1). O cliente no Quarto está sem sinal. Configure o repetidor para fazer a internet chegar ao Quarto com o <strong class="text-warning">mínimo de lag possível</strong> e sem causar conflito.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 workspace shadow-lg">
+    
+    <div class="col-lg-4">
+        <div class="panel-title"><i class="bi bi-sliders"></i> 1. Setup do Repetidor</div>
+        
+        <div class="mb-3">
+            <label class="form-label texto-legivel small fw-bold">Posição na Tomada:</label>
+            <select class="form-select bg-dark text-info border-secondary" id="sim-pos" onchange="atualizarSimulacao()">
+                <option value="nenhum">-- Escolher Tomada --</option>
+                <option value="sala">Na Sala (Junto ao Roteador)</option>
+                <option value="corredor">No Corredor (Meio do Caminho)</option>
+                <option value="quarto">No Quarto (Ponto Cego)</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label texto-legivel small fw-bold">Modo de Conexão (LAN):</label>
+            <select class="form-select bg-dark text-white border-secondary" id="sim-modo" onchange="atualizarSimulacao()">
+                <option value="sem_fio" class="text-warning" selected>Sem Cabo (Modo WDS/Repetidor)</option>
+                <option value="com_fio" class="text-info">Com Cabo (Modo Access Point)</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label texto-legivel small fw-bold">Servidor DHCP (LAN):</label>
+            <select class="form-select bg-dark text-white border-secondary" id="sim-dhcp" onchange="atualizarSimulacao()">
+                <option value="on" class="text-danger">LIGADO (Ativo)</option>
+                <option value="off" class="text-success" selected>DESLIGADO (Ponte)</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label texto-legivel small fw-bold">Endereço IP (LAN):</label>
+            <select class="form-select bg-dark text-white border-secondary" id="sim-ip" onchange="atualizarSimulacao()">
+                <option value="192.168.1.1">192.168.1.1 (Padrão de Fábrica)</option>
+                <option value="192.168.1.254" selected>192.168.1.254 (Isolado)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="panel-title"><i class="bi bi-house-door"></i> 2. Planta Física</div>
+        
+        <div class="house-map d-flex bg-dark">
+            <div class="room w-100" id="ui-sala" style="background-color: #161b22;">
+                <h5 class="text-white fw-bold">SALA</h5>
+                <i class="bi bi-router-fill device-icon text-primary mt-2"></i>
+                <span class="badge bg-primary mt-2">ONT Principal</span>
+                <div class="mt-auto pt-3" id="slot-sala"></div>
+            </div>
+            
+            <div class="room w-100" id="ui-corredor" style="background-color: #212529;">
+                <h5 class="text-white fw-bold">CORREDOR</h5>
+                <div class="mt-2 fw-bold" style="color: #0dcaf0;"><i class="bi bi-wifi-2"></i> Sinal -60dBm</div>
+                <div class="mt-auto pt-3" id="slot-corredor"></div>
+            </div>
+            
+            <div class="room w-100" id="ui-quarto" style="background-color: #111;">
+                <h5 class="text-white fw-bold">QUARTO</h5>
+                <i class="bi bi-person-fill device-icon text-light mt-2"></i>
+                <span class="badge bg-secondary text-white mt-2 border border-light">Cliente Gamer</span>
+                <div class="mt-auto pt-3" id="slot-quarto"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3">
+        <div class="panel-title"><i class="bi bi-phone"></i> 3. Teste no Quarto</div>
+        
+        <div class="phone-screen">
+            <div id="wifi-icon" class="wifi-bars text-light mb-2"><i class="bi bi-wifi-off"></i></div>
+            <div id="status-texto" class="text-danger fw-bold mb-4 small">Sem Conexão</div>
+            
+            <div class="metric-box">
+                <div class="texto-legivel small mb-1">Download</div>
+                <div id="display-down" class="metric-value status-danger">0.0 <span class="fs-6">Mbps</span></div>
+            </div>
+            
+            <div class="metric-box">
+                <div class="texto-legivel small mb-1">Ping (Latência)</div>
+                <div id="display-ping" class="metric-value status-danger">--- <span class="fs-6">ms</span></div>
+            </div>
+            
+            <button class="btn btn-outline-info w-100 mt-3 btn-sm fw-bold" onclick="analisarDiagnostico()"><i class="bi bi-search"></i> Ver Diagnóstico NOC</button>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Variáveis Globais de Estado
+    let downAtual = 0;
+    let pingAtual = 0;
+    let diagnosticoMsg = "";
+    let diagnosticoIcon = "";
+
+    function atualizarSimulacao() {
+        const pos = document.getElementById('sim-pos').value;
+        const modo = document.getElementById('sim-modo').value;
+        const dhcp = document.getElementById('sim-dhcp').value;
+        const ip = document.getElementById('sim-ip').value;
+        
+        document.getElementById('slot-sala').innerHTML = "";
+        document.getElementById('slot-corredor').innerHTML = "";
+        document.getElementById('slot-quarto').innerHTML = "";
+        
+        if(pos !== "nenhum") {
+            let colorClass = modo === "sem_fio" ? "repetidor-sem-fio" : "repetidor-com-fio";
+            let iconClass = modo === "sem_fio" ? "bi-wifi-2" : "bi-ethernet";
+            let repetidorHTML = `
+                <div class="o-repetidor ${colorClass} text-center">
+                    <i class="bi ${iconClass}"></i><br>
+                    <span class="fw-bold" style="font-size: 0.7rem; color: #fff;">Repetidor</span>
+                </div>
+            `;
+            document.getElementById('slot-' + pos).innerHTML = repetidorHTML;
+        }
+
+        if(pos === "nenhum") {
+            atualizarTelaTelefone(0, 0, "bi-wifi-off", "text-light", "Fora de Alcance", "text-danger");
+            diagnosticoMsg = "O cliente está no ponto cego do quarto. Nenhuma rede alcança o dispositivo.";
+            diagnosticoIcon = "error";
+            return;
+        }
+
+        if(dhcp === "on" && modo === "com_fio") {
+            atualizarTelaTelefone(0, 999, "bi-wifi-off", "text-danger", "Obtendo IP...", "text-warning");
+            diagnosticoMsg = "CONFLITO DE DHCP! O repetidor ligado por cabo está tentando dar IPs para a rede ao mesmo tempo que a ONT. A internet do cliente parou de funcionar completamente.";
+            diagnosticoIcon = "error";
+            return;
+        }
+
+        let baseDown = 0;
+        let basePing = 0;
+        let wifiClass = "";
+        let wifiIcon = "bi-wifi";
+
+        if(modo === "sem_fio") {
+            if(pos === "quarto") {
+                baseDown = 5; 
+                basePing = 120;
+                diagnosticoMsg = "O repetidor está no quarto (ponto cego). Ele recebe um sinal terrível da sala e retransmite lixo. A internet fica superlenta e com ping altíssimo.";
+                diagnosticoIcon = "warning";
+                wifiClass = "text-success";
+            } 
+            else if(pos === "sala") {
+                baseDown = 30; 
+                basePing = 60;
+                diagnosticoMsg = "O repetidor está na sala (junto ao roteador principal). Ele não resolve o ponto cego no quarto e ainda cria poluição de rádio.";
+                diagnosticoIcon = "warning";
+                wifiIcon = "bi-wifi-2";
+                wifiClass = "text-warning";
+            }
+            else if(pos === "corredor") {
+                baseDown = 90; 
+                basePing = 25;
+                diagnosticoMsg = "BOA POSIÇÃO! O repetidor está no corredor (meio do caminho), recebendo um sinal decente da sala e cobrindo o quarto. Como está sem cabo (modo Repetidor Wi-Fi), a banda é cortada pela metade devido ao Half-Duplex, mas a navegação está ok.";
+                diagnosticoIcon = "success";
+                wifiClass = "text-success";
+            }
+        } 
+        else {
+            baseDown = 200; 
+            basePing = 10;
+            diagnosticoMsg = "CONFIGURAÇÃO PROFISSIONAL! O repetidor está conectado via cabo LAN (modo Access Point). A velocidade total da ONT (200 Mbps) chega perfeitamente ao quarto e a latência é excelente para jogos.";
+            diagnosticoIcon = "success";
+            wifiClass = "text-info";
+        }
+
+        if(ip === "192.168.1.1") {
+            diagnosticoMsg += "<br><br><b class='text-warning'>AVISO DE GESTÃO:</b> O IP do repetidor é igual ao da ONT (192.168.1.1). Há conflito de IP de gestão. O NOC perderá o acesso remoto à ONT.";
+            if(diagnosticoIcon === "success") diagnosticoIcon = "warning";
+        }
+
+        atualizarTelaTelefone(baseDown.toFixed(1), basePing, wifiIcon, wifiClass, "Conectado", "text-success");
+    }
+
+    function atualizarTelaTelefone(down, ping, icon, iconClass, statusText, statusClass) {
+        document.getElementById('wifi-icon').className = `wifi-bars ${iconClass} mb-2`;
+        document.getElementById('wifi-icon').innerHTML = `<i class="bi ${icon}"></i>`;
+        
+        document.getElementById('status-texto').className = `fw-bold mb-4 small ${statusClass}`;
+        document.getElementById('status-texto').innerText = statusText;
+
+        document.getElementById('display-down').innerHTML = `${down} <span class="fs-6 text-light">Mbps</span>`;
+        if(down >= 100) document.getElementById('display-down').className = "metric-value status-ok";
+        else if(down > 0) document.getElementById('display-down').className = "metric-value status-warn";
+        else document.getElementById('display-down').className = "metric-value status-danger";
+
+        if(ping === 999 || ping === 0) document.getElementById('display-ping').innerHTML = `--- <span class="fs-6 text-light">ms</span>`;
+        else {
+            document.getElementById('display-ping').innerHTML = `${ping} <span class="fs-6 text-light">ms</span>`;
+            if(ping <= 20) document.getElementById('display-ping').className = "metric-value status-ok";
+            else if(ping <= 80) document.getElementById('display-ping').className = "metric-value status-warn";
+            else document.getElementById('display-ping').className = "metric-value status-danger";
+        }
+    }
+
+    function analisarDiagnostico() {
+        if(diagnosticoMsg === "") {
+            Swal.fire({title: 'Aviso NOC', text: 'Selecione a tomada do repetidor primeiro.', icon: 'info', background: '#252526', color: '#fff'});
+            return;
+        }
+        Swal.fire({
+            title: 'Diagnóstico Técnico',
+            html: `<div class="text-start" style="font-size: 0.95rem; line-height: 1.5;">${diagnosticoMsg}</div>`,
+            icon: diagnosticoIcon,
+            background: '#252526',
+            color: '#fff',
+            confirmButtonColor: '#0dcaf0'
+        });
+    }
+
+    window.onload = function() {
+        atualizarSimulacao();
+    };
+</script>
+{% endblock %}

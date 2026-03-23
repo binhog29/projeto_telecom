@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    .sim-header { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); padding: 30px; border-radius: 10px; border-bottom: 3px solid #0dcaf0; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+    .workspace { background-color: #1a1a1a; border: 2px solid #333; border-radius: 10px; padding: 20px; }
+    .panel-title { font-size: 1.1rem; font-weight: bold; color: #aaa; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 20px; }
+    
+    .speedtest-box { background: #000; border: 4px solid #333; border-radius: 50%; width: 200px; height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0 auto; box-shadow: 0 0 30px rgba(13, 202, 240, 0.2); transition: 0.5s; }
+    .speedtest-value { font-size: 3.5rem; font-weight: bold; font-family: 'Courier New', monospace; color: #0dcaf0; text-shadow: 0 0 15px #0dcaf0; }
+    .speedtest-label { color: #fff; letter-spacing: 2px; font-size: 1rem; }
+    
+    .status-card { background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 10px; }
+    .status-value { font-size: 1.5rem; font-weight: bold; }
+    
+    .texto-legivel { color: #e0e0e0 !important; }
+</style>
+
+<div class="sim-header text-white">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-speedometer me-4" style="font-size: 3.5rem; color: #0dcaf0;"></i>
+        <div>
+            <h1 class="fw-bold mb-1">Simulador de Limites: Planos e Wi-Fi</h1>
+            <p class="text-light mb-0 fs-5">Mostre ao cliente por que 1000 Mega não chegam no Wi-Fi do quarto.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 workspace shadow-lg">
+    
+    <div class="col-lg-4">
+        <div class="panel-title"><i class="bi bi-person-lines-fill"></i> 1. Cenário do Cliente</div>
+        
+        <div class="mb-3">
+            <label class="form-label texto-legivel small fw-bold">Plano Contratado (Provedor):</label>
+            <select class="form-select bg-dark text-white border-secondary fw-bold" id="sim-plano" onchange="rodarSpeedtest()">
+                <option value="500">500 Mbps (Fibra)</option>
+                <option value="700">700 Mbps (Fibra)</option>
+                <option value="1000" selected>1000 Mbps (Gigabit)</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label texto-legivel small fw-bold">Meio de Conexão do Aparelho:</label>
+            <select class="form-select bg-dark text-info border-secondary" id="sim-conexao" onchange="rodarSpeedtest()">
+                <option value="cabo">Cabo de Rede (Patch Cord Cat5e/Cat6)</option>
+                <option value="wifi5g" selected>Wi-Fi 5GHz (Curto Alcance / Alta Vel.)</option>
+                <option value="wifi2g">Wi-Fi 2.4GHz (Longo Alcance / Baixa Vel.)</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label texto-legivel small fw-bold">Distância / Barreira Física:</label>
+            <select class="form-select bg-dark text-warning border-secondary" id="sim-distancia" onchange="rodarSpeedtest()">
+                <option value="colado">No mesmo ambiente (Visada direta)</option>
+                <option value="parede" selected>Sala ao lado (1 Parede de alvenaria)</option>
+                <option value="longe">Fundo da casa (3 Paredes / Longe)</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label texto-legivel small fw-bold">Potência TX do Roteador:</label>
+            <select class="form-select bg-dark text-danger border-secondary" id="sim-tx" onchange="rodarSpeedtest()">
+                <option value="100" selected>100% (Alta - Causa Assimetria Longe)</option>
+                <option value="50">50% (Média - Cobre apenas o necessário)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="panel-title"><i class="bi bi-activity"></i> 2. Resultado Real no Aparelho</div>
+        
+        <div class="row">
+            <div class="col-md-5 text-center mb-4">
+                <div class="speedtest-box" id="speed-visor">
+                    <div class="speedtest-value" id="visor-mbps">0</div>
+                    <div class="speedtest-label">Mbps</div>
+                </div>
+                <button class="btn btn-outline-info mt-4 fw-bold w-100" onclick="rodarSpeedtest()"><i class="bi bi-arrow-repeat"></i> Repetir Teste</button>
+            </div>
+            
+            <div class="col-md-7">
+                <div class="status-card border-secondary">
+                    <div class="text-muted small mb-1">Força Física do Sinal (dBm)</div>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-broadcast fs-3 me-3" id="icon-dbm"></i>
+                        <div class="status-value text-white" id="visor-dbm">-- dBm</div>
+                    </div>
+                </div>
+                
+                <div class="status-card border-secondary">
+                    <div class="text-muted small mb-1">Latência (Ping)</div>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-stopwatch fs-3 me-3 text-warning"></i>
+                        <div class="status-value text-white" id="visor-ping">-- ms</div>
+                    </div>
+                </div>
+
+                <div class="alert alert-dark border-info text-light mt-3 shadow-sm" style="background-color: #111;">
+                    <h6 class="fw-bold text-info border-bottom border-secondary pb-2"><i class="bi bi-robot"></i> Parecer do Engenheiro</h6>
+                    <p id="parecer-texto" class="small mb-0 mt-2" style="line-height: 1.6;">Configure as opções ao lado para ver a explicação técnica de por que o cliente recebe essa velocidade.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function rodarSpeedtest() {
+        const plano = parseInt(document.getElementById('sim-plano').value);
+        const conexao = document.getElementById('sim-conexao').value;
+        const distancia = document.getElementById('sim-distancia').value;
+        const tx = document.getElementById('sim-tx').value;
+        
+        let mbps = 0;
+        let dbm = 0;
+        let ping = 0;
+        let parecer = "";
+
+        // LÓGICA DE FÍSICA E REDES
+        
+        if (conexao === "cabo") {
+            // CABO IGNORA DISTÂNCIA DENTRO DOS 100 METROS
+            mbps = plano * 0.94; // Overhead do TCP/IP (Uma porta Gigabit passa ~940Mbps reais)
+            dbm = "N/A (Cabo LAN)";
+            ping = 2;
+            parecer = `O aparelho está conectado via <b>Cabo de Rede</b>. O cabo não sofre interferência do ar. A velocidade chega ao limite da placa de rede ou do plano (descontando cerca de 6% de cabeçalhos de controle do protocolo TCP/IP). É a <b>única forma</b> de garantir ${plano} Mega.`;
+            document.getElementById('icon-dbm').className = "bi bi-ethernet fs-3 me-3 text-info";
+        } 
+        else if (conexao === "wifi2g") {
+            // LIMITES DO 2.4GHz
+            if(distancia === "colado") { dbm = -35; mbps = 80; ping = 15; }
+            if(distancia === "parede") { dbm = -60; mbps = 40; ping = 35; }
+            if(distancia === "longe")  { 
+                dbm = tx === "100" ? -75 : -88; 
+                mbps = tx === "100" ? 5 : 0; 
+                ping = 150; 
+            }
+            
+            // O plano não importa se o meio físico é lento
+            if(mbps > plano) mbps = plano;
+
+            parecer = `O plano de ${plano} Mega <b>não importa no Wi-Fi 2.4GHz</b>. O limite físico da tecnologia 2.4GHz em telemóveis comuns (1x1 ou 2x2 MIMO) é na casa dos 50 a 80 Mbps no mundo real. `;
+            
+            if(distancia === "longe" && tx === "100") {
+                parecer += `<br><br><span class="text-warning"><b>Assimetria (Ilusão do Sinal):</b></span> Como a Potência TX está em 100%, o telemóvel "ouve" o roteador, mas a antena do telemóvel é fraca e não consegue "gritar de volta". O cliente vê traços de Wi-Fi, mas nada carrega.`;
+            }
+            document.getElementById('icon-dbm').className = "bi bi-wifi fs-3 me-3 text-warning";
+        }
+        else if (conexao === "wifi5g") {
+            // LIMITES DO 5GHz
+            if(distancia === "colado") { dbm = -40; mbps = 650; ping = 8; }
+            if(distancia === "parede") { dbm = -70; mbps = 150; ping = 20; }
+            if(distancia === "longe")  { dbm = -85; mbps = 0; ping = 999; }
+            
+            if(mbps > plano) mbps = plano * 0.9; // Se o limite do 5G é 650M e o plano é 500M, recebe ~450M reais.
+
+            parecer = `O <b>Wi-Fi 5GHz</b> é uma "Ferrari", mas anda numa estrada curta. Ele consegue entregar altíssimas velocidades perto do roteador, mas a frequência de 5GHz tem muita dificuldade em atravessar matéria sólida (paredes). `;
+            
+            if(distancia === "parede") {
+                parecer += `Como há uma parede no meio, a força da onda (dBm) caiu drasticamente, e com ela, a modulação de velocidade (Mbps) desabou.`;
+            } else if (distancia === "longe") {
+                parecer += `<br><span class="text-danger">A onda 5GHz não tem energia para chegar ao fundo da casa. O sinal morre no caminho.</span>`;
+            } else if (plano === 1000 && mbps < 1000) {
+                parecer += `Mesmo estando ao lado do roteador, um telemóvel comum dificilmente passará de 600-700 Mbps no Wi-Fi. Para bater os 1000 Mega no ecrã, só via Cabo!`;
+            }
+            document.getElementById('icon-dbm').className = "bi bi-wifi fs-3 me-3 text-success";
+        }
+
+        // Animação Simples de Speedtest
+        animarValor("visor-mbps", 0, mbps.toFixed(1), 800);
+        
+        document.getElementById('visor-dbm').innerText = typeof dbm === "number" ? dbm + " dBm" : dbm;
+        document.getElementById('visor-ping').innerText = ping === 999 ? "Time Out" : ping + " ms";
+        document.getElementById('parecer-texto').innerHTML = parecer;
+        
+        // Cor do Speedtest Baseado na Velocidade
+        let box = document.getElementById('speed-visor');
+        if(mbps >= 300) box.style.boxShadow = "0 0 30px rgba(0, 255, 0, 0.5)";
+        else if(mbps >= 50) box.style.boxShadow = "0 0 30px rgba(255, 193, 7, 0.5)";
+        else box.style.boxShadow = "0 0 30px rgba(255, 0, 0, 0.5)";
+    }
+
+    // Função para fazer o número subir rapidamente
+    function animarValor(id, start, end, duration) {
+        let obj = document.getElementById(id);
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = (progress * (end - start) + start).toFixed(1);
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    // Iniciar na primeira carga
+    window.onload = function() {
+        rodarSpeedtest();
+    }
+</script>
+{% endblock %}
