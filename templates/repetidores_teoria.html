@@ -279,4 +279,35 @@
     </div>
 </div>
 
+<div class="row g-4 mb-5">
+    <div class="col-12">
+        <h3 class="text-secondary border-bottom border-secondary pb-2 mb-4"><i class="bi bi-router-fill text-danger"></i> 7. A Regra de Ouro: Unificar ou Separar as Redes (2.4G e 5G)?</h3>
+        <p class="text-secondary fs-6">Uma das maiores causas de chamados no suporte é a configuração incorreta do SSID (Nome da Rede) na casa do cliente durante a instalação.</p>
+    </div>
+
+    <div class="col-md-6">
+        <div class="repeater-card bad-practice">
+            <h5 class="text-danger fw-bold"><i class="bi bi-x-octagon-fill me-2"></i> ONTs Comuns (NÃO UNIFICAR)</h5>
+            <p class="texto-claro mt-3 small">Na instalação padrão (apenas a ONT normal), <strong>nunca coloque o mesmo nome e senha para o 2.4GHz e 5GHz</strong>.</p>
+            <ul class="texto-claro small mt-2 mb-0">
+                <li class="mb-2"><strong class="text-warning">A Ilusão do Sinal:</strong> O telemóvel agarra-se ao 2.4GHz na garagem e não larga mais, mesmo com o cliente na sala ao lado da ONT. A velocidade despenca e a culpa recai no provedor.</li>
+                <li class="mb-2"><strong class="text-warning">Casa Inteligente (IoT):</strong> Lâmpadas, robôs aspiradores e câmaras só usam 2.4GHz. Redes unificadas "baralham" o aplicativo na hora de configurar esses aparelhos.</li>
+                <li><strong class="text-white">Padrão Correto:</strong> <code>Familia_Silva</code> e <code>Familia_Silva_5G</code>. O técnico deve educar o cliente a usar o 5G para velocidade e o 2.4G apenas para aparelhos distantes.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="repeater-card good-practice">
+            <h5 class="text-success fw-bold"><i class="bi bi-check-circle-fill me-2"></i> Roteadores Mesh (OBRIGATÓRIO UNIFICAR)</h5>
+            <p class="texto-claro mt-3 small">Se o cliente comprou um sistema <strong>Wi-Fi Mesh Premium</strong> (Deco, Twibi, Huawei, etc.), a regra inverte-se completamente.</p>
+            <ul class="texto-claro small mt-2 mb-0">
+                <li class="mb-2"><strong class="text-info">Gestão Ativa (802.11k/v/r):</strong> O sistema Mesh é inteligente. Ele "empurra" ativamente o telemóvel para o 5GHz quando está perto e para o 2.4GHz quando o cliente se afasta.</li>
+                <li class="mb-2"><strong class="text-info">Transição Invisível:</strong> A tecnologia decide qual é a melhor antena e frequência sem que a ligação caia, tirando essa responsabilidade do telemóvel.</li>
+                <li><strong class="text-white">Padrão Correto:</strong> Apenas um nome (ex: <code>Familia_Silva</code>). O cérebro do sistema Mesh faz todo o trabalho pesado de gestão.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

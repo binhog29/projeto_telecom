@@ -26,4 +26,60 @@
          </div>
     </div>
 </div>
+<div class="mt-5 mb-4">
+    <h5 class="text-secondary border-bottom border-success pb-2 mb-3">Splitters Desbalanceados (FBT)</h5>
+    <p class="small text-muted mb-3">Utilizados em redes com topologia de barramento (cascata). Ao contrário do PLC, o FBT divide o sinal óptico de forma desigual: uma "perna" rouba muito sinal para atender a CTO local, e a outra "perna" segue com pouca perda para a próxima caixa na rua.</p>
+    
+    <div class="table-responsive">
+        <table class="table table-bordered table-sm text-center align-middle shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>Razão (Ratio)</th>
+                    <th>Perna Menor (Drop/CTO)</th>
+                    <th>Perna Maior (Segue Linha)</th>
+                    <th>Uso Comum (Cascata)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="fw-bold">10 / 90</td>
+                    <td class="text-danger fw-bold">-10.5 dB</td>
+                    <td class="text-success fw-bold">-0.6 dB</td>
+                    <td class="text-muted small">Início da rede (Perto da OLT)</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">20 / 80</td>
+                    <td class="text-danger fw-bold">-7.4 dB</td>
+                    <td class="text-success fw-bold">-1.1 dB</td>
+                    <td class="text-muted small">Meio da rede</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">30 / 70</td>
+                    <td class="text-danger fw-bold">-5.6 dB</td>
+                    <td class="text-success fw-bold">-1.7 dB</td>
+                    <td class="text-muted small">Meio da rede</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">40 / 60</td>
+                    <td class="text-danger fw-bold">-4.4 dB</td>
+                    <td class="text-success fw-bold">-2.5 dB</td>
+                    <td class="text-muted small">Fim da rede</td>
+                </tr>
+                <tr class="table-light">
+                    <td class="fw-bold">50 / 50</td>
+                    <td class="text-danger fw-bold">-3.4 dB</td>
+                    <td class="text-success fw-bold">-3.4 dB</td>
+                    <td class="text-muted small">Divisão igualitária</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="col-lg-5">
+         <div class="card shadow-sm">
+             <img src="{{ url_for('static', filename='img/splitter_desbalanceado.jpg') }}" class="card-img-top" style="height: 300px; object-fit: cover;" onerror="this.src='https://placehold.co/600x400?text=FOTO+SPLITTER'">
+             <div class="card-body text-muted small">Splitter Óptico 1x2 Desbalanceado 45 55 Desconectorizado.</div>
+         </div>
+    </div>
+</div>
 {% endblock %}
