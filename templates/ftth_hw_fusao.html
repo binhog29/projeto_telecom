@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="mb-3">
+    <a href="/ftth/hardware" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+</div>
+
+<div class="bg-light p-3 rounded mb-4 border-start border-danger border-4 shadow-sm">
+    <h3 class="text-dark mb-0">Máquina de Fusão e Clivador</h3>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm border-danger">
+            <div class="card-header bg-danger text-white fw-bold">
+                Máquina de Fusão Óptica
+            </div>
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                
+                <div class="mb-3 w-100 d-flex justify-content-center align-items-center" style="min-height: 180px;">
+                    <img src="/static/img/maquina_fusao.jpg" alt="Máquina de Fusão" class="img-fluid rounded shadow-sm border" style="max-height: 180px; object-fit: contain;">
+                </div>
+
+                <p class="text-start small flex-grow-1">Alinha as fibras microscopicamente usando motores de precisão e aplica um arco elétrico para derreter e unir as pontas.</p>
+                <div class="w-100 text-start">
+                    <span class="badge bg-light text-danger border w-100 text-start text-wrap lh-base mb-1">
+                        <i class="bi bi-wrench-adjustable me-1"></i> Limpar lentes e V-Groove (Álcool Isopropílico).
+                    </span>
+                    <span class="badge bg-light text-secondary border w-100 text-start text-wrap lh-base">
+                        Trocar eletrodos (3k a 5k fusões).
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm border-secondary">
+            <div class="card-header bg-secondary text-white fw-bold">
+                Clivador de Precisão
+            </div>
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                
+                <div class="mb-3 w-100 d-flex justify-content-center align-items-center" style="min-height: 180px;">
+                    <img src="/static/img/clivador.png" alt="Clivador" class="img-fluid rounded shadow-sm border" style="max-height: 180px; object-fit: contain;">
+                </div>
+
+                <p class="text-start small flex-grow-1">Faz um micro-corte (clivagem) na fibra num ângulo exato de 90 graus para uma fusão perfeita.</p>
+                <div class="w-100 text-start">
+                    <span class="badge bg-light text-secondary border w-100 text-start text-wrap lh-base mb-1">
+                        Girar lâmina quando cortes falharem (após ~1k cortes).
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

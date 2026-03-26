@@ -265,6 +265,16 @@ def ftth_hw_ferragens(): return render_template('ftth_hw_ferragens.html', titulo
 def ftth_hw_cpe(): return render_template('ftth_hw_cpe.html', titulo="HW: Equipamentos CPE")
 @app.route('/ftth/hardware/pto')
 def ftth_hw_pto(): return render_template('ftth_hw_pto.html', titulo="HW: PTO/Roseta")
+@app.route('/ftth/hardware/consumiveis')
+def ftth_hw_consumiveis():
+    return render_template('ftth_hw_consumiveis.html')
+@app.route('/ftth/hardware/limpeza')
+def ftth_hw_limpeza():
+    return render_template('ftth_hw_limpeza.html')
+@app.route('/ftth/hardware/epi')
+def ftth_hw_epi():
+    return render_template('ftth_hw_epi.html')
+
 
 @app.route('/radio/teoria', methods=['GET', 'POST'])
 def radio_teoria():
@@ -291,7 +301,15 @@ def radio_hw_energia(): return render_template('radio_hw_energia.html', titulo="
 def radio_hw_infra(): return render_template('radio_hw_infra.html', titulo="HW Rádio: Cabos e Infraestrutura")
 @app.route('/radio/hardware/cliente')
 def radio_hw_cliente(): return render_template('radio_hw_cliente.html', titulo="HW Rádio: Cliente (CPE Interior)")
-
+@app.route('/ftth/hardware/fusao')
+def ftth_hw_fusao():
+    return render_template('ftth_hw_fusao.html')
+@app.route('/ftth/hardware/instrumentos')
+def ftth_hw_instrumentos():
+    return render_template('ftth_hw_instrumentos.html')
+@app.route('/ftth/hardware/alicates')
+def ftth_hw_alicates():
+    return render_template('ftth_hw_alicates.html')
 @app.route('/ip/teoria')
 def ip_teoria(): return render_template('ip_teoria.html', titulo="Redes IP: Protocolos")
 

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="mb-3">
+    <a href="/ftth/hardware" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+</div>
+
+<div class="bg-light p-3 rounded mb-4 border-start border-danger border-4 shadow-sm">
+    <h3 class="text-dark mb-0">Kit de Limpeza Óptica</h3>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-12 col-md-6">
+        <div class="card h-100 shadow-sm border-danger">
+            <div class="card-header bg-danger text-white fw-bold">Caneta de Limpeza (One-Click)</div>
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                
+                <div class="mb-3 w-100 d-flex justify-content-center align-items-center" style="min-height: 180px;">
+                    <img src="/static/img/one_click.jpg" alt="Caneta One-Click" class="img-fluid rounded shadow-sm border" style="max-height: 180px; object-fit: contain;">
+                </div>
+
+                <p class="text-start small flex-grow-1">Basta inserir no conector e pressionar até ouvir o "click". Uma fita de microfibra limpa a face do ferrolho removendo poeira e oleosidade. Essencial para portas de CTO e OLT.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="card h-100 shadow-sm border-danger">
+            <div class="card-header bg-danger text-white fw-bold">Álcool Isopropílico e Wipes</div>
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                
+                <div class="mb-3 w-100 d-flex justify-content-center align-items-center" style="min-height: 180px;">
+                    <img src="/static/img/alcool_isopropilico.jpg" alt="Álcool e Lenços" class="img-fluid rounded shadow-sm border" style="max-height: 180px; object-fit: contain;">
+                </div>
+
+                <p class="text-start small flex-grow-1">O Álcool Isopropílico (puro) evapora rapidamente sem deixar manchas de água. Usado com lenços que não soltam fiapos para limpar a fibra nua antes de a colocar no clivador.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

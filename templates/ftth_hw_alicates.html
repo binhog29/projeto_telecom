@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="mb-3">
+    <a href="/ftth/hardware" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+</div>
+
+<div class="bg-light p-3 rounded mb-4 border-start border-danger border-4 shadow-sm">
+    <h3 class="text-dark mb-0">Ferramentas de Decapagem</h3>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-12 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-dark text-white fw-bold">Alicate Decapador de Drop</div>
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                
+                <div class="mb-3 w-100 d-flex justify-content-center align-items-center" style="min-height: 180px;">
+                    <img src="/static/img/alicate_drop.jpg" alt="Alicate Drop" class="img-fluid rounded shadow-sm border" style="max-height: 180px; object-fit: contain;">
+                </div>
+
+                <p class="text-start small flex-grow-1 mb-0">Usado na casa do cliente. Remove a capa plástica retangular preta do cabo Drop Flat, deixando exposta a fibra de vidro interna com a sua tinta acrílica colorida.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-dark text-white fw-bold">Alicate de 2 ou 3 Furos</div>
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                
+                <div class="mb-3 w-100 d-flex justify-content-center align-items-center" style="min-height: 180px;">
+                    <img src="/static/img/alicate_furos.jpg" alt="Alicate de Furos" class="img-fluid rounded shadow-sm border" style="max-height: 180px; object-fit: contain;">
+                </div>
+
+                <p class="text-start small flex-grow-1 mb-0">Ferramenta cirúrgica. O furo menor arranca o verniz (acrilato de 250 mícrons) da fibra de vidro antes de ela ir para o clivador. Se mal calibrado, quebra a fibra imediatamente.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-dark text-white fw-bold">Roletador de Tubo Loose</div>
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                
+                <div class="mb-3 w-100 d-flex justify-content-center align-items-center" style="min-height: 180px;">
+                    <img src="/static/img/roletador.png" alt="Roletador de Tubo Loose" class="img-fluid rounded shadow-sm border" style="max-height: 180px; object-fit: contain;">
+                </div>
+
+                <p class="text-start small flex-grow-1 mb-0">Usado na rua (Sangria). Corta apenas a "capinha" do tubo colorido do cabo AS onde as 12 fibras estão soltas, sem danificar os vidros lá dentro.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

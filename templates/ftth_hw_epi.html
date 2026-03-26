@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="mb-3">
+    <a href="/ftth/hardware" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+</div>
+
+<div class="bg-light p-3 rounded mb-4 border-start border-warning border-4 shadow-sm">
+    <h3 class="text-dark mb-0">Segurança do Trabalho (EPI)</h3>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-12 col-md-6">
+        <div class="card h-100 shadow-sm" style="border: 1px solid #ffc107;">
+            <div class="card-header text-dark fw-bold" style="background-color: #ffc107;">Óculos de Proteção Transparente</div>
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                
+                <div class="mb-3 w-100 d-flex justify-content-center align-items-center" style="min-height: 180px;">
+                    <img src="/static/img/oculos_epi.jpg" alt="Óculos de Proteção" class="img-fluid rounded shadow-sm border" style="max-height: 180px; object-fit: contain;">
+                </div>
+
+                <p class="text-start small flex-grow-1">Pedaços de fibra clivada voam facilmente. Uma vez no olho, o vidro não é detetado em raio-x comum e pode causar cegueira. Uso obrigatório durante fusões e preparação de conectores.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <div class="card h-100 shadow-sm" style="border: 1px solid #ffc107;">
+            <div class="card-header text-dark fw-bold" style="background-color: #ffc107;">Recipiente Coletor de Fibra</div>
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                
+                <div class="mb-3 w-100 d-flex justify-content-center align-items-center" style="min-height: 180px;">
+                    <img src="/static/img/coletor_fibra.jpg" alt="Coletor de Descarte" class="img-fluid rounded shadow-sm border" style="max-height: 180px; object-fit: contain;">
+                </div>
+
+                <p class="text-start small flex-grow-1">Pote com tampa de segurança projetado para armazenar as sobras de fibra após a clivagem. Deixar a fibra no chão da casa do cliente é um risco de ferimento gravíssimo (para pessoas e animais de estimação).</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

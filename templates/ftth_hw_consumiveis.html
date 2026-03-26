@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="mb-3">
+    <a href="/ftth/hardware" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+</div>
+
+<div class="bg-light p-3 rounded mb-4 border-start border-success border-4 shadow-sm">
+    <h3 class="text-dark mb-0">Consumíveis de Emenda</h3>
+</div>
+
+<div class="row g-4 mb-5 justify-content-center">
+    <div class="col-12 col-md-6">
+        <div class="card h-100 shadow-sm border-success">
+            <div class="card-header bg-success text-white fw-bold">Protetor de Emenda (Tubete)</div>
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                
+                <div class="mb-3 w-100 d-flex justify-content-center align-items-center" style="min-height: 180px;">
+                    <img src="/static/img/tubete.jpg" alt="Tubete de Fusão" class="img-fluid rounded shadow-sm border" style="max-height: 180px; object-fit: contain;">
+                </div>
+
+                <p class="text-start small flex-grow-1">O tubete é composto por um tubo termocontrátil (encolhe com o calor da máquina) e uma haste de aço inoxidável. Ele protege o vidro nu recém-fundido, garantindo que ele não quebre ao ser acomodado na bandeja da CTO ou CEO.</p>
+                <div class="text-start mt-auto w-100">
+                    <span class="badge bg-light text-success border w-100 text-start text-wrap lh-base">Tamanhos comuns: 40mm e 60mm.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
