@@ -17,24 +17,41 @@ app.secret_key = 'telecom_pro_secreto_2026'
 def init_db():
     conn = sqlite3.connect('telecom.db')
     c = conn.cursor()
-    # Tabela de Usuários
+    
+    # Criação das Tabelas
     c.execute('''CREATE TABLE IF NOT EXISTS usuarios 
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT)''')
     
-    # NOVA: Tabela de Projetos do CAD
     c.execute('''CREATE TABLE IF NOT EXISTS projetos
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, nome TEXT, dados TEXT)''')
     
-    # Cria o usuário padrão
+    # 1. Cria o usuário padrão (Admin)
     c.execute("SELECT * FROM usuarios WHERE username='admin'")
     if not c.fetchone():
         senha_criptografada = generate_password_hash('123')
         c.execute("INSERT INTO usuarios (username, password) VALUES ('admin', ?)", (senha_criptografada,))
     
+    # 2. Lista de Técnicos a serem criados (Nome de Usuário, Senha)
+    novos_tecnicos = [
+        ('carlos', 'carlos1234'),
+        ('natan', 'natan1235'),
+        ('fernando', 'fernando1234'),
+        ('daniel', 'daniel1234')
+    ]
+    
+    # 3. Loop automático para inserir todos os técnicos de forma segura
+    for usuario, senha in novos_tecnicos:
+        c.execute("SELECT * FROM usuarios WHERE username=?", (usuario,))
+        if not c.fetchone(): # Só cria se o usuário ainda não existir
+            senha_hash = generate_password_hash(senha)
+            c.execute("INSERT INTO usuarios (username, password) VALUES (?, ?)", (usuario, senha_hash))
+    
     conn.commit()
     conn.close()
 
+# Executa a função ao iniciar
 init_db()
+
 
 def login_required(f):
     @wraps(f)
