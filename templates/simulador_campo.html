@@ -49,16 +49,17 @@
 
 <div class="row mb-3">
     <div class="col-12">
-        <div class="alert alert-dark border-info text-info">
+        <div class="alert alert-dark border-info" style="color: #FF5733;">
             <i class="bi bi-info-circle-fill me-2"></i> <strong>Cenário:</strong> A OLT está a emitir <strong>+2.5 dBm</strong>. O cabo AS 36FO percorreu <strong>3 km</strong> até esta CTO. Escolha uma fibra do tubo, faça a fusão no Splitter e meça o sinal no cliente!
         </div>
     </div>
 </div>
 
+
 <div class="row g-4 workspace shadow-lg">
     <div class="col-lg-4 col-md-12">
         <div class="panel-title"><i class="bi bi-bezier2"></i> 1. Cabo Tronco (AS 36FO)</div>
-        <p class="text-muted small">Clique num tubo loose para decapar e ver as fibras.</p>
+        <p class="small" style="color: #00FF00;">Clique num tubo loose para decapar e ver as fibras.</p>
         
         <div class="tube-container" onclick="toggleTube('tubo1')">
             <div class="d-flex align-items-center">
@@ -123,7 +124,7 @@
         <div class="panel-title"><i class="bi bi-speedometer2"></i> 3. Power Meter (Sinal do Cliente)</div>
         
         <div class="laser-meter mt-3 shadow">
-            <div class="text-muted mb-2">Power Meter PON</div>
+            <div class="mb-2" style="color: #00FF00;">Power Meter PON</div>
             <div class="dbm-value dbm-los" id="display-dbm">LOS</div>
             <div class="mt-2 fw-bold text-secondary" id="display-status">Sem Sinal Lúminoso</div>
         </div>

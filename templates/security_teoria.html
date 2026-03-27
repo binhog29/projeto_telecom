@@ -50,6 +50,33 @@
                 </div>
             </details>
         </div>
+
+        <h2 class="section-title text-success" style="border-color: #198754 !important;"><i class="bi bi-router-fill"></i> 3. Defesas Específicas de Provedor (ISP)</h2>
+        <div class="mt-3 mb-5">
+            <details>
+                <summary>Roteamento BGP e RPKI</summary>
+                <div class="details-content">
+                    <p><strong>O Perigo:</strong> Na internet, os provedores confiam uns nos outros cegamente. Se um provedor no exterior anunciar por engano que é o dono do seu bloco de IPs, todo o tráfego dos seus clientes vai parar lá (Route Hijacking).</p>
+                    <p><strong>RPKI (Resource Public Key Infrastructure):</strong> É o "cartório" da internet. Você assina digitalmente os seus blocos IPv4 e IPv6. Os roteadores de borda modernos só aceitam rotas que tenham uma assinatura criptográfica válida, ignorando anúncios falsos.</p>
+                    <p><strong>BCP38 (Anti-Spoofing):</strong> Regra de ouro no seu concentrador PPPoE: Nunca permitir que pacotes saiam da sua rede com um IP de origem que não pertença ao seu bloco. Isso impede que a sua rede seja usada para lançar ataques de amplificação.</p>
+                </div>
+            </details>
+            <details>
+                <summary>Isolamento de Clientes (Camada 2)</summary>
+                <div class="details-content">
+                    <p><strong>Client Isolation (Isolamento de Porta):</strong> Regra obrigatória na OLT e Switches de agregação. Impede que o Cliente A comunique diretamente com o Cliente B. Se um cliente pegar um vírus, ele não consegue espalhar-se pela sua rede para os vizinhos da mesma CTO.</p>
+                    <p><strong>Rogue DHCP / DHCP Snooping:</strong> O pesadelo do suporte. Ocorre quando o cliente liga o cabo da rua na porta LAN (em vez da WAN) do roteador. O roteador dele começa a entregar IPs falsos (ex: 192.168.0.x) para os outros clientes, derrubando a internet de um bairro inteiro. O DHCP Snooping nos switches bloqueia isso imediatamente.</p>
+                </div>
+            </details>
+            <details>
+                <summary>CGNAT e Conformidade Legal</summary>
+                <div class="details-content">
+                    <p><strong>A Divisão do IP (CGNAT):</strong> Como não há IPs públicos (IPv4) para todos, 32 ou 64 clientes partilham o mesmo IP público para navegar na internet, usando blocos de portas diferentes (ex: Cliente 1 usa as portas 1000 a 2000).</p>
+                    <p><strong>Logs de Conexão (A Proteção Jurídica):</strong> Se houver um crime online, a polícia pedirá os dados ao provedor fornecendo o IP público e o minuto exato. Se o provedor não tiver um servidor de Syslog guardando qual cliente (PPPoE) estava a usar qual porta exata de CGNAT naquele milissegundo, <strong>o dono do provedor é responsabilizado perante a lei</strong>.</p>
+                </div>
+            </details>
+        </div>
+
     </div>
 
     <div class="col-lg-4">
