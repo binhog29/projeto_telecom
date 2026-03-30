@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-primary"><i class="bi bi-controller"></i> Simulador Prático de Campo</h1>
+        <p class="lead text-muted">Treine a utilização dos instrumentos de medição e valide o seu raciocínio num cenário real de ativação.</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-dark shadow-sm" style="border: 2px solid #FF5733; color: #FF5733;">
+            <i class="bi bi-info-circle-fill me-2"></i> <strong>Cenário de Ativação:</strong> A OLT na central está a emitir <strong>+2.5 dBm</strong>. O cabo AS 36FO percorreu <strong>3 km</strong> até à sua CTO. A sua missão: Escolher uma fibra do tubo, garantir que está livre, fundir no Splitter e validar o sinal que vai para a casa do cliente!
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    
+    <div class="col-12 col-lg-4">
+        <div class="card h-100 shadow-sm border-0 border-top border-warning border-4">
+            <div class="card-body">
+                <h4 class="card-title text-warning text-dark" style="color: #FD7E14 !important;"><i class="bi bi-activity"></i> Identificador de Fibra</h4>
+                <p class="text-muted small mb-3">Objetivo: Garantir que a fibra está "morta" (sem cliente) antes de a cortar na CTO.</p>
+                <ol class="list-group list-group-numbered list-group-flush small">
+                    <li class="list-group-item"><strong>Adaptador:</strong> Selecione a fenda correta (ex: 250µm para fibra nua pintada).</li>
+                    <li class="list-group-item"><strong>Pinçar:</strong> Encaixe a fibra reta e pressione o gatilho para criar a microcurvatura.</li>
+                    <li class="list-group-item"><strong>Leitura:</strong> O painel vai indicar se há luz (tráfego) e a direção (setas).</li>
+                    <li class="list-group-item text-danger fw-bold"><strong>Ação:</strong> Se apitar e mostrar tráfego contínuo, PARE! É cliente ativo. Se estiver "morta", pode cortar.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card h-100 shadow-sm border-0 border-top border-success border-4">
+            <div class="card-body">
+                <h4 class="card-title text-success"><i class="bi bi-speedometer"></i> Power Meter</h4>
+                <p class="text-muted small mb-3">Objetivo: Medir a intensidade da luz que vai para a casa do cliente.</p>
+                <ol class="list-group list-group-numbered list-group-flush small">
+                    <li class="list-group-item"><strong>Ligar:</strong> Pressione o botão de Power.</li>
+                    <li class="list-group-item"><strong>Frequência:</strong> Pressione <strong>λ (Lambda)</strong> até <strong>1490nm</strong>.</li>
+                    <li class="list-group-item"><strong>Limpeza:</strong> Limpe o conector (SC/APC) com álcool.</li>
+                    <li class="list-group-item text-success fw-bold"><strong>Leitura:</strong> O ideal da saída do Splitter até à ONU é entre -15.0 dBm e -25.0 dBm.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+        <div class="col-12 col-lg-4">
+        <div class="card h-100 shadow-sm border-0 border-top border-primary border-4">
+            <div class="card-body">
+                <h4 class="card-title text-primary"><i class="bi bi-graph-up"></i> OTDR</h4>
+                <p class="text-muted small mb-3">Objetivo: Encontrar a distância exata onde o cabo rompeu ou dobrou.</p>
+                <ol class="list-group list-group-numbered list-group-flush small">
+                    <li class="list-group-item text-danger"><strong>Perigo de Queima:</strong> A fibra NÃO PODE ter luz ativa! O sinal da OLT pode <strong>queimar o sensor (APD)</strong> do equipamento.</li>
+                    <li class="list-group-item"><strong>Porta Live (Exceção):</strong> Para medir com a rede ligada, use EXCLUSIVAMENTE a porta com filtro <strong>1625nm ou 1650nm</strong>.</li>
+                    <li class="list-group-item"><strong>Configurar:</strong> Defina a frequência e a distância da medição.</li>
+                    <li class="list-group-item text-primary fw-bold"><strong>Ler o Gráfico:</strong> Pressione Start. Degraus pequenos = emendas. Queda abrupta ao fundo = rompimento.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark text-white border-secondary shadow">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-warning"><i class="bi bi-check2-square"></i> Checklist de Instalação</span>
+                <span class="badge bg-secondary">Nível: Iniciante</span>
+            </div>
+            <div class="card-body">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="passo1">
+                    <label class="form-check-label text-light" for="passo1">
+                        <strong>Passo 1:</strong> Abrir a CTO e separar o tubo AS 36FO e a fibra correta (ex: Fibra Verde).
+                    </label>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="passo2">
+                    <label class="form-check-label text-warning" for="passo2">
+                        <strong>Passo 2 (Segurança):</strong> Pinçar a fibra verde com o <strong>Identificador de Fibra Ativa</strong>. Não apitou e não tem tráfego? Perfeito, fibra confirmada como "morta"/livre! Pode cortar.
+                    </label>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="passo3">
+                    <label class="form-check-label text-light" for="passo3">
+                        <strong>Passo 3:</strong> Decapar, limpar com álcool, clivar e fundir a fibra da rua na porta IN do Splitter 1x8.
+                    </label>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="passo4">
+                    <label class="form-check-label text-light" for="passo4">
+                        <strong>Passo 4: Atenuação Natural.</strong> <br>
+                        <span class="small text-muted">A OLT envia +2.5 dBm. O cabo perde ~0.35 dB/km (3km = -1.05 dB). O Splitter 1x8 perde ~10.5 dB.</span><br>
+                        <span class="text-info fw-bold">Cálculo: (+2.5) - (1.05) - (10.5) = Saída esperada do Splitter é de aproximadamente -9.05 dBm.</span>
+                    </label>
+                </div>
+                
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" id="passo5">
+                    <label class="form-check-label text-light" for="passo5">
+                        <strong>Passo 5:</strong> Ajustar o Power Meter para 1490nm e medir a saída. Deu <strong>-9.10 dBm</strong>? A fusão ficou perfeita! Lançar drop para o cliente.
+                    </label>
+                </div>
+            </div>
+            <div class="card-footer border-secondary text-end">
+                <button id="btn-finalizar" class="btn btn-warning fw-bold">Finalizar Instalação</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.getElementById('btn-finalizar').addEventListener('click', function() {
+        let totalPassos = document.querySelectorAll('.form-check-input').length;
+        let passosConcluidos = document.querySelectorAll('.form-check-input:checked').length;
+
+        if (passosConcluidos === totalPassos) {
+            // Alerta Bonito de SUCESSO
+            Swal.fire({
+                title: 'Excelente Trabalho!',
+                text: 'Instalação concluída de forma segura. O sinal está perfeito e o cliente já está a navegar!',
+                icon: 'success',
+                confirmButtonText: 'Fechar',
+                confirmButtonColor: '#198754', // Verde padrão do sistema
+                background: '#212529', // Fundo escuro
+                color: '#ffffff' // Texto branco
+            });
+            
+            // Desmarca tudo para o próximo treino
+            document.querySelectorAll('.form-check-input').forEach(cb => cb.checked = false);
+        } else {
+            let faltam = totalPassos - passosConcluidos;
+            
+            // Alerta Bonito de ERRO/AVISO
+            Swal.fire({
+                title: 'Atenção à Segurança!',
+                text: 'Você não pode finalizar a instalação. Faltam ' + faltam + ' passo(s) na checklist.',
+                icon: 'warning',
+                confirmButtonText: 'Entendi',
+                confirmButtonColor: '#ffc107', // Amarelo alerta
+                background: '#212529', // Fundo escuro
+                color: '#ffffff' // Texto branco
+            });
+        }
+    });
+</script>
+
+{% endblock %}

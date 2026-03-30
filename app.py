@@ -291,7 +291,9 @@ def ftth_hw_limpeza():
 @app.route('/ftth/hardware/epi')
 def ftth_hw_epi():
     return render_template('ftth_hw_epi.html')
-
+@app.route('/ftth/pratica')
+def ftth_pratica():
+    return render_template('ftth_pratica.html')
 
 @app.route('/radio/teoria', methods=['GET', 'POST'])
 def radio_teoria():
